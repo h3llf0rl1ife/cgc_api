@@ -1,10 +1,11 @@
 import pymssql
 
 def executeQuery(query):
-    server = ""
-    user = ""
-    password = ""
-    db = ""
+    server = "10.7.2.1"
+    user = "sqladmin"
+    password = "AcChRgHax2C0p3s"
+    db = "SIEGE"
+    
     with pymssql.connect(server, user, password, db) as conn:
         with conn.cursor(as_dict=True) as cursor:
             cursor.execute(query)
