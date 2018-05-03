@@ -1,16 +1,38 @@
 import pymssql
+import datetime
+import decimal
+from dateutil.parser import parse
+
+
+def validateDate(kwarg, default):
+    # default: 0 = min date, 1 = now 
+    try:
+        x = parse(kwarg)
+        return x.strftime('%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        dates = (datetime.datetime(1900, 1, 1, 00, 00, 00), datetime.datetime.now())
+        return dates[default].strftime('%Y-%m-%d %H:%M:%S')
+
 
 def executeQuery(query):
-    server = "10.7.2.1"
-    user = "sqladmin"
-    password = "AcChRgHax2C0p3s"
-    db = "SIEGE"
+    server = "192.168.64.234"
+    user = "gestcom"
+    password = "miftah"
+    db = "Eljadida"
+
+    result = []
     
     with pymssql.connect(server, user, password, db) as conn:
         with conn.cursor(as_dict=True) as cursor:
             cursor.execute(query)
             for row in cursor:
-                print(row)
+                for entry in row:
+                    if type(row[entry]) is datetime.datetime:
+                        row[entry] = row[entry].strftime('%Y-%m-%d %H:%M:%S')
+                    elif type(row[entry]) is decimal.Decimal:
+                        row[entry] = float(row[entry])
+                result.append(row)
+    return result
 
 
 class Queries(object):
@@ -3507,8 +3529,8 @@ ORDER BY
 	NUM_DECOMPTE DESC
         '''
         
-        kwargs['Param1'] = validate_date(kwargs['Param1'], 0)
-        kwargs['Param2'] = validate_date(kwargs['Param2'], 1)
+        kwargs['Param1'] = validateDate(kwargs['Param1'], 0)
+        kwargs['Param2'] = validateDate(kwargs['Param2'], 1)
 
         kwargs['OPTIONAL_ARG_1'] = 'AND T_DT_DECOMPTE.GP_CLIENT = {Param_gp_client}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_gp_client'] in (None, '', 'Null') else kwargs['OPTIONAL_ARG_1']
@@ -3519,39 +3541,38 @@ ORDER BY
     def Req_ls_cheques_non_remis(kwargs):
         query = '''
 SELECT 
-T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
-T_DECOMPTE.MODE_PAIEMENT AS MODE_PAIEMENT,	
-T_DECOMPTE.MONTANT AS MONTANT,	
-T_BANQUES.LIBELLE AS LIBELLE,	
-T_DT_DECOMPTE.LE_TIRE AS LE_TIRE,	
-T_DT_DECOMPTE.DATE_CHEQUE AS DATE_CHEQUE,	
-T_DT_DECOMPTE.DATE_ECHEANCE AS DATE_ECHEANCE,	
-T_DECOMPTE.REFERENCE AS REFERENCE
+    T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
+    T_DECOMPTE.MODE_PAIEMENT AS MODE_PAIEMENT,	
+    T_DECOMPTE.MONTANT AS MONTANT,	
+    T_BANQUES.LIBELLE AS LIBELLE,	
+    T_DT_DECOMPTE.LE_TIRE AS LE_TIRE,	
+    T_DT_DECOMPTE.DATE_CHEQUE AS DATE_CHEQUE,	
+    T_DT_DECOMPTE.DATE_ECHEANCE AS DATE_ECHEANCE,	
+    T_DECOMPTE.REFERENCE AS REFERENCE
 FROM 
-T_DT_DECOMPTE,	
-T_BANQUES,	
-T_DECOMPTE
+    T_DT_DECOMPTE,	
+    T_BANQUES,	
+    T_DECOMPTE
 WHERE 
-T_DECOMPTE.NUM_DECOMPTE = T_DT_DECOMPTE.NUM_DECOMPTE
-AND		T_BANQUES.NUM_BANQUE = T_DECOMPTE.CODE_BANQUE
-AND
-(
-T_DECOMPTE.NUM_DECOMPTE NOT IN 
-(
-SELECT 
-T_DT_BORDEREAU.NUM_DECOMPTE AS NUM_DECOMPTE
-FROM 
-T_BORDEREAU_VALEURS,	
-T_DT_BORDEREAU
-WHERE 
-T_BORDEREAU_VALEURS.ID_BORDEREAU = T_DT_BORDEREAU.ID_BORDEREAU
-AND
-(
-T_BORDEREAU_VALEURS.ACTIF = 1
-)
-) 
-)
-
+    T_DECOMPTE.NUM_DECOMPTE = T_DT_DECOMPTE.NUM_DECOMPTE
+    AND		T_BANQUES.NUM_BANQUE = T_DECOMPTE.CODE_BANQUE
+    AND
+    (
+        T_DECOMPTE.NUM_DECOMPTE NOT IN 
+        (
+            SELECT 
+                T_DT_BORDEREAU.NUM_DECOMPTE AS NUM_DECOMPTE
+            FROM 
+                T_BORDEREAU_VALEURS,	
+                T_DT_BORDEREAU
+            WHERE 
+                T_BORDEREAU_VALEURS.ID_BORDEREAU = T_DT_BORDEREAU.ID_BORDEREAU
+            AND
+                (
+                    T_BORDEREAU_VALEURS.ACTIF = 1
+                )
+        ) 
+    )
         '''
         return query.format(**kwargs)
 
