@@ -4,41 +4,42 @@ import decimal
 from dateutil.parser import parse
 
 
-def validateDate(kwarg, default):
-    # default: 0 = min date, 1 = now 
-    try:
-        x = parse(kwarg)
-        return x.strftime('%Y-%m-%d %H:%M:%S')
-    except ValueError:
-        dates = (datetime.datetime(1900, 1, 1, 00, 00, 00), datetime.datetime.now())
-        return dates[default].strftime('%Y-%m-%d %H:%M:%S')
-
-
-def executeQuery(query):
-    server = "192.168.64.234"
-    user = "gestcom"
-    password = "miftah"
-    db = "Eljadida"
-
-    result = []
-    
-    with pymssql.connect(server, user, password, db) as conn:
-        with conn.cursor(as_dict=True) as cursor:
-            cursor.execute(query)
-            for row in cursor:
-                for entry in row:
-                    if type(row[entry]) is datetime.datetime:
-                        row[entry] = row[entry].strftime('%Y-%m-%d %H:%M:%S')
-                    elif type(row[entry]) is decimal.Decimal:
-                        row[entry] = float(row[entry])
-                result.append(row)
-    return result
-
-
 class Queries(object):
+    def __init__(self, server, user, password, database):
+        self.server = server
+        self.user = user
+        self.password = password
+        self.database = database
+    
+    
+    def executeQuery(self, query):
+        result = []
+        
+        with pymssql.connect(self.server, self.user, self.password, self.database) as conn:
+            with conn.cursor(as_dict=True) as cursor:
+                cursor.execute(query)
+                for row in cursor:
+                    for entry in row:
+                        if type(row[entry]) is datetime.datetime:
+                            row[entry] = row[entry].strftime('%Y-%m-%d %H:%M:%S')
+                        elif type(row[entry]) is decimal.Decimal:
+                            row[entry] = float(row[entry])
+                    result.append(row)
+        return result
+    
 
     @staticmethod
-    def is_op_auth_for_tache(kwargs):
+    def validateDate(kwarg, default):
+        # default: 0 = min date, 1 = now 
+        try:
+            x = parse(kwarg)
+            return x.strftime('%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            dates = (datetime.datetime(1900, 1, 1, 00, 00, 00), datetime.datetime.now())
+            return dates[default].strftime('%Y-%m-%d %H:%M:%S')
+
+    
+    def is_op_auth_for_tache(self, kwargs):
         query = '''
             SELECT 
                 T_OPERTEURS_TACHES.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -52,8 +53,8 @@ class Queries(object):
         '''
         return query.format(**kwargs)
     
-    @staticmethod
-    def Param_ls_clients_gp(kwargs):
+    
+    def Param_ls_clients_gp(self, kwargs):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -71,8 +72,8 @@ class Queries(object):
         '''
         return query.format(**kwargs)
     
-    @staticmethod
-    def Param_supp_objectif_secteurs(kwargs):
+    
+    def Param_supp_objectif_secteurs(self, kwargs):
         query = '''
             DELETE FROM 
                 T_OBJECTIF_SECTEURS
@@ -82,8 +83,8 @@ class Queries(object):
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_affectation_chargement(kwargs):
+    
+    def Req_affectation_chargement(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -103,8 +104,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_anc_solde_dep(kwargs):
+    
+    def Req_anc_solde_dep(self, kwargs):
         query = '''
 SELECT 
 	SUM(T_MOUVEMENTS_CAISSE.MONTANT) AS la_somme_MONTANT,	
@@ -130,8 +131,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_annulation_facture(kwargs):
+    
+    def Req_annulation_facture(self, kwargs):
         query = '''
 UPDATE 
 	T_FACTURE
@@ -142,8 +143,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_annulation_gratuit_prevente(kwargs):
+    
+    def Req_annulation_gratuit_prevente(self, kwargs):
         query = '''
 UPDATE T_LIGNE_COMMANDE
 SET T_LIGNE_COMMANDE.QTE_PROMO = 0
@@ -152,8 +153,8 @@ AND T_LIGNE_COMMANDE.QTE_LIVREE = 0 AND T_LIGNE_COMMANDE.QTE_COMMANDE>0
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_annule_synchro(kwargs):
+    
+    def Req_annule_synchro(self, kwargs):
         query = '''
 UPDATE 
 	T_SYNCHRO
@@ -166,8 +167,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_article_livraison(kwargs):
+    
+    def Req_article_livraison(self, kwargs):
         query = '''
 SELECT 
 	T_MOUVEMENTS.ORIGINE AS ORIGINE,	
@@ -185,8 +186,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_article_livree_gms_date(kwargs):
+    
+    def Req_article_livree_gms_date(self, kwargs):
         query = '''
 SELECT 
 	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -215,8 +216,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_article_magasins(kwargs):
+    
+    def Req_article_magasins(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -231,8 +232,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_articles_charges(kwargs):
+    
+    def Req_articles_charges(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -261,8 +262,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_articles_cmd(kwargs):
+    
+    def Req_articles_cmd(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -291,8 +292,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_articles_enseigne(kwargs):
+    
+    def Req_articles_enseigne(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES_ENSEIGNE.ID_ENSEIGNE AS ID_ENSEIGNE,	
@@ -304,8 +305,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_articles_livraison_client(kwargs):
+    
+    def Req_articles_livraison_client(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -334,8 +335,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_articles_livraison_secteur(kwargs):
+    
+    def Req_articles_livraison_secteur(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
@@ -355,8 +356,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_articles_livrees(kwargs):
+    
+    def Req_articles_livrees(self, kwargs):
         query = '''
 SELECT 
 	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
@@ -379,8 +380,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def req_autorisation_caisserie(kwargs):
+    
+    def req_autorisation_caisserie(self, kwargs):
         query = '''
 SELECT 
 	T_AUTORISATION_SOLDE_CAISSERIE.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -392,8 +393,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_bl_non_envoyer(kwargs):
+    
+    def Req_bl_non_envoyer(self, kwargs):
         query = '''
 SELECT 
 	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -429,8 +430,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_bl_non_envoyer_cond(kwargs):
+    
+    def Req_bl_non_envoyer_cond(self, kwargs):
         query = '''
 SELECT 
 	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -466,8 +467,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_bls_synch(kwargs):
+    
+    def Req_bls_synch(self, kwargs):
         query = '''
 SELECT 
 	T_SYNCHRO.ID_OPERATION AS ID_OPERATION
@@ -478,8 +479,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_bordereau(kwargs):
+    
+    def Req_bordereau(self, kwargs):
         query = '''
 SELECT 
 	T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
@@ -507,8 +508,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_budget_mensuel(kwargs):
+    
+    def Req_budget_mensuel(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -527,8 +528,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ca_client_objectif(kwargs):
+    
+    def Req_ca_client_objectif(self, kwargs):
         query = '''
 SELECT 
 	T_OBJECTIFS.CODE_CLIENT AS CODE_CLIENT,	
@@ -554,8 +555,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ca_invendu(kwargs):
+    
+    def Req_ca_invendu(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -585,8 +586,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ca_invendu_periode(kwargs):
+    
+    def Req_ca_invendu_periode(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
@@ -614,8 +615,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ca_lait_frais(kwargs):
+    
+    def Req_ca_lait_frais(self, kwargs):
         query = '''
 SELECT 
 	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -642,8 +643,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ca_pda(kwargs):
+    
+    def Req_ca_pda(self, kwargs):
         query = '''
 SELECT 
 	SUM(T_FACTURE.MONTANT_FACTURE) AS la_somme_MONTANT_FACTURE,	
@@ -664,8 +665,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ca_secteur(kwargs):
+    
+    def Req_ca_secteur(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
@@ -681,8 +682,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ca_secteur_date(kwargs):
+    
+    def Req_ca_secteur_date(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -717,8 +718,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ca_secteur_periode(kwargs):
+    
+    def Req_ca_secteur_periode(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
@@ -734,8 +735,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_caisses_palettes(kwargs):
+    
+    def Req_caisses_palettes(self, kwargs):
         query = '''
 SELECT 
 	T_CAISSES_PALETTES.CODE_TYPE AS CODE_TYPE,	
@@ -752,8 +753,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_chargement(kwargs):
+    
+    def Req_chargement(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -807,8 +808,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_chargement_article(kwargs):
+    
+    def Req_chargement_article(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.code_vendeur AS code_vendeur,	
@@ -860,8 +861,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_chargement_cond(kwargs):
+    
+    def Req_chargement_cond(self, kwargs):
         query = '''
 SELECT 
 	T_COND_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -887,8 +888,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_chargement_non_valide(kwargs):
+    
+    def Req_chargement_non_valide(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -912,8 +913,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_chargement_par_article(kwargs):
+    
+    def Req_chargement_par_article(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -971,8 +972,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_chargement_par_produit(kwargs):
+    
+    def Req_chargement_par_produit(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -1038,8 +1039,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_chargement_periode(kwargs):
+    
+    def Req_chargement_periode(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1065,8 +1066,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_chargement_secteur(kwargs):
+    
+    def Req_chargement_secteur(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -1102,8 +1103,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_cheque_non_envoyer(kwargs):
+    
+    def Req_cheque_non_envoyer(self, kwargs):
         query = '''
 SELECT 
 	T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -1130,8 +1131,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_client_cac_journee(kwargs):
+    
+    def Req_client_cac_journee(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -1154,8 +1155,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_client_not_int(kwargs):
+    
+    def Req_client_not_int(self, kwargs):
         query = '''
 SELECT 
 	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -1179,8 +1180,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_clients_n1(kwargs):
+    
+    def Req_clients_n1(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_MOY_VENTE_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -1201,8 +1202,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_code_chargement(kwargs):
+    
+    def Req_code_chargement(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -1216,8 +1217,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_codification_operation(kwargs):
+    
+    def Req_codification_operation(self, kwargs):
         query = '''
 SELECT 
 	MAX(T_OPERATIONS.CODE_OPERATION) AS le_maximum_CODE_OPERATION
@@ -1226,8 +1227,8 @@ FROM
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_commande_gms_date(kwargs):
+    
+    def Req_commande_gms_date(self, kwargs):
         query = '''
 SELECT 
 	T_COMMANDES.CODE_CLIENT AS CODE_CLIENT,	
@@ -1262,8 +1263,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_commande_secteur(kwargs):
+    
+    def Req_commande_secteur(self, kwargs):
         query = '''
 SELECT 
 	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -1291,8 +1292,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_commande_secteur_article(kwargs):
+    
+    def Req_commande_secteur_article(self, kwargs):
         query = '''
 SELECT 
 	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -1318,8 +1319,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_commande_secteur_produit(kwargs):
+    
+    def Req_commande_secteur_produit(self, kwargs):
         query = '''
 SELECT 
 	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -1347,8 +1348,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_commande_usine_date(kwargs):
+    
+    def Req_commande_usine_date(self, kwargs):
         query = '''
 SELECT 
 	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -1379,8 +1380,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_cond_charge_operateur(kwargs):
+    
+    def Req_cond_charge_operateur(self, kwargs):
         query = '''
 SELECT 
 	T_COND_CHARGEE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -1403,8 +1404,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_cond_chargee(kwargs):
+    
+    def Req_cond_chargee(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1432,8 +1433,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_cond_livraison(kwargs):
+    
+    def Req_cond_livraison(self, kwargs):
         query = '''
 UPDATE 
 	T_COND_LIVRAISON
@@ -1446,8 +1447,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_cond_livraison_client(kwargs):
+    
+    def Req_cond_livraison_client(self, kwargs):
         query = '''
 SELECT 
 	T_COND_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -1472,8 +1473,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def req_conseigne_deconseige(kwargs):
+    
+    def req_conseigne_deconseige(self, kwargs):
         query = '''
 SELECT 
 	T_REGELEMENT_COND.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -1497,8 +1498,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_contrubition_canal(kwargs):
+    
+    def Req_contrubition_canal(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -1519,8 +1520,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_date_dispo_statistiques(kwargs):
+    
+    def Req_date_dispo_statistiques(self, kwargs):
         query = '''
 SELECT 
 	MAX(T_STATISTIQUES.DATE_JOURNEE) AS le_maximum_DATE_JOURNEE
@@ -1531,8 +1532,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_date_distribution_remise(kwargs):
+    
+    def Req_date_distribution_remise(self, kwargs):
         query = '''
 SELECT 
 	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -1567,8 +1568,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_decompte_operateur_journee(kwargs):
+    
+    def Req_decompte_operateur_journee(self, kwargs):
         query = '''
 SELECT 
 	T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -1584,8 +1585,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dernier_chargement(kwargs):
+    
+    def Req_dernier_chargement(self, kwargs):
         query = '''
 SELECT TOP 5 
 	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1600,8 +1601,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dernier_maj_stock(kwargs):
+    
+    def Req_dernier_maj_stock(self, kwargs):
         query = '''
 SELECT 
 	T_SECTEUR.code_secteur AS code_secteur,	
@@ -1613,8 +1614,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dernier_rib(kwargs):
+    
+    def Req_dernier_rib(self, kwargs):
         query = '''
 SELECT DISTINCT TOP 5 
 	T_DECOMPTE.CODE_CLIENT AS CODE_CLIENT,	
@@ -1633,8 +1634,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_det_borderau_valeurs(kwargs):
+    
+    def Req_det_borderau_valeurs(self, kwargs):
         query = '''
 SELECT 
 	T_DT_BORDEREAU.ID_BORDEREAU AS ID_BORDEREAU,	
@@ -1656,8 +1657,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_articles(kwargs):
+    
+    def Req_dt_articles(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -1712,8 +1713,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_caisserie_secteur(kwargs):
+    
+    def Req_dt_caisserie_secteur(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1738,8 +1739,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_courrier(kwargs):
+    
+    def Req_dt_courrier(self, kwargs):
         query = '''
 SELECT 
 	T_DT_COURRIER_AGENCE.ID_ENVOI AS ID_ENVOI,	
@@ -1754,8 +1755,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_decompte(kwargs):
+    
+    def Req_dt_decompte(self, kwargs):
         query = '''
 UPDATE 
 	T_DT_DECOMPTE
@@ -1766,8 +1767,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_facture_client(kwargs):
+    
+    def Req_dt_facture_client(self, kwargs):
         query = '''
 SELECT 
 	T_DT_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -1795,8 +1796,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_mouvement_cond(kwargs):
+    
+    def Req_dt_mouvement_cond(self, kwargs):
         query = '''
 SELECT 
 	T_MOUVEMENTS_CAISSERIE.ID_MOUVEMENT AS ID_MOUVEMENT,	
@@ -1826,8 +1827,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_operation(kwargs):
+    
+    def Req_dt_operation(self, kwargs):
         query = '''
 SELECT 
 	T_MOUVEMENTS.ID_MOUVEMENT AS ID_MOUVEMENT,	
@@ -1867,8 +1868,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_prelevement(kwargs):
+    
+    def Req_dt_prelevement(self, kwargs):
         query = '''
 SELECT 
 	T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT AS ID_PRELEVEMENT,	
@@ -1912,8 +1913,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_promo_tranche_article(kwargs):
+    
+    def Req_dt_promo_tranche_article(self, kwargs):
         query = '''
 SELECT 
 	T_DT_PROMO_TRANCHE.ID_PROMO AS ID_PROMO,	
@@ -1931,8 +1932,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_reclamation(kwargs):
+    
+    def Req_dt_reclamation(self, kwargs):
         query = '''
 SELECT 
 	T_DT_RECLAMATION.ID_RECLAMATION AS ID_RECLAMATION,	
@@ -1949,8 +1950,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_rendus(kwargs):
+    
+    def Req_dt_rendus(self, kwargs):
         query = '''
 SELECT 
 	T_LIGNE_RETOUR_RENDUS.ID_RETOUR AS ID_RETOUR,	
@@ -1974,8 +1975,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_dt_retour(kwargs):
+    
+    def Req_dt_retour(self, kwargs):
         query = '''
 SELECT 
 	T_LIGNE_RETOUR_CAISSERIE.ID_RETOUR AS ID_RETOUR,	
@@ -2000,8 +2001,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ecarts(kwargs):
+    
+    def Req_ecarts(self, kwargs):
         query = '''
 SELECT 
 	T_RETOURS_USINE.ID_RETOUR AS ID_RETOUR,	
@@ -2058,8 +2059,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ecarts_caisserie(kwargs):
+    
+    def Req_ecarts_caisserie(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_RETOURS_USINE.ID_RETOUR AS ID_RETOUR,	
@@ -2103,8 +2104,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ecarts_inventaire_par_magasin(kwargs):
+    
+    def Req_ecarts_inventaire_par_magasin(self, kwargs):
         query = '''
 SELECT 
 	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -2127,8 +2128,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_etat_borderau_valeurs(kwargs):
+    
+    def Req_etat_borderau_valeurs(self, kwargs):
         query = '''
 SELECT 
 	T_DT_BORDEREAU.ID_BORDEREAU AS ID_BORDEREAU,	
@@ -2154,8 +2155,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def req_etat_chargement(kwargs):
+    
+    def req_etat_chargement(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -2175,8 +2176,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_etat_journee(kwargs):
+    
+    def Req_etat_journee(self, kwargs):
         query = '''
 SELECT 
 	T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -2193,8 +2194,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_etat_synchro(kwargs):
+    
+    def Req_etat_synchro(self, kwargs):
         query = '''
 SELECT 
 	T_SYNCHRO.ID_JOB AS ID_JOB,	
@@ -2211,8 +2212,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_etat_validation_remise(kwargs):
+    
+    def Req_etat_validation_remise(self, kwargs):
         query = '''
 SELECT 
 	T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
@@ -2224,8 +2225,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_export_invendu_rendus(kwargs):
+    
+    def Req_export_invendu_rendus(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -2256,8 +2257,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_facture_periode(kwargs):
+    
+    def Req_facture_periode(self, kwargs):
         query = '''
 SELECT 
 	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -2304,8 +2305,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_famille_gamme(kwargs):
+    
+    def Req_famille_gamme(self, kwargs):
         query = '''
 SELECT 
 	T_FAMILLE.CODE_FAMILLE AS CODE_FAMILLE,	
@@ -2318,8 +2319,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_get_id_det_mission(kwargs):
+    
+    def Req_get_id_det_mission(self, kwargs):
         query = '''
 SELECT 
 	T_Det_Mission.Id_Det_Mission AS Id_Det_Mission,	
@@ -2342,8 +2343,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def REQ_Get_MissionBL_By_Ordre(kwargs):
+    
+    def REQ_Get_MissionBL_By_Ordre(self, kwargs):
         query = '''
 SELECT 
 	MAX(T_Mission_BL.Id_Det) AS MAX_Id_Det
@@ -2352,8 +2353,8 @@ FROM
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_get_prevendeur_date(kwargs):
+    
+    def Req_get_prevendeur_date(self, kwargs):
         query = '''
 SELECT 
 	T_COMMANDE_CLIENT.DATE_COMMANDE AS DATE_COMMANDE,	
@@ -2365,8 +2366,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def REQ_GetEnseigne(kwargs):
+    
+    def REQ_GetEnseigne(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_GROUP_CLIENTS.ID_GP_CLIENT AS ID_GP_CLIENT,	
@@ -2379,8 +2380,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_bl_mission(kwargs):
+    
+    def Req_info_bl_mission(self, kwargs):
         query = '''
 SELECT 
 	T_Mission_BL.Id_Det_Mission AS Id_Det_Mission,	
@@ -2395,8 +2396,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_caisse(kwargs):
+    
+    def Req_info_caisse(self, kwargs):
         query = '''
 SELECT 
 	T_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
@@ -2408,8 +2409,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_chargement(kwargs):
+    
+    def Req_info_chargement(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -2444,8 +2445,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_client(kwargs):
+    
+    def Req_info_client(self, kwargs):
         query = '''
 SELECT 
 	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -2470,8 +2471,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_journee(kwargs):
+    
+    def Req_info_journee(self, kwargs):
         query = '''
 SELECT 
 	T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -2507,8 +2508,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_mission(kwargs):
+    
+    def Req_info_mission(self, kwargs):
         query = '''
 SELECT 
 	T_Ordre_Mission_Agence.Id_Ordre_Mission AS Id_Ordre_Mission,	
@@ -2527,8 +2528,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_operateur(kwargs):
+    
+    def Req_info_operateur(self, kwargs):
         query = '''
 SELECT 
 	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -2547,8 +2548,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_tournee_client(kwargs):
+    
+    def Req_info_tournee_client(self, kwargs):
         query = '''
 SELECT 
 	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
@@ -2571,8 +2572,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_info_trajet(kwargs):
+    
+    def Req_info_trajet(self, kwargs):
         query = '''
 SELECT 
 	T_Hist_Trajet.Id_Ordre_Mission AS Id_Ordre_Mission,	
@@ -2596,8 +2597,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_itineraire(kwargs):
+    
+    def Req_itineraire(self, kwargs):
         query = '''
 SELECT 
 	T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -2611,8 +2612,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_jours_non_clos(kwargs):
+    
+    def Req_jours_non_clos(self, kwargs):
         query = '''
 SELECT 
 	COUNT(T_JOURNEE.CLOTURE) AS Comptage_1,	
@@ -2627,8 +2628,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_lignes_commande(kwargs):
+    
+    def Req_lignes_commande(self, kwargs):
         query = '''
 SELECT 
 	T_LIGNE_COMMANDE.ID_COMMANDE AS ID_COMMANDE,	
@@ -2661,8 +2662,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_livraison_articles(kwargs):
+    
+    def Req_livraison_articles(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -2695,8 +2696,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_livraison_cond(kwargs):
+    
+    def Req_livraison_cond(self, kwargs):
         query = '''
 SELECT 
 	T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
@@ -2712,8 +2713,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_livraison_conditionnement(kwargs):
+    
+    def Req_livraison_conditionnement(self, kwargs):
         query = '''
 SELECT 
 	T_COND_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -2739,8 +2740,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_livraison_global_client(kwargs):
+    
+    def Req_livraison_global_client(self, kwargs):
         query = '''
 SELECT 
 	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -2787,8 +2788,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_livraison_non_valider(kwargs):
+    
+    def Req_livraison_non_valider(self, kwargs):
         query = '''
 SELECT 
 	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -2817,8 +2818,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_livraisons_unique(kwargs):
+    
+    def Req_livraisons_unique(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_LIVRAISON.code_secteur AS code_secteur,	
@@ -2849,8 +2850,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_aides_vendeur(kwargs):
+    
+    def Req_ls_aides_vendeur(self, kwargs):
         query = '''
 SELECT 
 	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -2867,8 +2868,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_alimentation_non_valide(kwargs):
+    
+    def Req_ls_alimentation_non_valide(self, kwargs):
         query = '''
 SELECT 
 	T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -2885,8 +2886,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_alimentation_valide(kwargs):
+    
+    def Req_ls_alimentation_valide(self, kwargs):
         query = '''
 SELECT 
 	T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -2903,8 +2904,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_alimentations(kwargs):
+    
+    def Req_ls_alimentations(self, kwargs):
         query = '''
 SELECT 
 	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
@@ -2918,8 +2919,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def REQ_ls_appareil(kwargs):
+    
+    def REQ_ls_appareil(self, kwargs):
         query = '''
 SELECT 
 	T_APPAREIL.CODE_APPAREIL AS CODE_APPAREIL,	
@@ -2948,8 +2949,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_articles(kwargs):
+    
+    def Req_ls_articles(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -2999,8 +3000,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def req_ls_articles_dispo(kwargs):
+    
+    def req_ls_articles_dispo(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3012,8 +3013,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_articles_export(kwargs):
+    
+    def Req_ls_articles_export(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3062,8 +3063,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def req_ls_articles_livrees_newrest(kwargs):
+    
+    def req_ls_articles_livrees_newrest(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3084,8 +3085,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_articles_stat(kwargs):
+    
+    def Req_ls_articles_stat(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3133,8 +3134,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_articles_stock(kwargs):
+    
+    def Req_ls_articles_stock(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3164,8 +3165,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_articles_tout(kwargs):
+    
+    def Req_ls_articles_tout(self, kwargs):
         query = '''
 SELECT 
 	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3213,8 +3214,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_autorisation_caisserie(kwargs):
+    
+    def Req_ls_autorisation_caisserie(self, kwargs):
         query = '''
 SELECT 
 	T_AUTORISATION_SOLDE_CAISSERIE.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -3250,8 +3251,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_autorisation_journee(kwargs):
+    
+    def Req_ls_autorisation_journee(self, kwargs):
         query = '''
 SELECT 
 	T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -3263,8 +3264,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_autorisations(kwargs):
+    
+    def Req_ls_autorisations(self, kwargs):
         query = '''
 SELECT 
 	T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -3295,8 +3296,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_avoirs_secteurs(kwargs):
+    
+    def Req_ls_avoirs_secteurs(self, kwargs):
         query = '''
 SELECT 
 	T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -3327,8 +3328,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_avoirs_secteurs_caisserie(kwargs):
+    
+    def Req_ls_avoirs_secteurs_caisserie(self, kwargs):
         query = '''
 SELECT 
 	T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -3356,8 +3357,8 @@ GROUP BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_bl_client(kwargs):
+    
+    def Req_ls_bl_client(self, kwargs):
         query = '''
 SELECT 
 	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -3381,8 +3382,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_borderau_valeurs(kwargs):
+    
+    def Req_ls_borderau_valeurs(self, kwargs):
         query = '''
 SELECT 
 	T_BORDEREAU_VALEURS.ID_BORDEREAU AS ID_BORDEREAU,	
@@ -3406,8 +3407,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_chargement_cac(kwargs):
+    
+    def Req_ls_chargement_cac(self, kwargs):
         query = '''
 SELECT 
 	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -3421,8 +3422,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_chargements_journee(kwargs):
+    
+    def Req_ls_chargements_journee(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -3460,8 +3461,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_chauffeurs(kwargs):
+    
+    def Req_ls_chauffeurs(self, kwargs):
         query = '''
 SELECT 
 	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -3476,8 +3477,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_cheques(kwargs):
+    
+    def Req_ls_cheques(self, kwargs):
         query = '''
 SELECT 
 	T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
@@ -3494,8 +3495,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_cheques_cac(kwargs):
+    
+    def Req_ls_cheques_cac(self, kwargs):
         query = '''
 SELECT 
 	T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -3529,16 +3530,16 @@ ORDER BY
 	NUM_DECOMPTE DESC
         '''
         
-        kwargs['Param1'] = validateDate(kwargs['Param1'], 0)
-        kwargs['Param2'] = validateDate(kwargs['Param2'], 1)
+        kwargs['Param1'] = self.validateDate(kwargs['Param1'], 0)
+        kwargs['Param2'] = self.validateDate(kwargs['Param2'], 1)
 
         kwargs['OPTIONAL_ARG_1'] = 'AND T_DT_DECOMPTE.GP_CLIENT = {Param_gp_client}'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_gp_client'] in (None, '', 'Null') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_gp_client'] in (None, '', 'Null', 'NULL') else kwargs['OPTIONAL_ARG_1']
 
         return query.format(**kwargs).format(**kwargs)
 
-    @staticmethod
-    def Req_ls_cheques_non_remis(kwargs):
+    
+    def Req_ls_cheques_non_remis(self, kwargs):
         query = '''
 SELECT 
     T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -3576,8 +3577,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_client_servi_date(kwargs):
+    
+    def Req_ls_client_servi_date(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
@@ -3599,8 +3600,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_clients(kwargs):
+    
+    def Req_ls_clients(self, kwargs):
         query = '''
 SELECT 
 	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -3655,8 +3656,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_clients_cac(kwargs):
+    
+    def Req_ls_clients_cac(self, kwargs):
         query = '''
 SELECT 
 	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -3671,8 +3672,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_clients_cac_dep(kwargs):
+    
+    def Req_ls_clients_cac_dep(self, kwargs):
         query = '''
 SELECT 
 	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -3705,8 +3706,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_clients_cac_remise(kwargs):
+    
+    def Req_ls_clients_cac_remise(self, kwargs):
         query = '''
 SELECT DISTINCT 
 	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -3733,8 +3734,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_clients_classe_secteur(kwargs):
+    
+    def Req_ls_clients_classe_secteur(self, kwargs):
         query = '''
 SELECT 
 	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -3755,8 +3756,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_clients_con_dec(kwargs):
+    
+    def Req_ls_clients_con_dec(self, kwargs):
         query = '''
 SELECT 
 	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -3772,8 +3773,8 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_clients_conseigne(kwargs):
+    
+    def Req_ls_clients_conseigne(self, kwargs):
         query = '''
 SELECT 
 	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -3828,8 +3829,8 @@ WHERE
         '''
         return query.format(**kwargs)
 
-    @staticmethod
-    def Req_ls_clients_itinéraire(kwargs):
+    
+    def Req_ls_clients_itinéraire(self, kwargs):
         query = '''
 SELECT 
 	T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -3857,3 +3858,7736 @@ ORDER BY
         '''
         return query.format(**kwargs)
 
+    
+    def Req_ls_clients_remise_lait(self, kwargs):
+        query = '''
+SELECT 
+	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_CLIENTS.ACTIF AS ACTIF,	
+	T_CLIENTS.REMISE_LAIT AS REMISE_LAIT
+FROM 
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.ACTIF = 1
+	AND	T_CLIENTS.REMISE_LAIT = 1
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_clients_sans_facture(self, kwargs):
+        query = '''
+SELECT 
+	T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
+	T_ITINERAIRES.CODE_CLIENT AS CODE_CLIENT,	
+	T_ITINERAIRES.RANG AS RANG,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_CLIENTS.ADRESSE AS ADRESSE,	
+	T_CLIENTS.ACTIF AS ACTIF,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR,	
+	T_ITINERAIRES.RANG_PREVENTE AS RANG_PREVENTE
+FROM 
+	T_CLIENTS,	
+	T_ITINERAIRES,	
+	T_SOUS_SECTEUR
+WHERE 
+	T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_ITINERAIRES.CODE_CLIENT
+	AND
+	(
+		T_CLIENTS.ACTIF = 1
+		AND	T_ITINERAIRES.CODE_TOURNEE = {Param_code_tournee}
+		AND	T_ITINERAIRES.CODE_CLIENT NOT IN ({Param_clts}) 
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_clients_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.RANG AS RANG,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_SECTEUR.code_secteur AS code_secteur,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT,	
+	T_CLIENTS.CLASSE AS CLASSE,	
+	T_CLIENTS.CLIENT_EN_COMPTE AS CLIENT_EN_COMPTE,	
+	T_CLIENTS.ACTIF AS ACTIF,	
+	T_CLIENTS.SOLDE_C_STD AS SOLDE_C_STD,	
+	T_CLIENTS.SOLDE_PRODUITS AS SOLDE_PRODUITS,	
+	T_CLIENTS.TYPE_PRESENTOIRE AS TYPE_PRESENTOIRE
+FROM 
+	T_SECTEUR,	
+	T_SOUS_SECTEUR,	
+	T_CLIENTS
+WHERE 
+	T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND
+	(
+		T_SECTEUR.code_secteur = {Param_code_secteur}
+		AND	T_CLIENTS.ACTIF = 1
+		AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}
+		AND	T_CLIENTS.CLASSE IN ({Param_classe}) 
+		AND	T_CLIENTS.CAT_CLIENT = {Param_categorie}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_code_secteur_commandes(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_COMMANDES.code_secteur AS code_secteur
+FROM 
+	T_COMMANDES
+WHERE 
+	T_COMMANDES.TYPE_COMMANDE = 'S'
+	AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_commande(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
+	T_COMMANDES.TYPE_COMMANDE AS TYPE_COMMANDE,	
+	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_COMMANDES.code_secteur AS code_secteur,	
+	T_COMMANDES.CODE_CLIENT AS CODE_CLIENT,	
+	T_COMMANDES.CODE_AGENCE AS CODE_AGENCE,	
+	T_COMMANDES.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_COMMANDES.DATE_HEURE_SAISIE AS DATE_HEURE_SAISIE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT,	
+	T_COMMANDES.NUM_COMMANDE AS NUM_COMMANDE,	
+	T_COMMANDES.DATE_COMMANDE AS DATE_COMMANDE,	
+	T_COMMANDES.OS AS OS
+FROM 
+	T_COMMANDES,	
+	T_OPERATEUR,	
+	T_CLIENTS,	
+	T_SECTEUR
+WHERE 
+	T_COMMANDES.code_secteur = T_SECTEUR.code_secteur
+	AND		T_CLIENTS.CODE_CLIENT = T_COMMANDES.CODE_CLIENT
+	AND		T_COMMANDES.CODE_OPERATEUR = T_OPERATEUR.CODE_OPERATEUR
+	AND
+	(
+		T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_COMMANDES.CODE_AGENCE = {Param_code_agence}
+		AND	T_COMMANDES.TYPE_COMMANDE IN ({Param_type_commande}) 
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_commande_client(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
+	T_COMMANDES.TYPE_COMMANDE AS TYPE_COMMANDE,	
+	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_COMMANDES.code_secteur AS code_secteur,	
+	T_COMMANDES.CODE_CLIENT AS CODE_CLIENT,	
+	T_COMMANDES.CODE_AGENCE AS CODE_AGENCE,	
+	T_COMMANDES.NUM_COMMANDE AS NUM_COMMANDE,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT,	
+	T_COMMANDES.OS AS OS
+FROM 
+	T_CLIENTS,	
+	T_COMMANDES
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_COMMANDES.CODE_CLIENT
+	AND
+	(
+		T_COMMANDES.TYPE_COMMANDE = 'C'
+		AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_COMMANDES.code_secteur = {Param_code_secteur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_commande_usine(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
+	T_COMMANDES.TYPE_COMMANDE AS TYPE_COMMANDE,	
+	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_COMMANDES.code_secteur AS code_secteur,	
+	T_COMMANDES.CODE_AGENCE AS CODE_AGENCE,	
+	T_COMMANDES.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_COMMANDES.DATE_HEURE_SAISIE AS DATE_HEURE_SAISIE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_COMMANDES.NUM_COMMANDE AS NUM_COMMANDE
+FROM 
+	T_COMMANDES,	
+	T_OPERATEUR
+WHERE 
+	T_COMMANDES.CODE_OPERATEUR = T_OPERATEUR.CODE_OPERATEUR
+	AND
+	(
+		T_COMMANDES.CODE_AGENCE = {Param_code_agence}
+		AND	T_COMMANDES.TYPE_COMMANDE IN ({Param_type_commande}) 
+	)
+ORDER BY 
+	DATE_LIVRAISON DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def req_ls_commandes_prevente(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDE_CLIENT.ID_COMMANDE AS ID_COMMANDE,	
+	T_COMMANDE_CLIENT.DATE_COMMANDE AS DATE_COMMANDE,	
+	T_COMMANDE_CLIENT.CODE_CLIENT AS CODE_CLIENT,	
+	T_COMMANDE_CLIENT.DATE_HEURE_SAISIE AS DATE_HEURE_SAISIE,	
+	T_COMMANDE_CLIENT.CODE_PREVENDEUR AS CODE_PREVENDEUR,	
+	T_COMMANDE_CLIENT.STATUT AS STATUT,	
+	T_COMMANDE_CLIENT.ETAT AS ETAT,	
+	T_COMMANDE_CLIENT.NUM_FACTURE AS NUM_FACTURE,	
+	T_COMMANDE_CLIENT.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_ZONE.NOM_ZONE AS NOM_ZONE,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR,	
+	T_ZONE.RESP_VENTE AS RESP_VENTE,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_COMMANDE_CLIENT.DATE_HEURE_LIVRAISON AS DATE_HEURE_LIVRAISON,	
+	T_COMMANDE_CLIENT.CODE_LIVREUR AS CODE_LIVREUR
+FROM 
+	T_ZONE,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_CLIENTS,	
+	T_COMMANDE_CLIENT
+WHERE 
+	T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND		T_SECTEUR.code_secteur = T_COMMANDE_CLIENT.code_secteur
+	AND		T_CLIENTS.CODE_CLIENT = T_COMMANDE_CLIENT.CODE_CLIENT
+	AND
+	(
+		T_COMMANDE_CLIENT.DATE_COMMANDE BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_COMMANDE_CLIENT.code_secteur = {Param_code_secteur}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {Param_resp_vente}
+		AND	T_COMMANDE_CLIENT.CODE_CLIENT = {Param_code_client}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_comptes(self, kwargs):
+        query = '''
+SELECT 
+	T_COMPTES.CODE_COMPTE AS CODE_COMPTE,	
+	T_COMPTES.NUM_COMPTE AS NUM_COMPTE,	
+	T_BANQUES.LIBELLE AS LIBELLE
+FROM 
+	T_BANQUES,	
+	T_COMPTES
+WHERE 
+	T_BANQUES.NUM_BANQUE = T_COMPTES.BANQUE
+	AND
+	(
+		T_COMPTES.CODE_COMPTE <> 0
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_MAGASIN_COND.CODE_CP AS CODE_CP,	
+	T_CAISSES_PALETTES.NOM_TYPE AS NOM_TYPE,	
+	T_MAGASIN_COND.QTE_STOCK AS QTE_STOCK,	
+	T_CAISSES_PALETTES.CATEGORIE AS CATEGORIE,	
+	T_CAISSES_PALETTES.PRIX_VENTE AS PRIX_VENTE,	
+	T_MAGASIN_COND.CODE_MAGASIN AS CODE_MAGASIN
+FROM 
+	T_CAISSES_PALETTES,	
+	T_MAGASIN_COND
+WHERE 
+	T_CAISSES_PALETTES.CODE_TYPE = T_MAGASIN_COND.CODE_CP
+	AND
+	(
+		T_MAGASIN_COND.CODE_MAGASIN = {Param_code_magasin}
+		AND	T_MAGASIN_COND.CODE_CP = {Param_code_cp}
+		AND	T_CAISSES_PALETTES.CATEGORIE = {Param_type_cond}
+		AND	T_MAGASIN_COND.CODE_CP <> 99
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_cond_chargees(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
+	T_COND_CHARGEE.CODE_COND AS CODE_COND,	
+	T_COND_CHARGEE.QTE_CHARGEE AS QTE_CHARGEE,	
+	T_COND_CHARGEE.QTE_CHARGEE_VAL AS QTE_CHARGEE_VAL,	
+	T_COND_CHARGEE.QTE_POINTE AS QTE_POINTE,	
+	T_COND_CHARGEE.QTE_CHAR_SUPP AS QTE_CHAR_SUPP,	
+	T_COND_CHARGEE.QTE_RETOUR AS QTE_RETOUR,	
+	T_COND_CHARGEE.ECART AS ECART,	
+	T_COND_CHARGEE.VALEUR_ECART AS VALEUR_ECART,	
+	T_COND_CHARGEE.COMPTE_ECART AS COMPTE_ECART,	
+	T_COND_CHARGEE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_COND_CHARGEE.CREDIT AS CREDIT,	
+	T_COND_CHARGEE.VALEUR_CREDIT AS VALEUR_CREDIT
+FROM 
+	T_COND_CHARGEE
+WHERE 
+	T_COND_CHARGEE.CODE_CHARGEMENT = {Param_code_chargement}
+	AND	T_COND_CHARGEE.CODE_COND = {Param_code_cond}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_cond_livraison(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
+	T_COND_LIVRAISON.QTE_CHARGEE AS QTE_CHARGEE,	
+	T_COND_LIVRAISON.VALEUR_CHARGEE AS VALEUR_CHARGEE,	
+	T_COND_LIVRAISON.PRIX AS PRIX,	
+	T_CAISSES_PALETTES.NOM_TYPE AS NOM_TYPE,	
+	T_COND_LIVRAISON.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_COND_LIVRAISON.QTE_IMPORTE AS QTE_IMPORTE
+FROM 
+	T_CAISSES_PALETTES,	
+	T_COND_LIVRAISON
+WHERE 
+	T_CAISSES_PALETTES.CODE_TYPE = T_COND_LIVRAISON.CODE_CP
+	AND
+	(
+		T_COND_LIVRAISON.NUM_LIVRAISON = {Param_num_livraison}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_cond_livrees(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
+	T_COND_LIVRAISON.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_COND_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_COND_LIVRAISON.TYPE_CLIENT AS TYPE_CLIENT,	
+	T_COND_LIVRAISON.QTE_IMPORTE AS QTE_IMPORTE,	
+	T_COND_LIVRAISON.QTE_CHARGEE AS QTE_CHARGEE,	
+	T_COND_LIVRAISON.PRIX AS PRIX
+FROM 
+	T_COND_LIVRAISON
+WHERE 
+	T_COND_LIVRAISON.NUM_LIVRAISON = {Param_num_livraison}
+	AND	T_COND_LIVRAISON.CODE_CP = {Param_code_cp}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_controlleurs(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.CODE_INTERNE AS CODE_INTERNE
+FROM 
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.FONCTION = 7
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_courrier(self, kwargs):
+        query = '''
+SELECT 
+	T_COURRIER_AGENCE.ID_ENVOI AS ID_ENVOI,	
+	T_COURRIER_AGENCE.CAT AS CAT,	
+	T_COURRIER_AGENCE.DATE_HEURE_SAISIE AS DATE_HEURE_SAISIE,	
+	T_COURRIER_AGENCE.DATE_HEURE_ENVOI AS DATE_HEURE_ENVOI,	
+	T_COURRIER_AGENCE.SAISIE_PAR AS SAISIE_PAR,	
+	T_COURRIER_AGENCE.VALIDER_PAR AS VALIDER_PAR,	
+	T_COURRIER_AGENCE.Matricule AS Matricule,	
+	T_COURRIER_AGENCE.DESTINATAIRE AS DESTINATAIRE,	
+	T_COURRIER_AGENCE.VALID AS VALID
+FROM 
+	T_COURRIER_AGENCE
+WHERE 
+	T_COURRIER_AGENCE.SAISIE_PAR <> 0
+ORDER BY 
+	DATE_HEURE_SAISIE DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_decompte_cheque(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
+	T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
+	T_DECOMPTE.MODE_PAIEMENT AS MODE_PAIEMENT,	
+	T_DECOMPTE.CODE_CAISSE AS CODE_CAISSE,	
+	T_DECOMPTE.MONTANT AS MONTANT,	
+	T_DECOMPTE.DATE_HEURE_VERS AS DATE_HEURE_VERS,	
+	T_DECOMPTE.CODE_CLIENT AS CODE_CLIENT,	
+	T_DECOMPTE.CODE_BANQUE AS CODE_BANQUE,	
+	T_DECOMPTE.REFERENCE AS REFERENCE,	
+	T_BANQUES.LIBELLE AS LIBELLE,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_DECOMPTE.REGLEMENT AS REGLEMENT
+FROM 
+	T_BANQUES,	
+	T_DECOMPTE,	
+	T_CLIENTS
+WHERE 
+	T_DECOMPTE.CODE_CLIENT = T_CLIENTS.CODE_CLIENT
+	AND		T_BANQUES.NUM_BANQUE = T_DECOMPTE.CODE_BANQUE
+	AND
+	(
+		T_DECOMPTE.CODE_OPERATEUR = {Param_param_operateur}
+		AND	T_DECOMPTE.DATE_DECOMPTE = {Param_date_decompte}
+		AND	T_DECOMPTE.MODE_PAIEMENT = 'C'
+		AND	T_DECOMPTE.REGLEMENT = 0
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_decompte_espece(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
+	T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
+	T_DECOMPTE.MODE_PAIEMENT AS MODE_PAIEMENT,	
+	T_DECOMPTE.CODE_CAISSE AS CODE_CAISSE,	
+	T_DECOMPTE.MONTANT AS MONTANT,	
+	T_DECOMPTE.DATE_HEURE_VERS AS DATE_HEURE_VERS,	
+	T_DECOMPTE.REGLEMENT AS REGLEMENT
+FROM 
+	T_DECOMPTE
+WHERE 
+	T_DECOMPTE.CODE_OPERATEUR = {Param_param_operateur}
+	AND	T_DECOMPTE.DATE_DECOMPTE = {Param_date_decompte}
+	AND	T_DECOMPTE.MODE_PAIEMENT = 'E'
+	AND	T_DECOMPTE.REGLEMENT = 0
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_decompte_journee(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
+	T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
+	T_DECOMPTE.MODE_PAIEMENT AS MODE_PAIEMENT
+FROM 
+	T_DECOMPTE
+WHERE 
+	T_DECOMPTE.DATE_DECOMPTE = {Param_date_decompte}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_depense_caisse(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_OPERATIONS_CAISSE.LIBELLE AS LIBELLE,	
+	T_OPERATIONS_CAISSE.NUM_PIECE AS NUM_PIECE,	
+	T_OPERATIONS_CAISSE.NATURE AS NATURE,	
+	T_OPERATIONS_CAISSE.BENEFICIAIRE AS BENEFICIAIRE,	
+	T_OPERATIONS_CAISSE.COMPTE_VERSEMENT AS COMPTE_VERSEMENT,	
+	T_OPERATIONS_CAISSE.COMMENTAIRE AS COMMENTAIRE,	
+	T_MOUVEMENTS_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
+	T_MOUVEMENTS_CAISSE.MONTANT AS MONTANT_T_
+FROM 
+	T_OPERATIONS_CAISSE,	
+	T_MOUVEMENTS_CAISSE
+WHERE 
+	T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
+	AND
+	(
+		T_MOUVEMENTS_CAISSE.CODE_CAISSE = {Param_code_caisse}
+		AND	T_OPERATIONS_CAISSE.DATE_OPERATION <= {Param_dt}
+		AND	
+		(
+			T_OPERATIONS_CAISSE.DATE_VALIDATION >= {Param_dt}
+			OR	T_OPERATIONS_CAISSE.DATE_VALIDATION = '19000101000000'
+		)
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_depenses(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.LIBELLE AS LIBELLE,	
+	T_OPERATIONS_CAISSE.MONTANT AS MONTANT,	
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_MOUVEMENTS_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_OPERATIONS_CAISSE.NATURE AS NATURE
+FROM 
+	T_OPERATIONS_CAISSE,	
+	T_MOUVEMENTS_CAISSE
+WHERE 
+	T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
+	AND
+	(
+		T_OPERATIONS_CAISSE.TYPE_OPERATION IN ('D', 'V') 
+		AND	T_MOUVEMENTS_CAISSE.CODE_CAISSE = {Param_code_caisse}
+		AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_operation}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_depositaires(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.ACTIF AS ACTIF,	
+	T_OPERATEUR.SOLDE_PRODUITS AS SOLDE_PRODUITS,	
+	T_OPERATEUR.SOLDE_CONDITIONNEMENT AS SOLDE_CONDITIONNEMENT,	
+	T_OPERATEUR.CODE_INTERNE AS CODE_INTERNE
+FROM 
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.FONCTION = 11
+	AND	T_OPERATEUR.ACTIF = 1
+        '''
+        return query.format(**kwargs)
+
+    
+    def req_ls_ecarts_controleur(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.COMPTE_ECART AS COMPTE_ECART,	
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT,	
+	SUM(T_MOUVEMENTS.QTE_ECART) AS la_somme_QTE_ECART,	
+	SUM(T_MOUVEMENTS.MONTANT_ECART) AS la_somme_MONTANT_ECART,	
+	T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN
+FROM 
+	T_PRODUITS,	
+	T_ARTICLES,	
+	T_MOUVEMENTS,	
+	T_MAGASINS
+WHERE 
+	T_MAGASINS.CODE_MAGASIN = T_MOUVEMENTS.CODE_MAGASIN
+	AND		T_ARTICLES.CODE_ARTICLE = T_MOUVEMENTS.CODE_ARTICLE
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND
+	(
+		T_MOUVEMENTS.COMPTE_ECART = {Param_compte_ecart}
+		AND	T_MOUVEMENTS.DATE_MVT BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MAGASINS.NOM_MAGASIN,	
+	T_MOUVEMENTS.COMPTE_ECART,	
+	T_PRODUITS.NOM_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def req_ls_ecarts_controleur_caisserie(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
+	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART AS COMPTE_ECART,	
+	T_MOUVEMENTS_CAISSERIE.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
+	T_MOUVEMENTS_CAISSERIE.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN,	
+	SUM(T_MOUVEMENTS_CAISSERIE.QTE_ECART) AS la_somme_QTE_ECART
+FROM 
+	T_OPERATIONS,	
+	T_MOUVEMENTS_CAISSERIE,	
+	T_MAGASINS
+WHERE 
+	T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS_CAISSERIE.ORIGINE
+	AND		T_MAGASINS.CODE_MAGASIN = T_MOUVEMENTS_CAISSERIE.CODE_MAGASIN
+	AND
+	(
+		T_OPERATIONS.DATE_OPERATION BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART = {Param_compte_ecart}
+	)
+GROUP BY 
+	T_OPERATIONS.DATE_OPERATION,	
+	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART,	
+	T_MOUVEMENTS_CAISSERIE.CODE_MAGASIN,	
+	T_MOUVEMENTS_CAISSERIE.CODE_CP,	
+	T_MOUVEMENTS_CAISSERIE.TYPE_MOUVEMENT,	
+	T_MAGASINS.NOM_MAGASIN
+        '''
+        return query.format(**kwargs)
+
+    
+    def req_ls_ecarts_journee(self, kwargs):
+        query = '''
+SELECT 
+	T_ECARTS_RENDUS.ID_ECART AS ID_ECART,	
+	T_ECARTS_RENDUS.DATE_SITUATION AS DATE_SITUATION,	
+	T_ECARTS_RENDUS.DATE_HEURE_SAISIE AS DATE_HEURE_SAISIE,	
+	T_ECARTS_RENDUS.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_ECARTS_RENDUS.VALEUR_PRODUIT AS VALEUR_PRODUIT,	
+	T_ECARTS_RENDUS.CS_STD AS CS_STD,	
+	T_ECARTS_RENDUS.CS_PRM AS CS_PRM,	
+	T_ECARTS_RENDUS.CS_AGR AS CS_AGR,	
+	T_ECARTS_RENDUS.PAL_STD AS PAL_STD,	
+	T_ECARTS_RENDUS.PAL_UHT AS PAL_UHT,	
+	T_ECARTS_RENDUS.VALID AS VALID,	
+	T_ECARTS_RENDUS.PAL_EURO AS PAL_EURO,	
+	T_ECARTS_RENDUS.CS_BLC AS CS_BLC,	
+	T_ECARTS_RENDUS.CS_1 AS CS_1,	
+	T_ECARTS_RENDUS.CS_2 AS CS_2
+FROM 
+	T_ECARTS_RENDUS
+WHERE 
+	T_ECARTS_RENDUS.DATE_SITUATION = {Param_date_situation}
+	AND	T_ECARTS_RENDUS.VALID = 1
+	AND	T_ECARTS_RENDUS.DATE_HEURE_SAISIE BETWEEN {Param_dt1} AND {Param_dt2}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_ecarts_rendus(self, kwargs):
+        query = '''
+SELECT 
+	T_ECARTS_RENDUS.ID_ECART AS ID_ECART,	
+	T_ECARTS_RENDUS.DATE_SITUATION AS DATE_SITUATION,	
+	T_ECARTS_RENDUS.DATE_HEURE_SAISIE AS DATE_HEURE_SAISIE,	
+	T_ECARTS_RENDUS.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_ECARTS_RENDUS.VALEUR_PRODUIT AS VALEUR_PRODUIT,	
+	T_ECARTS_RENDUS.CS_STD AS CS_STD,	
+	T_ECARTS_RENDUS.CS_PRM AS CS_PRM,	
+	T_ECARTS_RENDUS.CS_AGR AS CS_AGR,	
+	T_ECARTS_RENDUS.PAL_STD AS PAL_STD,	
+	T_ECARTS_RENDUS.PAL_UHT AS PAL_UHT,	
+	T_ECARTS_RENDUS.PAL_EURO AS PAL_EURO,	
+	T_ECARTS_RENDUS.CS_BLC AS CS_BLC
+FROM 
+	T_OPERATEUR,	
+	T_ECARTS_RENDUS
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_ECARTS_RENDUS.CODE_OPERATEUR
+	AND
+	(
+		T_ECARTS_RENDUS.DATE_HEURE_SAISIE BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_enseigne_secteur(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_GROUP_CLIENTS.ID_GP_CLIENT AS ID_GP_CLIENT,	
+	T_GROUP_CLIENTS.NOM_GROUP AS NOM_GROUP,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur
+FROM 
+	T_SOUS_SECTEUR,	
+	T_GROUP_CLIENTS,	
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.SOUS_SECTEUR = T_SOUS_SECTEUR.CODE_SOUS_SECTEUR
+	AND		T_CLIENTS.GROUP_CLIENT = T_GROUP_CLIENTS.ID_GP_CLIENT
+	AND
+	(
+		T_SOUS_SECTEUR.code_secteur = {Param_CODE_SECTEUR}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_facture_date(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
+	T_FACTURE.DATE_HEURE AS DATE_HEURE,	
+	T_FACTURE.MONTANT_FACTURE AS MONTANT_FACTURE,	
+	T_FACTURE.VALID AS VALID,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur
+FROM 
+	T_FACTURE,	
+	T_CLIENTS,	
+	T_SOUS_SECTEUR
+WHERE 
+	T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_FACTURE.CODE_CLIENT = T_CLIENTS.CODE_CLIENT
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_SOUS_SECTEUR.code_secteur = {Param_CODE_SECTEUR}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_factures_clients(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_FACTURE.MONTANT_FACTURE AS MONTANT_FACTURE,	
+	T_FACTURE.MONTANT_PERTE AS MONTANT_PERTE,	
+	T_FACTURE.VALID AS VALID,	
+	T_FACTURE.DATE_HEURE AS DATE_HEURE,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_CLIENTS.CLASSE AS CLASSE,	
+	T_CLIENTS.CLIENT_EN_COMPTE AS CLIENT_EN_COMPTE,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR,	
+	T_ZONE.RESP_VENTE AS RESP_VENTE,	
+	SUM(( ( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) * T_DT_FACTURE.PRIX ) * T_DT_FACTURE.TX_GRATUIT ) /  100) ) AS la_somme_Gratuit
+FROM 
+	T_ZONE,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_SOUS_SECTEUR,	
+	T_CLIENTS,	
+	T_FACTURE,	
+	T_OPERATEUR,	
+	T_DT_FACTURE
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_FACTURE.CODE_OPERATEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_DT_FACTURE.NUM_FACTURE = T_FACTURE.NUM_FACTURE
+	AND
+	(
+		T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+		AND	T_FACTURE.VALID = 1
+		AND	T_CLIENTS.CLASSE = {Param_classe}
+		AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {Param_resp_vente}
+	)
+GROUP BY 
+	T_FACTURE.NUM_FACTURE,	
+	T_FACTURE.CODE_CLIENT,	
+	T_FACTURE.MONTANT_FACTURE,	
+	T_FACTURE.MONTANT_PERTE,	
+	T_FACTURE.VALID,	
+	T_FACTURE.DATE_HEURE,	
+	T_SOUS_SECTEUR.code_secteur,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_CLIENTS.CLASSE,	
+	T_CLIENTS.CLIENT_EN_COMPTE,	
+	T_CLIENTS.CAT_CLIENT,	
+	T_ZONE.CODE_SUPERVISEUR,	
+	T_ZONE.RESP_VENTE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_gms(self, kwargs):
+        query = '''
+SELECT 
+	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT
+FROM 
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.CODE_CLIENT <> 0
+	AND	
+	(
+		T_CLIENTS.CAT_CLIENT = 1
+		OR	T_CLIENTS.CAT_CLIENT = 15
+	)
+ORDER BY 
+	NOM_CLIENT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_gms_depo(self, kwargs):
+        query = '''
+SELECT 
+	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT
+FROM 
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.CAT_CLIENT IN (1, 2) 
+	AND	T_CLIENTS.CODE_CLIENT <> 0
+ORDER BY 
+	NOM_CLIENT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_groups(self, kwargs):
+        query = '''
+SELECT 
+	T_GROUP_CLIENTS.ID_GP_CLIENT AS ID_GP_CLIENT,	
+	T_GROUP_CLIENTS.NOM_GROUP AS NOM_GROUP
+FROM 
+	T_GROUP_CLIENTS
+ORDER BY 
+	NOM_GROUP ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_liv(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.STATUT AS STATUT,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT
+FROM 
+	T_LIVRAISON
+WHERE 
+	T_LIVRAISON.STATUT <> 'A'
+	AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_livraison(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_LIVRAISON.code_secteur AS code_secteur,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT
+FROM 
+	T_CLIENTS,	
+	T_LIVRAISON
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
+	AND
+	(
+		T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_LIVRAISON.code_secteur = {Param_code_secteur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_livraison_client(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_CLIENTS.SOUS_SECTEUR AS SOUS_SECTEUR,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT
+FROM 
+	T_SOUS_SECTEUR,	
+	T_CLIENTS,	
+	T_OPERATIONS
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_OPERATIONS.CODE_CLIENT
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND
+	(
+		T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_livraison_tournee_journee(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.code_secteur AS code_secteur,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_CLIENTS.RANG AS RANG,	
+	T_LIVRAISON.NUM_COMMANDE AS NUM_COMMANDE,	
+	T_LIVRAISON.SUR_COMMANDE AS SUR_COMMANDE
+FROM 
+	T_CLIENTS,	
+	T_LIVRAISON
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
+	AND
+	(
+		T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_LIVRAISON.code_secteur = {Param_code_secteur}
+		AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
+		AND	T_LIVRAISON.STATUT <> 'A'
+		AND	T_LIVRAISON.SUR_COMMANDE = 1
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_livraisons(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_LIVRAISON.code_secteur AS code_secteur,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_LIVRAISON.code_vendeur AS code_vendeur,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_LIVRAISON.vehicule AS vehicule,	
+	T_LIVRAISON.Type_Livraison AS Type_Livraison
+FROM 
+	T_OPERATEUR,	
+	T_LIVRAISON,	
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_LIVRAISON.code_vendeur
+	AND
+	(
+		T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_LIVRAISON.Type_Livraison IN (1, 2) 
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_livraisons_journee(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_LIVRAISON.code_secteur AS code_secteur,	
+	T_LIVRAISON.Type_Livraison AS Type_Livraison,	
+	T_LIVRAISON.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_LIVRAISON.DATE_HEURE AS DATE_HEURE,	
+	T_LIVRAISON.code_vendeur AS code_vendeur,	
+	T_LIVRAISON.STATUT AS STATUT,	
+	T_LIVRAISON.LIVRAISON_TOURNEE AS LIVRAISON_TOURNEE,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_LIVRAISON.BENEFICIAIRE AS BENEFICIAIRE,	
+	T_LIVRAISON.ORDONATEUR AS ORDONATEUR,	
+	T_LIVRAISON.NUM_COMMANDE AS NUM_COMMANDE,	
+	T_CLIENTS.TYPE_BL AS TYPE_BL,	
+	T_CLIENTS.CLIENT_EN_COMPTE AS CLIENT_EN_COMPTE,	
+	T_CLIENTS.SOLDE_C_PR AS SOLDE_C_PR,	
+	T_CLIENTS.GROUP_CLIENT AS GROUP_CLIENT
+FROM 
+	T_CLIENTS,	
+	T_LIVRAISON,	
+	T_SECTEUR
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
+	AND		T_LIVRAISON.code_secteur = T_SECTEUR.code_secteur
+	AND
+	(
+		T_LIVRAISON.DATE_LIVRAISON = {Param_date_chargement}
+		AND	T_LIVRAISON.STATUT <> 'A'
+		AND	T_LIVRAISON.TYPE_MVT = {Param_type_mvt}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_motifs(self, kwargs):
+        query = '''
+SELECT 
+	T_MOTIF.CODE_MOTIF AS CODE_MOTIF,	
+	T_MOTIF.MOTIF AS MOTIF,	
+	T_MOTIF.MOTIF_TRANSFERT AS MOTIF_TRANSFERT,	
+	T_MOTIF.MOTIF_RETOUR_CAC AS MOTIF_RETOUR_CAC
+FROM 
+	T_MOTIF
+WHERE 
+	T_MOTIF.MOTIF_TRANSFERT = {Param_transfert}
+	AND	T_MOTIF.MOTIF_RETOUR_CAC = {Param_retour_cac}
+        '''
+        return query.format(**kwargs)
+
+    
+    def req_ls_mvt(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES.LIBELLE_COURT AS LIBELLE_COURT,	
+	T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.QTE_MOUVEMENT AS QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT,	
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT
+FROM 
+	T_MAGASINS,	
+	T_MOUVEMENTS,	
+	T_ARTICLES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_MOUVEMENTS.CODE_ARTICLE
+	AND		T_MAGASINS.CODE_MAGASIN = T_MOUVEMENTS.CODE_MAGASIN
+	AND
+	(
+		T_MOUVEMENTS.CODE_ARTICLE = {Param_code_produit}
+		AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_num_bl_client(self, kwargs):
+        query = '''
+SELECT TOP 10 
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_LIVRAISON.STATUT AS STATUT,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT
+FROM 
+	T_LIVRAISON
+WHERE 
+	T_LIVRAISON.STATUT <> 'A'
+	AND	T_LIVRAISON.TYPE_MVT = 'L'
+	AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
+ORDER BY 
+	NUM_LIVRAISON DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_operateurs(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.CODE_AGCE AS CODE_AGCE,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.MDP AS MDP,	
+	T_OPERATEUR.TITULAIRE AS TITULAIRE,	
+	T_OPERATEUR.ACTIF AS ACTIF,	
+	T_OPERATEUR.SOLDE_PRODUITS AS SOLDE_PRODUITS,	
+	T_OPERATEUR.SOLDE_CONDITIONNEMENT AS SOLDE_CONDITIONNEMENT,	
+	T_FONCTION.NOM_FONCTION AS NOM_FONCTION,	
+	T_OPERATEUR.SOLDE_C_STD AS SOLDE_C_STD,	
+	T_OPERATEUR.SOLDE_P_AG AS SOLDE_P_AG,	
+	T_OPERATEUR.SOLDE_P_UHT AS SOLDE_P_UHT,	
+	T_OPERATEUR.SOLDE_C_AG AS SOLDE_C_AG,	
+	T_OPERATEUR.SOLDE_C_PR AS SOLDE_C_PR,	
+	T_OPERATEUR.CODE_INTERNE AS CODE_INTERNE
+FROM 
+	T_FONCTION,	
+	T_OPERATEUR
+WHERE 
+	T_FONCTION.CODE_FONCTION = T_OPERATEUR.FONCTION
+	AND
+	(
+		T_OPERATEUR.ACTIF = {Param_actif}
+		AND	T_OPERATEUR.CODE_OPERATEUR <> 0
+	)
+ORDER BY 
+	NOM_OPERATEUR ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_operateurs_fonction(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_FONCTION.NOM_FONCTION AS NOM_FONCTION,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.ACTIF AS ACTIF,	
+	T_OPERATEUR.SOLDE_PRODUITS AS SOLDE_PRODUITS,	
+	T_OPERATEUR.SOLDE_CONDITIONNEMENT AS SOLDE_CONDITIONNEMENT,	
+	T_OPERATEUR.SOLDE_C_STD AS SOLDE_C_STD,	
+	T_OPERATEUR.SOLDE_P_AG AS SOLDE_P_AG,	
+	T_OPERATEUR.SOLDE_P_UHT AS SOLDE_P_UHT,	
+	T_OPERATEUR.SOLDE_C_AG AS SOLDE_C_AG,	
+	T_OPERATEUR.SOLDE_C_PR AS SOLDE_C_PR
+FROM 
+	T_FONCTION,	
+	T_OPERATEUR
+WHERE 
+	T_FONCTION.CODE_FONCTION = T_OPERATEUR.FONCTION
+	AND
+	(
+		T_OPERATEUR.FONCTION IN ({Param_fonction}) 
+		AND	T_OPERATEUR.ACTIF = 1
+	)
+ORDER BY 
+	NOM_OPERATEUR ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_operation_caisse_valide(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION
+FROM 
+	T_OPERATIONS_CAISSE
+WHERE 
+	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_operations(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS.DATE_HEURE AS DATE_HEURE,	
+	T_OPERATIONS.TYPE_PRODUIT AS TYPE_PRODUIT,	
+	T_OPERATIONS.CODE_AGCE1 AS CODE_AGCE1,	
+	T_OPERATIONS.COMMENTAIRE AS COMMENTAIRE,	
+	T_OPERATIONS.NUM_CONVOYAGE AS NUM_CONVOYAGE,	
+	T_OPERATIONS.MOTIF AS MOTIF,	
+	T_OPERATIONS.REF AS REF,	
+	T_OPERATIONS.CODE_MAGASIN1 AS CODE_MAGASIN,	
+	T_OPERATIONS.COMPTE_ECART AS COMPTE_ECART,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATIONS.CATEGORIE1 AS CATEGORIE1,	
+	T_OPERATIONS.CATEGORIE2 AS CATEGORIE2,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION AS SOUS_TYPE_OPERATION,	
+	OP.NOM_OPERATEUR AS OP_SAISIE,	
+	T_OPERATIONS.CODE_AGCE2 AS CODE_AGCE2,	
+	T_Ordre_Mission_Agence.Matricule_Vehicule AS Matricule,	
+	T_Ordre_Mission_Agence.Chauffeurs_Mission AS Chauffeur,	
+	T_Ordre_Mission_Agence.Nom_Transporteur AS PROPRIETAIRE
+FROM 
+	T_Ordre_Mission_Agence,	
+	T_OPERATIONS,	
+	T_OPERATEUR,	
+	T_OPERATEUR OP
+WHERE 
+	T_OPERATIONS.COMPTE_ECART = T_OPERATEUR.CODE_OPERATEUR
+	AND		OP.CODE_OPERATEUR = T_OPERATIONS.CODE_OPERATEUR
+	AND		T_Ordre_Mission_Agence.Id_Ordre_Mission = T_OPERATIONS.NUM_CONVOYAGE
+	AND
+	(
+		T_OPERATIONS.CODE_AGCE1 = {Param_code_agce}
+		AND	T_OPERATIONS.TYPE_OPERATION = {Param_type_operation}
+		AND	T_OPERATIONS.DATE_OPERATION = {Param_date_operation}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_operations_caisse(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_OPERATIONS_CAISSE.NUM_PIECE AS NUM_PIECE,	
+	T_OPERATIONS_CAISSE.NATURE AS NATURE,	
+	T_OPERATIONS_CAISSE.BENEFICIAIRE AS BENEFICIAIRE,	
+	T_OPERATIONS_CAISSE.COMPTE_VERSEMENT AS COMPTE_VERSEMENT,	
+	T_OPERATIONS_CAISSE.COMMENTAIRE AS COMMENTAIRE,	
+	T_OPERATIONS_CAISSE.MONTANT AS MONTANT,	
+	T_OPERATIONS_CAISSE.LIBELLE AS LIBELLE,	
+	T_MOUVEMENTS_CAISSE.MONTANT AS MONTANT_MVT,	
+	T_MOUVEMENTS_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
+	T_CAISSE.NOM_CAISSE AS NOM_CAISSE,	
+	T_MOUVEMENTS_CAISSE.TYPE_MVT AS TYPE_MVT
+FROM 
+	T_OPERATIONS_CAISSE,	
+	T_MOUVEMENTS_CAISSE,	
+	T_CAISSE
+WHERE 
+	T_CAISSE.CODE_CAISSE = T_MOUVEMENTS_CAISSE.CODE_CAISSE
+	AND		T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
+	AND
+	(
+		T_OPERATIONS_CAISSE.DATE_OPERATION BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+		AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ({Param_type_operation}) 
+		AND	T_OPERATIONS_CAISSE.DATE_VALIDATION <> ({Param_diff_validation}) 
+	)
+ORDER BY 
+	CODE_OPERATION DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_operations_non_justifies(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_OPERATIONS_CAISSE.NUM_PIECE AS NUM_PIECE,	
+	T_OPERATIONS_CAISSE.NATURE AS NATURE,	
+	T_OPERATIONS_CAISSE.BENEFICIAIRE AS BENEFICIAIRE,	
+	T_OPERATIONS_CAISSE.COMPTE_VERSEMENT AS COMPTE_VERSEMENT,	
+	T_OPERATIONS_CAISSE.COMMENTAIRE AS COMMENTAIRE,	
+	T_OPERATIONS_CAISSE.MONTANT AS MONTANT,	
+	T_OPERATIONS_CAISSE.LIBELLE AS LIBELLE,	
+	T_MOUVEMENTS_CAISSE.MONTANT AS MONTANT_MVT,	
+	T_MOUVEMENTS_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
+	T_CAISSE.NOM_CAISSE AS NOM_CAISSE,	
+	T_MOUVEMENTS_CAISSE.TYPE_MVT AS TYPE_MVT
+FROM 
+	T_OPERATIONS_CAISSE,	
+	T_MOUVEMENTS_CAISSE,	
+	T_CAISSE
+WHERE 
+	T_CAISSE.CODE_CAISSE = T_MOUVEMENTS_CAISSE.CODE_CAISSE
+	AND		T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
+	AND
+	(
+		T_OPERATIONS_CAISSE.DATE_OPERATION = {Param_date_operation}
+		AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = '19000101000000'
+		AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ({Param_type_operation}) 
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_prelev_journee(self, kwargs):
+        query = '''
+SELECT 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV AS ID_PRELEV,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION
+FROM 
+	T_PRELEVEMENT_SUSP_COND
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = {Param_dt}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_prelevement(self, kwargs):
+        query = '''
+SELECT 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV AS ID_PRELEV,	
+	T_PRELEVEMENT_SUSP_COND.DATE_PRELEV AS DATE_PRELEV,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION
+FROM 
+	T_PRELEVEMENT_SUSP_COND
+ORDER BY 
+	ID_PRELEV DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_prelevements_periode(self, kwargs):
+        query = '''
+SELECT 
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
+	SUM(T_DT_PRELEVEMENT_COND.SUSP_VENTE) AS la_somme_SUSP_VENTE
+FROM 
+	T_PRELEVEMENT_SUSP_COND,	
+	T_DT_PRELEVEMENT_COND
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
+	AND
+	(
+		T_DT_PRELEVEMENT_COND.CODE_OPERATEUR = {Param_code_operateur}
+		AND	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_prelevements_periode_caisserie(self, kwargs):
+        query = '''
+SELECT 
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
+	SUM(( T_DT_PRELEVEMENT_COND.SOLDE_STD - T_DT_PRELEVEMENT_COND.DECON_STD ) ) AS la_somme_SOLDE_STD,	
+	SUM(( T_DT_PRELEVEMENT_COND.SOLDE_AGR - T_DT_PRELEVEMENT_COND.DECON_AGR ) ) AS la_somme_SOLDE_AGR,	
+	SUM(( T_DT_PRELEVEMENT_COND.SOLDE_PRM - T_DT_PRELEVEMENT_COND.DECON_PRM ) ) AS la_somme_SOLDE_PRM,	
+	SUM(( T_DT_PRELEVEMENT_COND.SOLDE_PAG - T_DT_PRELEVEMENT_COND.DECON_PAG ) ) AS la_somme_SOLDE_PAG,	
+	SUM(( T_DT_PRELEVEMENT_COND.SOLDE_PUHT - T_DT_PRELEVEMENT_COND.DECON_PUHT ) ) AS la_somme_SOLDE_PUHT,	
+	SUM(( T_DT_PRELEVEMENT_COND.SOLDE_EURO - T_DT_PRELEVEMENT_COND.DECON_EURO ) ) AS la_somme_SOLDE_EURO,	
+	SUM(( T_DT_PRELEVEMENT_COND.SOLDE_CBL - T_DT_PRELEVEMENT_COND.DECON_CBL ) ) AS la_somme_SOLDE_CBL
+FROM 
+	T_PRELEVEMENT_SUSP_COND,	
+	T_DT_PRELEVEMENT_COND
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
+	AND
+	(
+		T_DT_PRELEVEMENT_COND.CODE_OPERATEUR = {Param_code_operateur}
+		AND	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_preparation(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES.RANG AS RANG,	
+	T_PREPARATION_CHARGEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PREPARATION_CHARGEMENTS.IMPORTE AS IMPORTE,	
+	T_PREPARATION_CHARGEMENTS.SORTIE1 AS SORTIE1,	
+	T_PREPARATION_CHARGEMENTS.SORTIE2 AS SORTIE2,	
+	T_ARTICLES.LIBELLE_COURT AS LIBELLE_COURT,	
+	T_ARTICLES.QTE_PACK AS QTE_PACK,	
+	T_ARTICLES.CONDITIONNEMENT AS CONDITIONNEMENT,	
+	T_PREPARATION_CHARGEMENTS.CHARG_GMS AS CHARG_GMS,	
+	T_PREPARATION_CHARGEMENTS.REST_STOCK AS REST_STOCK
+FROM 
+	T_ARTICLES,	
+	T_PREPARATION_CHARGEMENTS
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_PREPARATION_CHARGEMENTS.CODE_ARTICLE
+
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_prix_produit(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_PRIX.PRIX AS PRIX_VENTE
+FROM 
+	T_ARTICLES,	
+	T_PRIX,	
+	T_PRODUITS
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_PRIX.CODE_ARTICLE
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND
+	(
+		T_PRIX.Date_Debut <= {param_dt}
+		AND	T_PRIX.Date_Fin >= {param_dt}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_produit_commandes(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
+	T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_COMMANDES.QTE_U AS QTE_U,	
+	T_PRODUITS_COMMANDES.QTE_C AS QTE_C,	
+	T_PRODUITS_COMMANDES.QTE_P AS QTE_P,	
+	T_ARTICLES.LIBELLE AS LIBELLE,	
+	T_PRIX_AGENCE.PRIX_VENTE AS PRIX_VENTE,	
+	T_PRIX_AGENCE.CODE_AGCE AS CODE_AGCE,	
+	T_ARTICLES.RANG AS RANG,	
+	T_ARTICLES.CODE_BARRE AS CODE_BARRE
+FROM 
+	T_ARTICLES,	
+	T_PRIX_AGENCE,	
+	T_PRODUITS_COMMANDES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_PRODUITS_COMMANDES.CODE_ARTICLE
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRIX_AGENCE.CODE_ARTICLE
+	AND
+	(
+		T_PRODUITS_COMMANDES.ID_COMMANDE = {Param_id_commande}
+		AND	T_PRIX_AGENCE.CODE_AGCE = {Param_code_agce}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_produits(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES.RANG AS RANG,	
+	T_ARTICLES.LIBELLE AS LIBELLE,	
+	T_ARTICLES.QTE_PALETTE AS QTE_PALETTE,	
+	T_ARTICLES.CONDITIONNEMENT AS CONDITIONNEMENT,	
+	T_ARTICLES.ACTIF AS ACTIF,	
+	T_ARTICLES_MAGASINS.MAGASIN AS MAGASIN,	
+	T_PRIX.PRIX AS PRIX_VENTE,	
+	T_PRIX.CODE_AGCE AS CODE_AGCE,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_ARTICLES.TYPE_CAISSE AS TYPE_CAISSE,	
+	T_ARTICLES.TYPE_PALETTE AS TYPE_PALETTE,	
+	T_ARTICLES.CONDITIONNEMENT2 AS CONDITIONNEMENT2,	
+	T_ARTICLES.QTE_PALETTE2 AS QTE_PALETTE2,	
+	T_ARTICLES.CODE_BARRE AS CODE_BARRE
+FROM 
+	T_ARTICLES_MAGASINS,	
+	T_PRIX,	
+	T_ARTICLES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_PRIX.CODE_ARTICLE
+	AND		T_ARTICLES.CODE_ARTICLE = T_ARTICLES_MAGASINS.CODE_ARTICLE
+	AND
+	(
+		T_ARTICLES.ACTIF = 1
+		AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_mag}
+		AND	T_PRIX.CODE_AGCE = {Param_code_agce}
+		AND	T_PRIX.Date_Debut <= {param_dt}
+		AND	T_PRIX.Date_Fin >= {param_dt}
+		AND	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_produits_actif(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT,	
+	MAX(T_ARTICLES.RANG) AS le_maximum_RANG,	
+	T_FAMILLE.NOM_FAMILLE AS NOM_FAMILLE,	
+	T_FAMILLE.CODE_FAMILLE AS CODE_FAMILLE,	
+	T_GAMME.CODE_GAMME AS CODE_GAMME,	
+	T_GAMME.NOM_GAMME AS NOM_GAMME,	
+	MAX(T_PRIX.PRIX) AS le_maximum_PRIX_VENTE,	
+	MIN(T_ARTICLES.AFF_COMMANDE) AS le_minimum_AFF_COMMANDE
+FROM 
+	T_ARTICLES,	
+	T_PRIX,	
+	T_PRODUITS,	
+	T_FAMILLE,	
+	T_GAMME
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_PRIX.CODE_ARTICLE
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND		T_FAMILLE.CODE_FAMILLE = T_PRODUITS.CODE_FAMILLE
+	AND		T_GAMME.CODE_GAMME = T_FAMILLE.CODE_GAMME
+	AND
+	(
+		T_PRIX.Date_Debut <= {param_dt}
+		AND	T_PRIX.Date_Fin >= {param_dt}
+		AND	T_ARTICLES.ACTIF = 1
+	)
+GROUP BY 
+	T_PRODUITS.CODE_PRODUIT,	
+	T_PRODUITS.NOM_PRODUIT,	
+	T_FAMILLE.NOM_FAMILLE,	
+	T_FAMILLE.CODE_FAMILLE,	
+	T_GAMME.CODE_GAMME,	
+	T_GAMME.NOM_GAMME
+ORDER BY 
+	le_maximum_RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_produits_chargees(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
+	T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_CHARGEE.QTE_CHARGEE_VAL AS QTE_CHARGEE_VAL,	
+	T_PRODUITS_CHARGEE.QTE_CHARGEE_POINTE AS QTE_CHARGEE_POINTE,	
+	T_PRODUITS_CHARGEE.QTE_CHARGEE_SUPP AS QTE_CHARGEE_SUPP,	
+	T_PRODUITS_CHARGEE.TOTAL_CHARGEE AS TOTAL_CHARGEE,	
+	T_PRODUITS_CHARGEE.QTE_ECART AS QTE_ECART,	
+	T_PRODUITS_CHARGEE.TOTAL_VENDU AS TOTAL_VENDU,	
+	T_PRODUITS_CHARGEE.TOTAL_GRATUIT AS TOTAL_GRATUIT,	
+	T_PRODUITS_CHARGEE.TOTAL_ECHANGE AS TOTAL_ECHANGE,	
+	T_PRODUITS_CHARGEE.TOTAL_REMISE AS TOTAL_REMISE,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_POINTE AS TOTAL_RENDUS_POINTE,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_AG AS TOTAL_RENDUS_AG,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_US AS TOTAL_RENDUS_US,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_COM AS TOTAL_RENDUS_COM,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_SP AS TOTAL_RENDUS_SP,	
+	T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE AS TOTAL_INVENDU_POINTE,	
+	T_PRODUITS_CHARGEE.PRIX AS PRIX,	
+	T_PRODUITS_CHARGEE.MONTANT AS MONTANT,	
+	T_PRODUITS_CHARGEE.CREDIT AS CREDIT,	
+	T_PRODUITS_CHARGEE.MONTANT_CREDIT AS MONTANT_CREDIT,	
+	T_PRODUITS_CHARGEE.code_vendeur AS code_vendeur,	
+	T_PRODUITS_CHARGEE.QTE_CHARGEE AS QTE_CHARGEE,	
+	T_PRODUITS_CHARGEE.MONTANT_ECART AS MONTANT_ECART,	
+	T_PRODUITS_CHARGEE.COMPTE_ECART AS COMPTE_ECART,	
+	T_PRODUITS_CHARGEE.TOTAL_DONS AS TOTAL_DONS,	
+	T_PRODUITS_CHARGEE.PRIX_VNT AS PRIX_VNT
+FROM 
+	T_PRODUITS_CHARGEE
+WHERE 
+	T_PRODUITS_CHARGEE.CODE_CHARGEMENT = {Param_code_chagement}
+	AND	T_PRODUITS_CHARGEE.CODE_ARTICLE = {Param_code_article}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_produits_livraison(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_LIVREES.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.QTE_CHARGEE AS QTE_CHARGEE,	
+	T_PRODUITS_LIVREES.MONTANT AS MONTANT,	
+	T_PRODUITS_LIVREES.PRIX AS PRIX,	
+	T_PRODUITS_LIVREES.QTE_CAISSE AS QTE_CAISSE,	
+	T_PRODUITS_LIVREES.QTE_PAL AS QTE_PAL,	
+	T_ARTICLES.CONDITIONNEMENT AS CONDITIONNEMENT,	
+	T_ARTICLES.LIBELLE AS LIBELLE,	
+	T_ARTICLES.QTE_PALETTE AS QTE_PALETTE,	
+	T_PRODUITS_LIVREES.MOTIF_RETOUR AS MOTIF_RETOUR,	
+	T_MOTIFS_RETOUR.MOTIF AS MOTIF,	
+	T_PRODUITS_LIVREES.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_PRODUITS_LIVREES.QTE_IMPORTE AS QTE_IMPORTE,	
+	T_ARTICLES.RANG AS RANG,	
+	T_ARTICLES.CODE_BARRE AS CODE_BARRE,	
+	T_PRODUITS_LIVREES.QTE_COMMANDE AS QTE_COMMANDE,	
+	T_ARTICLES.TYPE_CAISSE AS TYPE_CAISSE,	
+	T_ARTICLES.TYPE_PALETTE AS TYPE_PALETTE,	
+	T_ARTICLES.TVA AS TVA,	
+	T_FAMILLE.CODE_GAMME AS CODE_GAMME
+FROM 
+	T_MOTIFS_RETOUR,	
+	T_ARTICLES,	
+	T_PRODUITS_LIVREES,	
+	T_PRODUITS,	
+	T_FAMILLE
+WHERE 
+	T_PRODUITS.CODE_FAMILLE = T_FAMILLE.CODE_FAMILLE
+	AND		T_ARTICLES.CODE_PRODUIT = T_PRODUITS.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRODUITS_LIVREES.CODE_ARTICLE
+	AND		T_MOTIFS_RETOUR.CODE_MOTIF = T_PRODUITS_LIVREES.MOTIF_RETOUR
+	AND
+	(
+		T_PRODUITS_LIVREES.NUM_LIVRAISON = {Param_num_livraison}
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_reclamations(self, kwargs):
+        query = '''
+SELECT 
+	T_RECLAMATIONS_QUALITE.ID_RECLAMATION AS ID_RECLAMATION,	
+	T_RECLAMATIONS_QUALITE.DATE_HEURE AS DATE_HEURE,	
+	T_RECLAMATIONS_QUALITE.Description AS Description,	
+	T_RECLAMATIONS_QUALITE.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_RECLAMATIONS_QUALITE.DLC AS DLC,	
+	T_RECLAMATIONS_QUALITE.QTE_NC AS QTE_NC,	
+	T_RECLAMATIONS_QUALITE.TYPE AS TYPE,	
+	T_RECLAMATIONS_QUALITE.ORIGINE AS ORIGINE,	
+	T_RECLAMATIONS_QUALITE.NBRE_CLIENTS AS NBRE_CLIENTS,	
+	T_RECLAMATIONS_QUALITE.DATE_RECLAMATION AS DATE_RECLAMATION,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_ARTICLES.LIBELLE AS LIBELLE
+FROM 
+	T_OPERATEUR,	
+	T_RECLAMATIONS_QUALITE,	
+	T_ARTICLES
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_RECLAMATIONS_QUALITE.EMETTEUR
+	AND		T_ARTICLES.CODE_ARTICLE = T_RECLAMATIONS_QUALITE.CODE_ARTICLE
+	AND
+	(
+		T_RECLAMATIONS_QUALITE.DATE_RECLAMATION BETWEEN {Param_date1} AND {Param_date2}
+		AND	T_RECLAMATIONS_QUALITE.DATE_HEURE BETWEEN {Param_dts1} AND {Param_dts2}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_reconaissances(self, kwargs):
+        query = '''
+SELECT 
+	T_RECONAISSANCES.CODE_CLIENT AS CODE_CLIENT,	
+	T_RECONAISSANCES.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_RECONAISSANCES.DATE_RECONAISS AS DATE_RECONAISS,	
+	T_RECONAISSANCES.SOLDE_C_STD AS SOLDE_C_STD,	
+	T_RECONAISSANCES.SOLDE_P_AG AS SOLDE_P_AG,	
+	T_RECONAISSANCES.SOLDE_P_UHT AS SOLDE_P_UHT,	
+	T_RECONAISSANCES.SOLDE_C_AG AS SOLDE_C_AG,	
+	T_RECONAISSANCES.SOLDE_C_PR AS SOLDE_C_PR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_RECONAISSANCES.ID_RECONAISSANCE AS ID_RECONAISSANCE,	
+	T_RECONAISSANCES.SOLDE_C_BLC AS SOLDE_C_BLC,	
+	T_RECONAISSANCES.SOLDE_P_EURO AS SOLDE_P_EURO
+FROM 
+	T_OPERATEUR,	
+	T_RECONAISSANCES,	
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_RECONAISSANCES.CODE_CLIENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_RECONAISSANCES.CODE_OPERATEUR
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_reglement(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
+	T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_DECOMPTE.MONTANT AS MONTANT,	
+	T_DECOMPTE.REGLEMENT AS REGLEMENT,	
+	T_DECOMPTE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_DECOMPTE.REFERENCE AS REFERENCE,	
+	T_DECOMPTE.DATE_HEURE_VERS AS DATE_HEURE_VERS
+FROM 
+	T_OPERATEUR,	
+	T_DECOMPTE
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_DECOMPTE.CODE_OPERATEUR
+	AND
+	(
+		T_DECOMPTE.REGLEMENT = {Param_reglement}
+		AND	T_DECOMPTE.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_DECOMPTE.CODE_OPERATEUR = {Param_code_operateur}
+		AND	T_DECOMPTE.MODE_PAIEMENT <> 'R'
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_reglements(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
+	T_DECOMPTE.MONTANT AS MONTANT,	
+	T_DECOMPTE.DATE_HEURE_VERS AS DATE_HEURE_VERS,	
+	T_DECOMPTE.REGLEMENT AS REGLEMENT,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE
+FROM 
+	T_OPERATEUR,	
+	T_DECOMPTE
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_DECOMPTE.CODE_OPERATEUR
+	AND
+	(
+		T_DECOMPTE.REGLEMENT = 1
+		AND	T_DECOMPTE.DATE_DECOMPTE = {Param_dt_reglement}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_reglements_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_REGELEMENT_COND.ID_REGLEMENT AS ID_REGLEMENT,	
+	T_REGELEMENT_COND.CODE_OPERTAEUR AS CODE_OPERTAEUR,	
+	T_REGELEMENT_COND.MONTANT_REGLER AS MONTANT_REGLER,	
+	T_REGELEMENT_COND.REGLER_C_STD AS REGLER_C_STD,	
+	T_REGELEMENT_COND.REGLER_P_AG AS REGLER_P_AG,	
+	T_REGELEMENT_COND.REGLER_P_UHT AS REGLER_P_UHT,	
+	T_REGELEMENT_COND.REGLER_C_AG AS REGLER_C_AG,	
+	T_REGELEMENT_COND.REGLER_C_PR AS REGLER_C_PR,	
+	T_REGELEMENT_COND.Date_Creation AS Date_Creation,	
+	T_REGELEMENT_COND.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_REGELEMENT_COND.REGLER_C_BLC AS REGLER_C_BLC,	
+	T_REGELEMENT_COND.REGLER_P_EURO AS REGLER_P_EURO,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_REGELEMENT_COND.REGLER_CS1 AS REGLER_CS1,	
+	T_REGELEMENT_COND.REGLER_CS2 AS REGLER_CS2
+FROM 
+	T_OPERATEUR,	
+	T_REGELEMENT_COND
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_REGELEMENT_COND.CODE_OPERTAEUR
+	AND
+	(
+		T_REGELEMENT_COND.CODE_OPERTAEUR = {Param_code_operateur}
+		AND	T_REGELEMENT_COND.DATE_VALIDATION = {Param_date_validation}
+	)
+ORDER BY 
+	ID_REGLEMENT DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_remise_clients(self, kwargs):
+        query = '''
+SELECT 
+	T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
+	T_REMISE_CLIENT.Date_Fin AS Date_Fin,	
+	T_REMISE_CLIENT.CODE_CLIENT AS CODE_CLIENT,	
+	T_REMISE_CLIENT.DATE_REMISE AS DATE_REMISE,	
+	T_REMISE_CLIENT.MT_REMISE AS MT_REMISE,	
+	T_REMISE_CLIENT.MT_REPARTI AS MT_REPARTI,	
+	T_REMISE_CLIENT.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_REMISE_CLIENT.MT_CA AS MT_CA,	
+	T_REMISE_CLIENT.VALID AS VALID,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_REMISE_CLIENT.TX_DERIVES AS TX_DERIVES,	
+	T_REMISE_CLIENT.CA_MOY AS CA_MOY,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR,	
+	T_ZONE.RESP_VENTE AS RESP_VENTE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_SUPERVISEUR,	
+	T_RESP_VENTE.NOM_OPERATEUR AS NOM_ANIMATEUR,	
+	T_CLIENTS.TYPE_PRESENTOIRE AS TYPE_PRESENTOIRE,	
+	T_REMISE_CLIENT.MT_REMISE_LAIT AS MT_REMISE_LAIT,	
+	T_REMISE_CLIENT.TX_LAIT AS TX_LAIT,	
+	T_REMISE_CLIENT.STATUT AS STATUT
+FROM 
+	T_REMISE_CLIENT,	
+	T_CLIENTS,	
+	T_SOUS_SECTEUR,	
+	T_OPERATEUR,	
+	T_SECTEUR,	
+	T_BLOC,	
+	T_ZONE,	
+	T_OPERATEUR T_RESP_VENTE
+WHERE 
+	T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_RESP_VENTE.CODE_OPERATEUR = T_ZONE.RESP_VENTE
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_SOUS_SECTEUR.code_secteur = T_SECTEUR.code_secteur
+	AND		T_REMISE_CLIENT.CODE_CLIENT = T_CLIENTS.CODE_CLIENT
+	AND
+	(
+		T_REMISE_CLIENT.Date_Debut BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_code_client}
+		AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_REMISE_CLIENT.STATUT >= 0
+	)
+ORDER BY 
+	NOM_ANIMATEUR ASC,	
+	NOM_SUPERVISEUR ASC,	
+	NOM_SECTEUR ASC,	
+	NOM_CLIENT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_remises_clients(self, kwargs):
+        query = '''
+SELECT 
+	T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
+	T_REMISE_CLIENT.Date_Fin AS Date_Fin,	
+	T_REMISE_CLIENT.CODE_CLIENT AS CODE_CLIENT,	
+	T_REMISE_CLIENT.DATE_REMISE AS DATE_REMISE,	
+	T_REMISE_CLIENT.MT_REMISE AS MT_REMISE,	
+	T_REMISE_CLIENT.MT_REPARTI AS MT_REPARTI,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR,	
+	T_ZONE.RESP_VENTE AS RESP_VENTE,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR
+FROM 
+	T_CLIENTS,	
+	T_REMISE_CLIENT,	
+	T_SOUS_SECTEUR,	
+	T_SECTEUR,	
+	T_BLOC,	
+	T_ZONE
+WHERE 
+	T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_REMISE_CLIENT.CODE_CLIENT
+	AND
+	(
+		T_REMISE_CLIENT.Date_Debut = {Param_date_debut}
+		AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}
+	)
+ORDER BY 
+	NOM_SECTEUR ASC,	
+	NOM_CLIENT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_remises_par_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
+	T_REMISE_CLIENT.Date_Fin AS Date_Fin,	
+	T_REMISE_CLIENT.CODE_CLIENT AS CODE_CLIENT,	
+	T_REMISE_CLIENT.MT_REMISE AS MT_REMISE,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT
+FROM 
+	T_REMISE_CLIENT,	
+	T_ZONE,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_SOUS_SECTEUR,	
+	T_OPERATEUR,	
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_REMISE_CLIENT.CODE_CLIENT
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND
+	(
+		T_REMISE_CLIENT.Date_Debut = {Param_dt1}
+		AND	T_REMISE_CLIENT.Date_Fin = {Param_dt2}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_resp_vente(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.ACTIF AS ACTIF
+FROM 
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.ACTIF = 1
+	AND	T_OPERATEUR.FONCTION = 15
+ORDER BY 
+	NOM_OPERATEUR ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_SECTEUR.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SECTEUR.RANG AS RANG,	
+	T_SECTEUR.ACTIF AS ACTIF,	
+	T_ZONE.NOM_ZONE AS NOM_ZONE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_SECTEUR.CAT_SECTEUR AS CAT_SECTEUR,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR,	
+	T_SECTEUR.PREVENTE AS PREVENTE
+FROM 
+	T_ZONE,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR[1]
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND
+	(
+		T_SECTEUR.ACTIF = 1
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_secteur2(self, kwargs):
+        query = '''
+SELECT 
+	T_SECTEUR.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SECTEUR.RANG AS RANG,	
+	T_SECTEUR.ACTIF AS ACTIF,	
+	T_ZONE.NOM_ZONE AS NOM_ZONE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_SECTEUR.CAT_SECTEUR AS CAT_SECTEUR
+FROM 
+	T_ZONE,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_OPERATEUR
+WHERE 
+	T_ZONE.CODE_SUPERVISEUR = T_OPERATEUR.CODE_OPERATEUR
+	AND		T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
+	AND		T_BLOC.CODE_ZONE = T_ZONE.CODE_ZONE
+	AND
+	(
+		T_SECTEUR.ACTIF = 1
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_secteur_prevente(self, kwargs):
+        query = '''
+SELECT 
+	T_SECTEUR.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SECTEUR.RANG AS RANG,	
+	T_SECTEUR.ACTIF AS ACTIF,	
+	T_ZONE.NOM_ZONE AS NOM_ZONE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_SECTEUR.CAT_SECTEUR AS CAT_SECTEUR,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR,	
+	T_SECTEUR.PREVENTE AS PREVENTE
+FROM 
+	T_ZONE,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR[1]
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND
+	(
+		T_SECTEUR.ACTIF = 1
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_SECTEUR.PREVENTE = 1
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_secteur_sans_commande(self, kwargs):
+        query = '''
+SELECT 
+	T_SECTEUR.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SECTEUR.RANG AS RANG,	
+	T_SECTEUR.ACTIF AS ACTIF
+FROM 
+	T_SECTEUR
+WHERE 
+	T_SECTEUR.ACTIF = 1
+	AND	T_SECTEUR.code_secteur NOT IN ({Param_cds}) 
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_ss_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_SOUS_SECTEUR.CODE_SOUS_SECTEUR AS CODE_SOUS_SECTEUR,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
+	T_SOUS_SECTEUR.RANG AS RANG
+FROM 
+	T_SOUS_SECTEUR
+WHERE 
+	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_ss_tournee(self, kwargs):
+        query = '''
+SELECT 
+	T_SOUS_SECTEUR.CODE_SOUS_SECTEUR AS CODE_SOUS_SECTEUR,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur
+FROM 
+	T_SOUS_SECTEUR
+WHERE 
+	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_superviseurs(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.ACTIF AS ACTIF
+FROM 
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.ACTIF = 1
+	AND	T_OPERATEUR.FONCTION = 8
+ORDER BY 
+	NOM_OPERATEUR ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_superviseurs_resp_vente(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.ACTIF AS ACTIF,	
+	T_ZONE.RESP_VENTE AS RESP_VENTE
+FROM 
+	T_ZONE,	
+	T_OPERATEUR
+WHERE 
+	T_ZONE.CODE_SUPERVISEUR = T_OPERATEUR.CODE_OPERATEUR
+	AND
+	(
+		T_OPERATEUR.ACTIF = 1
+		AND	T_ZONE.RESP_VENTE = {param_resp_vente}
+	)
+ORDER BY 
+	NOM_OPERATEUR ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_tache_operateur(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERTEURS_TACHES.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERTEURS_TACHES.ID_TACHE AS ID_TACHE,	
+	T_OPERTEURS_TACHES.ETAT AS ETAT,	
+	T_OPERATEUR.Matricule AS Matricule
+FROM 
+	T_OPERTEURS_TACHES,	
+	T_OPERATEUR
+WHERE 
+	T_OPERTEURS_TACHES.CODE_OPERATEUR = T_OPERATEUR.CODE_OPERATEUR
+	AND
+	(
+		T_OPERTEURS_TACHES.CODE_OPERATEUR = {Param_code_operateur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_tournees(self, kwargs):
+        query = '''
+SELECT 
+	T_TOURNEES.CODE_TOURNEE AS CODE_TOURNEE,	
+	T_TOURNEES.NOM_TOURNEE AS NOM_TOURNEE,	
+	T_TOURNEES.code_secteur AS code_secteur,	
+	T_TOURNEES.ROTATION AS ROTATION,	
+	T_TOURNEES.NBRE_JOURS AS NBRE_JOURS,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR
+FROM 
+	T_SECTEUR,	
+	T_TOURNEES
+WHERE 
+	T_SECTEUR.code_secteur = T_TOURNEES.code_secteur
+	AND
+	(
+		T_TOURNEES.code_secteur = {Param_code_secteur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_tous_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_SECTEUR.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SECTEUR.RANG AS RANG,	
+	T_SECTEUR.ACTIF AS ACTIF,	
+	T_ZONE.NOM_ZONE AS NOM_ZONE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_SECTEUR.CAT_SECTEUR AS CAT_SECTEUR,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR
+FROM 
+	T_ZONE,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_OPERATEUR
+WHERE 
+	T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR[1]
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND
+	(
+		T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_vehicule(self, kwargs):
+        query = '''
+SELECT 
+	T_VEHICULE.Matricule AS Matricule,	
+	T_VEHICULE.ACTIF AS ACTIF,	
+	T_VEHICULE.Id_Vehicule AS Id_Vehicule,	
+	T_VEHICULE.Id_Type_Vehicule AS Id_Type_Vehicule
+FROM 
+	T_VEHICULE
+WHERE 
+	T_VEHICULE.ACTIF = 1
+	AND	T_VEHICULE.Id_Type_Vehicule = {ParamId_Type_Vehicule}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_vendeurs(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.ACTIF AS ACTIF,	
+	T_OPERATEUR.SOLDE_PRODUITS AS SOLDE_PRODUITS,	
+	T_OPERATEUR.SOLDE_CONDITIONNEMENT AS SOLDE_CONDITIONNEMENT,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_FONCTION.NOM_FONCTION AS NOM_FONCTION,	
+	T_OPERATEUR.CODE_INTERNE AS CODE_INTERNE
+FROM 
+	T_FONCTION,	
+	T_OPERATEUR
+WHERE 
+	T_FONCTION.CODE_FONCTION = T_OPERATEUR.FONCTION
+	AND
+	(
+		T_OPERATEUR.ACTIF = 1
+		AND	T_OPERATEUR.FONCTION IN (1, 4, 5, 6) 
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_vendeurs_depositaires(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.ACTIF AS ACTIF
+FROM 
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.ACTIF = 1
+	AND	T_OPERATEUR.FONCTION IN (1, 4, 5, 6, 11, 55, 56) 
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ls_versement_caisse(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS_CAISSE.NUM_PIECE AS NUM_PIECE,	
+	T_OPERATIONS_CAISSE.COMPTE_VERSEMENT AS COMPTE_VERSEMENT,	
+	T_OPERATIONS_CAISSE.COMMENTAIRE AS COMMENTAIRE,	
+	T_OPERATIONS_CAISSE.MONTANT AS MONTANT,	
+	T_COMPTES.NUM_COMPTE AS NUM_COMPTE,	
+	T_BANQUES.LIBELLE AS LIBELLE,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION
+FROM 
+	T_BANQUES,	
+	T_COMPTES,	
+	T_OPERATIONS_CAISSE
+WHERE 
+	T_BANQUES.NUM_BANQUE = T_COMPTES.BANQUE
+	AND		T_COMPTES.CODE_COMPTE = T_OPERATIONS_CAISSE.COMPTE_VERSEMENT
+	AND
+	(
+		T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_versement}
+		AND	T_OPERATIONS_CAISSE.TYPE_OPERATION = {Param_type_operation}
+	)
+ORDER BY 
+	CODE_OPERATION DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_magasin_article(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES_MAGASINS.MAGASIN AS MAGASIN,	
+	SUM(T_ARTICLES_MAGASINS.QTE_STOCK) AS la_somme_QTE_STOCK
+FROM 
+	T_ARTICLES_MAGASINS
+WHERE 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE = {Param_code_article}
+	AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_magasin}
+GROUP BY 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE,	
+	T_ARTICLES_MAGASINS.MAGASIN
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_magasin_categorie(self, kwargs):
+        query = '''
+SELECT 
+	T_TYPE_PRODUIT_MAG.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_TYPE_PRODUIT_MAG.PRODUIT AS PRODUIT,	
+	T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN
+FROM 
+	T_MAGASINS,	
+	T_TYPE_PRODUIT_MAG
+WHERE 
+	T_MAGASINS.CODE_MAGASIN = T_TYPE_PRODUIT_MAG.CODE_MAGASIN
+	AND
+	(
+		T_TYPE_PRODUIT_MAG.PRODUIT = {Param_categorie}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_magasin_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_MAGASIN_COND.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_MAGASIN_COND.CODE_CP AS CODE_CP,	
+	T_MAGASIN_COND.QTE_STOCK AS QTE_STOCK,	
+	T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN
+FROM 
+	T_MAGASINS,	
+	T_MAGASIN_COND
+WHERE 
+	T_MAGASINS.CODE_MAGASIN = T_MAGASIN_COND.CODE_MAGASIN
+	AND
+	(
+		T_MAGASIN_COND.CODE_CP = {Param_code_cp}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_magasins_agence(self, kwargs):
+        query = '''
+SELECT 
+	T_MAGASINS.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN,	
+	T_MAGASINS.CODE_AGCE AS CODE_AGCE
+FROM 
+	T_MAGASINS
+WHERE 
+	T_MAGASINS.CODE_AGCE = {Param_code_agce}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_maj_pass(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_OPERATEUR.MDP AS MDP,	
+	T_OPERATEUR.ACTIF AS ACTIF
+FROM 
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.FONCTION IN (7) 
+	AND	T_OPERATEUR.ACTIF = 1
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_maj_position_cond(self, kwargs):
+        query = '''
+UPDATE 
+	T_MAGASIN_COND
+SET
+	QTE_STOCK = {Param_qte_stock}
+WHERE 
+	T_MAGASIN_COND.CODE_MAGASIN = {Param_code_magasin}
+	AND	T_MAGASIN_COND.CODE_CP = {Param_code_cp}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_mappage_article(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES.LIBELLE_COURT AS LIBELLE_COURT,	
+	T_ARTICLES.ACTIF AS ACTIF,	
+	T_MAPPAGE_ARTICLE.CODE_INTERNE AS CODE_INTERNE,	
+	T_ARTICLES.RANG AS RANG
+FROM 
+	T_ARTICLES
+	LEFT OUTER JOIN
+	T_MAPPAGE_ARTICLE
+	ON T_ARTICLES.CODE_ARTICLE = T_MAPPAGE_ARTICLE.CODE_ARTICLE
+WHERE 
+	(
+	T_ARTICLES.ACTIF = 1
+)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_mappage_produit(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT,	
+	T_MAPPAGE_PRODUIT.CODE_INTERNE AS CODE_INTERNE
+FROM 
+	T_PRODUITS
+	LEFT OUTER JOIN
+	T_MAPPAGE_PRODUIT
+	ON T_PRODUITS.CODE_PRODUIT = T_MAPPAGE_PRODUIT.CODE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_mappage_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_SECTEUR.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_MAPPAGE_SECTEUR.CODE_INTERNE AS CODE_INTERNE,	
+	T_SECTEUR.RANG AS RANG
+FROM 
+	T_SECTEUR
+	LEFT OUTER JOIN
+	T_MAPPAGE_SECTEUR
+	ON T_SECTEUR.code_secteur = T_MAPPAGE_SECTEUR.code_secteur
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_autorisation(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION) AS le_maximum_ID_JUSTIFICATION
+FROM 
+	T_AUTORISATIONS_SOLDE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_autorisation_caisserie(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_AUTORISATION_SOLDE_CAISSERIE.ID_JUSTIFICATION) AS le_maximum_ID_JUSTIFICATION
+FROM 
+	T_AUTORISATION_SOLDE_CAISSERIE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_borderau_valeurs(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_BORDEREAU_VALEURS.ID_BORDEREAU) AS le_maximum_CODE_OPERATION
+FROM 
+	T_BORDEREAU_VALEURS
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_chargement(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_CHARGEMENT.CODE_CHARGEMENT) AS le_maximum_CODE_CHARGEMENT
+FROM 
+	T_CHARGEMENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_commandes_usine(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_COMMANDES.ID_COMMANDE) AS le_maximum_ID_COMMANDE
+FROM 
+	T_COMMANDES
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_cond_livrees(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_COND_LIVRAISON.NUM_LIVRAISON) AS le_maximum_NUM_LIVRAISON
+FROM 
+	T_COND_LIVRAISON
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_convoyage(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_CONVOYAGE.NUM_CONVOYAGE) AS max_convoyage
+FROM 
+	T_CONVOYAGE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_decompte(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_DECOMPTE.NUM_DECOMPTE) AS le_maximum_NUM_DECOMPTE
+FROM 
+	T_DECOMPTE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_envoi(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_COURRIER_AGENCE.ID_ENVOI) AS le_maximum_ID
+FROM 
+	T_COURRIER_AGENCE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_journee(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_JOURNEE.DATE_JOURNEE) AS le_maximum_DATE_JOURNEE,	
+	T_JOURNEE.CLOTURE AS CLOTURE
+FROM 
+	T_JOURNEE
+GROUP BY 
+	T_JOURNEE.CLOTURE
+ORDER BY 
+	le_maximum_DATE_JOURNEE DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_livraison(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_LIVRAISON.NUM_LIVRAISON) AS le_maximum_NUM_LIVRAISON
+FROM 
+	T_LIVRAISON
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_mouv_cond(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_MOUVEMENTS_CAISSERIE.ID_MOUVEMENT) AS le_maximum_ID_MOUVEMENT
+FROM 
+	T_MOUVEMENTS_CAISSERIE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_mouvement(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_MOUVEMENTS.ID_MOUVEMENT) AS le_maximum_ID_MOUVEMENT
+FROM 
+	T_MOUVEMENTS
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_mvt_caisse(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_MOUVEMENTS_CAISSE.ID_MOUVEMENT) AS le_maximum_ID_MOUVEMENT
+FROM 
+	T_MOUVEMENTS_CAISSE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_operations_caisse(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_OPERATIONS_CAISSE.CODE_OPERATION) AS le_maximum_CODE_OPERATION
+FROM 
+	T_OPERATIONS_CAISSE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_prelevement(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_PRELEVEMENT_SUSP_COND.ID_PRELEV) AS le_maximum_ID_PRELEV
+FROM 
+	T_PRELEVEMENT_SUSP_COND
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_reclamation(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_RECLAMATIONS_QUALITE.ID_RECLAMATION) AS le_maximum_ID_RECLAMATION
+FROM 
+	T_RECLAMATIONS_QUALITE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_reconaissance(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_RECONAISSANCES.ID_RECONAISSANCE) AS le_maximum_ID_RECONAISSANCE
+FROM 
+	T_RECONAISSANCES
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_reglement(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_REGELEMENT_COND.ID_REGLEMENT) AS le_maximum_ID_REGLEMENT
+FROM 
+	T_REGELEMENT_COND
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_max_tournee(self, kwargs):
+        query = '''
+SELECT 
+	MAX(T_TOURNEES.CODE_TOURNEE) AS le_maximum_CODE_TOURNEE
+FROM 
+	T_TOURNEES
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_min_rang_produit(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
+	MIN(T_ARTICLES.RANG) AS le_minimum_RANG
+FROM 
+	T_ARTICLES
+WHERE 
+	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}
+GROUP BY 
+	T_ARTICLES.CODE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_modele_taches(self, kwargs):
+        query = '''
+SELECT 
+	T_MODELE_TACHES.ID_MODELE AS ID_MODELE,	
+	T_MODELE_TACHES.ID_TACHE AS ID_TACHE,	
+	T_MODELE_TACHES.ETAT AS ETAT
+FROM 
+	T_MODELE_TACHES
+WHERE 
+	T_MODELE_TACHES.ID_MODELE = {Param_id_modele}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_montant_a_verser(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_vendeur AS code_vendeur,	
+	T_CHARGEMENT.VALID AS VALID,	
+	SUM(T_CHARGEMENT.MONTANT_A_VERSER) AS la_somme_MONTANT_A_VERSER,	
+	T_OPERATEUR.FONCTION AS FONCTION
+FROM 
+	T_OPERATEUR,	
+	T_CHARGEMENT
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
+	AND
+	(
+		T_CHARGEMENT.VALID = 1
+		AND	T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+		AND	T_OPERATEUR.FONCTION = {Param_fonction}
+	)
+GROUP BY 
+	T_CHARGEMENT.DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_vendeur,	
+	T_CHARGEMENT.VALID,	
+	T_OPERATEUR.FONCTION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_montant_livraison_client(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_LIVREES.CODE_CLIENT AS CODE_CLIENT,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.QTE_CHARGEE AS QTE_CHARGEE,	
+	T_PRODUITS_LIVREES.MONTANT AS MONTANT,	
+	T_PRODUITS_LIVREES.PRIX AS PRIX,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_LIVRAISON.STATUT AS STATUT,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT
+FROM 
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.STATUT <> 'A'
+		AND	T_LIVRAISON.DATE_VALIDATION = {Param_date_validation}
+		AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_mouvements_caisserie(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_COND_CHARGEE.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_COND_CHARGEE.CODE_COND AS CODE_COND,	
+	T_COND_CHARGEE.QTE_POINTE AS QTE_POINTE,	
+	T_COND_CHARGEE.QTE_CHAR_SUPP AS QTE_CHAR_SUPP,	
+	T_COND_CHARGEE.QTE_RETOUR AS QTE_RETOUR,	
+	T_SECTEUR.RANG AS RANG
+FROM 
+	T_CHARGEMENT,	
+	T_COND_CHARGEE,	
+	T_SECTEUR
+WHERE 
+	T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
+	AND		T_CHARGEMENT.CODE_CHARGEMENT = T_COND_CHARGEE.CODE_CHARGEMENT
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+	)
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_moy_vente_gms(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_LIVREES.CODE_CLIENT AS CODE_CLIENT,	
+	T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_PRODUITS_LIVREES.TYPE_CLIENT AS TYPE_CLIENT,	
+	T_PRODUITS_LIVREES.TYPE_MVT AS TYPE_MVT,	
+	AVG(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_moyenne_QTE_CHARGEE
+FROM 
+	T_PRODUITS,	
+	T_PRODUITS_LIVREES,	
+	T_ARTICLES,	
+	T_LIVRAISON
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_PRODUITS_LIVREES.CODE_ARTICLE[1]
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND
+	(
+		T_PRODUITS_LIVREES.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_PRODUITS_LIVREES.TYPE_CLIENT = 1
+		AND	T_PRODUITS_LIVREES.CODE_CLIENT = {Param_code_client}
+		AND	T_LIVRAISON.STATUT <> 'A'
+	)
+GROUP BY 
+	T_PRODUITS.CODE_PRODUIT,	
+	T_PRODUITS_LIVREES.TYPE_CLIENT,	
+	T_PRODUITS_LIVREES.TYPE_MVT,	
+	T_PRODUITS_LIVREES.CODE_CLIENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_moyenne_vente(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_VENDU + T_PRODUITS_CHARGEE.CREDIT ) ) AS la_total_VENTE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE) AS la_somme_TOTAL_INVENDU_POINTE
+FROM 
+	T_PRODUITS_CHARGEE
+WHERE 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+GROUP BY 
+	T_PRODUITS_CHARGEE.CODE_ARTICLE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_moyenne_vente_produit_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.code_secteur AS code_secteur,	
+	T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_VENDU) AS la_somme_TOTAL_VENDU,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE) AS la_somme_TOTAL_INVENDU_POINTE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_COM) AS la_somme_TOTAL_RENDUS_COM,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_CHARGEE) AS la_somme_TOTAL_CHARGEE,	
+	SUM(T_PRODUITS_CHARGEE.CREDIT) AS la_somme_CREDIT
+FROM 
+	T_PRODUITS,	
+	T_ARTICLES,	
+	T_PRODUITS_CHARGEE,	
+	T_CHARGEMENT,	
+	T_OPERATEUR
+WHERE 
+	T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRODUITS_CHARGEE.CODE_ARTICLE
+	AND		T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
+	AND		T_OPERATEUR.CODE_OPERATEUR[1] = T_CHARGEMENT.code_vendeur
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}
+		AND	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}
+		AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
+	)
+GROUP BY 
+	T_CHARGEMENT.code_secteur,	
+	T_PRODUITS.CODE_PRODUIT,	
+	T_OPERATEUR.FONCTION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_mt_a_verser_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur AS code_secteur,	
+	T_CHARGEMENT.MONTANT_A_VERSER AS MONTANT_A_VERSER
+FROM 
+	T_CHARGEMENT
+WHERE 
+	T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+	AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_mt_remise_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_DT_FACTURE.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(( ( ( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_REMISE ) * T_DT_FACTURE.PRIX ) * T_DT_FACTURE.TX_GRATUIT ) /  100) ) AS MT_REMISE,	
+	SUM(( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) ) AS SOMME_QTE
+FROM 
+	T_FACTURE,	
+	T_CLIENTS,	
+	T_SOUS_SECTEUR,	
+	T_DT_FACTURE
+WHERE 
+	T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_DT_FACTURE.TX_GRATUIT <> 0
+		AND	T_SOUS_SECTEUR.code_secteur = {Param_CODE_SECTEUR}
+		AND	T_CLIENTS.CLIENT_EN_COMPTE = 0
+		AND	T_FACTURE.DATE_HEURE BETWEEN {param_dt1} AND {param_dt2}
+	)
+GROUP BY 
+	T_DT_FACTURE.CODE_ARTICLE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_mt_verse_operateur(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_DECOMPTE.MODE_PAIEMENT AS MODE_PAIEMENT,	
+	T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
+	SUM(T_DECOMPTE.MONTANT) AS la_somme_MONTANT
+FROM 
+	T_DECOMPTE
+WHERE 
+	T_DECOMPTE.MODE_PAIEMENT = 'E'
+	AND	T_DECOMPTE.DATE_DECOMPTE = {Param_date_decompte}
+	AND	T_DECOMPTE.CODE_OPERATEUR = {Param_code_operateur}
+GROUP BY 
+	T_DECOMPTE.CODE_OPERATEUR,	
+	T_DECOMPTE.MODE_PAIEMENT,	
+	T_DECOMPTE.DATE_DECOMPTE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_mvente(self, kwargs):
+        query = '''
+SELECT 
+	T_MOYENNE_VENTE.DATE_VENTE AS DATE_VENTE,	
+	T_MOYENNE_VENTE.code_secteur AS code_secteur,	
+	T_MOYENNE_VENTE.CA_MOYENNE AS CA_MOYENNE
+FROM 
+	T_MOYENNE_VENTE
+WHERE 
+	T_MOYENNE_VENTE.DATE_VENTE = {Param_date_vente}
+	AND	T_MOYENNE_VENTE.code_secteur = {Param_code_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_nbl_client(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT
+FROM 
+	T_LIVRAISON
+WHERE 
+	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+	AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_nbre_facture_client(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	COUNT(T_FACTURE.NUM_FACTURE) AS Comptage_1
+FROM 
+	T_FACTURE
+WHERE 
+	T_FACTURE.DATE_HEURE BETWEEN {Param1} AND {Param2}
+	AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+GROUP BY 
+	T_FACTURE.CODE_CLIENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_nouv_solde_dep(self, kwargs):
+        query = '''
+SELECT 
+	SUM(T_MOUVEMENTS_CAISSE.MONTANT) AS la_somme_MONTANT,	
+	T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION
+FROM 
+	T_OPERATIONS_CAISSE,	
+	T_MOUVEMENTS_CAISSE
+WHERE 
+	T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
+	AND
+	(
+		T_MOUVEMENTS_CAISSE.CODE_CAISSE = {Param_code_caisse}
+		AND	T_OPERATIONS_CAISSE.DATE_OPERATION = {Param_date_journee}
+		AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = '19000101000000'
+		AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ('D', 'V') 
+	)
+GROUP BY 
+	T_OPERATIONS_CAISSE.DATE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_objectif_agence(self, kwargs):
+        query = '''
+SELECT 
+	T_OBJECTIF_AGENCE.DATE_OBJECTIF AS DATE_OBJECTIF,	
+	T_OBJECTIF_AGENCE.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_OBJECTIF_AGENCE.OBJECTIF_TRAD AS OBJECTIF_TRAD,	
+	T_OBJECTIF_AGENCE.OBJECTIF_GMS AS OBJECTIF_GMS,	
+	T_OBJECTIF_AGENCE.OBJECTIF AS OBJECTIF
+FROM 
+	T_OBJECTIF_AGENCE
+WHERE 
+	T_OBJECTIF_AGENCE.DATE_OBJECTIF = {Param_dt_objectif}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_objectif_clients(self, kwargs):
+        query = '''
+SELECT 
+	T_OBJECTIF_CLIENTS.DATE_OBJECTIF AS DATE_OBJECTIF,	
+	T_OBJECTIF_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_OBJECTIF_CLIENTS.QTE_OBJECTIF AS QTE_OBJECTIF,	
+	T_OBJECTIF_CLIENTS.CODE_PRODUIT AS CODE_ARTICLE,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PROD
+FROM 
+	T_OBJECTIF_CLIENTS,	
+	T_ARTICLES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_OBJECTIF_CLIENTS.CODE_PRODUIT
+	AND
+	(
+		T_OBJECTIF_CLIENTS.DATE_OBJECTIF = {Param_date_objectif}
+		AND	T_OBJECTIF_CLIENTS.CODE_CLIENT = {Param_code_client}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_objectif_mois(self, kwargs):
+        query = '''
+SELECT 
+	T_OBJECTIF_VENTE.DATE_OBJECTIF AS DATE_OBJECTIF,	
+	T_OBJECTIF_VENTE.code_secteur AS code_secteur,	
+	T_OBJECTIF_VENTE.MONTANT_OBJECTIF AS MONTANT_OBJECTIF
+FROM 
+	T_OBJECTIF_VENTE
+WHERE 
+	T_OBJECTIF_VENTE.DATE_OBJECTIF = {Param_date_objectif}
+	AND	T_OBJECTIF_VENTE.code_secteur = {Param_code_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_objectif_perte(self, kwargs):
+        query = '''
+SELECT 
+	T_OBJECTIF_RENDUS.DATE_OBJECTIF AS DATE_OBJECTIF,	
+	T_OBJECTIF_RENDUS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_OBJECTIF_RENDUS.OBJ_RENDUS_US AS OBJ_RENDUS_US,	
+	T_OBJECTIF_RENDUS.OBJ_RENDUS_AG AS OBJ_RENDUS_AG,	
+	T_OBJECTIF_RENDUS.OBJ_RENDUS_SP AS OBJ_RENDUS_SP
+FROM 
+	T_OBJECTIF_RENDUS
+WHERE 
+	T_OBJECTIF_RENDUS.DATE_OBJECTIF = {Param_date_objectif}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_objectif_secteurs(self, kwargs):
+        query = '''
+SELECT 
+	T_OBJECTIF_SECTEURS.DATE_OBJECTIF AS DATE_OBJECTIF,	
+	T_OBJECTIF_SECTEURS.code_secteur AS code_secteur,	
+	T_OBJECTIF_SECTEURS.QTE_OBJECTIF AS QTE_OBJECTIF,	
+	T_OBJECTIF_SECTEURS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_OBJECTIF_SECTEURS.OBJECTIF_PERTE AS OBJECTIF_PERTE,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PROD
+FROM 
+	T_OBJECTIF_SECTEURS,	
+	T_ARTICLES
+WHERE 
+	T_OBJECTIF_SECTEURS.CODE_PRODUIT = T_ARTICLES.CODE_ARTICLE
+	AND
+	(
+		T_OBJECTIF_SECTEURS.DATE_OBJECTIF = {Param_date_objectif}
+		AND	T_OBJECTIF_SECTEURS.code_secteur = {Param_code_secteur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_objectifs_clients(self, kwargs):
+        query = '''
+SELECT 
+	T_BLOC.CODE_ZONE AS CODE_ZONE,	
+	T_SOUS_SECTEUR.code_secteur AS code_secteur,	
+	T_OBJECTIFS.CODE_CLIENT AS CODE_CLIENT,	
+	T_OBJECTIFS.OBJECTIF AS OBJECTIF,	
+	T_OBJECTIFS.REMISE_OBJECTIF AS REMISE_OBJECTIF
+FROM 
+	T_OBJECTIFS,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_SOUS_SECTEUR,	
+	T_CLIENTS,	
+	T_ZONE
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_OBJECTIFS.CODE_CLIENT
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_BLOC.CODE_ZONE = T_ZONE.CODE_ZONE
+	AND		T_BLOC.CODE_BLOC = T_SECTEUR.CODE_BLOC
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND
+	(
+		T_OBJECTIFS.OBJECTIF > 0
+		AND	T_OBJECTIFS.CODE_CLIENT = {Param_code_client}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_position_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_MAGASIN_COND.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_MAGASIN_COND.CODE_CP AS CODE_CP,	
+	T_MAGASIN_COND.QTE_STOCK AS QTE_STOCK
+FROM 
+	T_MAGASIN_COND
+WHERE 
+	T_MAGASIN_COND.CODE_MAGASIN = {Param_code_magasin}
+	AND	T_MAGASIN_COND.CODE_CP = {Param_code_cp}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_position_stock(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES_MAGASINS.MAGASIN AS MAGASIN,	
+	T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES_MAGASINS.CATEGORIE AS CATEGORIE,	
+	T_ARTICLES_MAGASINS.QTE_STOCK AS QTE_STOCK
+FROM 
+	T_ARTICLES_MAGASINS
+WHERE 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE = {Param_code_article}
+	AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_magasin}
+	AND	T_ARTICLES_MAGASINS.CATEGORIE = {Param_type_produit}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_previsions(self, kwargs):
+        query = '''
+SELECT 
+	T_PREVISION.Date_Debut AS Date_Debut,	
+	T_PREVISION.Date_Fin AS Date_Fin,	
+	T_PREVISION.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PREVISION.QTE AS QTE
+FROM 
+	T_PREVISION
+WHERE 
+	T_PREVISION.Date_Debut = {Param_date_debut}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_prix_article_periode(self, kwargs):
+        query = '''
+SELECT 
+	T_PRIX.Date_Debut AS Date_Debut,	
+	T_PRIX.Date_Fin AS Date_Fin,	
+	T_PRIX.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRIX.PRIX AS PRIX
+FROM 
+	T_PRIX
+WHERE 
+	T_PRIX.Date_Debut <= {Param_dt1}
+	AND	T_PRIX.Date_Fin >= {Param_dt1}
+	AND	T_PRIX.CODE_ARTICLE = {Param_code_article}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_prix_debut_jour(self, kwargs):
+        query = '''
+SELECT 
+	T_PRIX.Date_Debut AS Date_Debut,	
+	T_PRIX.CODE_AGCE AS CODE_AGCE,	
+	T_PRIX.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRIX.PRIX AS PRIX
+FROM 
+	T_PRIX
+WHERE 
+	T_PRIX.Date_Debut = {Param_date_debut}
+	AND	T_PRIX.CODE_AGCE = {Param_code_agce}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_produit_en_stock(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES_MAGASINS.CATEGORIE AS CATEGORIE,	
+	SUM(T_ARTICLES_MAGASINS.QTE_STOCK) AS la_somme_QTE_STOCK
+FROM 
+	T_ARTICLES_MAGASINS
+WHERE 
+	T_ARTICLES_MAGASINS.CATEGORIE = 'PRODUIT'
+	AND	T_ARTICLES_MAGASINS.CODE_ARTICLE = {Param_code_article}
+GROUP BY 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE,	
+	T_ARTICLES_MAGASINS.CATEGORIE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_produits_famille(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_PRODUITS.CODE_FAMILLE AS CODE_FAMILLE,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT
+FROM 
+	T_PRODUITS
+WHERE 
+	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_produits_mappage(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
+	MIN(T_ARTICLES.CODE_ARTICLE) AS le_minimum_CODE_ARTICLE,	
+	T_ARTICLES.ACTIF AS ACTIF
+FROM 
+	T_ARTICLES
+WHERE 
+	T_ARTICLES.ACTIF = 1
+GROUP BY 
+	T_ARTICLES.ACTIF,	
+	T_ARTICLES.CODE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_promotions_dt(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_PROMOTIONS.ID_PROMO AS ID_PROMO,	
+	T_PROMOTIONS.Date_Debut AS Date_Debut,	
+	T_PROMOTIONS.Date_Fin AS Date_Fin,	
+	T_CIBLE_PROMOTION.CODE_AGCE AS CODE_AGCE,	
+	T_CIBLE_PROMOTION.code_secteur AS code_secteur,	
+	T_CIBLE_PROMOTION.CODE_CLIENT AS CODE_CLIENT,	
+	T_DT_PROMO_TRANCHE.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT
+FROM 
+	T_DT_PROMO_TRANCHE,	
+	T_PROMOTIONS,	
+	T_CIBLE_PROMOTION,	
+	T_ARTICLES
+WHERE 
+	T_PROMOTIONS.ID_PROMO = T_CIBLE_PROMOTION.ID_PROMO
+	AND		T_DT_PROMO_TRANCHE.ID_PROMO = T_PROMOTIONS.ID_PROMO
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_PROMO_TRANCHE.CODE_ARTICLE
+	AND
+	(
+		T_PROMOTIONS.Date_Debut <= {Param_dt}
+		AND	T_PROMOTIONS.Date_Fin >= {Param_dt}
+		AND	
+		(
+			T_CIBLE_PROMOTION.code_secteur = 0
+			OR	T_CIBLE_PROMOTION.code_secteur = {param_code_secteur}
+		)
+		AND	
+		(
+			T_CIBLE_PROMOTION.CODE_CLIENT = 0
+			OR	T_CIBLE_PROMOTION.CODE_CLIENT = {param_code_client}
+		)
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_qte_commande(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDES.code_secteur AS code_secteur,	
+	T_COMMANDES.CODE_CLIENT AS CODE_CLIENT,	
+	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_COMMANDES.QTE_U AS QTE_U,	
+	T_PRODUITS_COMMANDES.QTE_C AS QTE_C
+FROM 
+	T_COMMANDES,	
+	T_PRODUITS_COMMANDES
+WHERE 
+	T_COMMANDES.ID_COMMANDE = T_PRODUITS_COMMANDES.ID_COMMANDE
+	AND
+	(
+		T_COMMANDES.code_secteur = {Param_code_secteur}
+		AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_PRODUITS_COMMANDES.CODE_ARTICLE = {Param_code_article}
+		AND	T_COMMANDES.CODE_CLIENT = {Param_code_client}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_rapp_ca_pda(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur AS code_secteur,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_CHARGEMENT.HEURE_SORTIE AS HEURE_SORTIE,	
+	T_CHARGEMENT.HEURE_ENTREE AS HEURE_ENTREE,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	SUM(( ( T_PRODUITS_CHARGEE.TOTAL_VENDU + T_PRODUITS_CHARGEE.CREDIT ) * T_PRODUITS_CHARGEE.PRIX_VNT ) ) AS CA_REALISE,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_RENDUS_COM * T_PRODUITS_CHARGEE.PRIX ) ) AS MT_RENDUS,	
+	SUM(( ( ( T_PRODUITS_CHARGEE.TOTAL_RENDUS_AG + T_PRODUITS_CHARGEE.TOTAL_RENDUS_SP ) + T_PRODUITS_CHARGEE.TOTAL_RENDUS_US ) * T_PRODUITS_CHARGEE.PRIX ) ) AS Autres_rendus,	
+	T_SECTEUR.CAT_SECTEUR AS CAT_SECTEUR
+FROM 
+	T_CHARGEMENT,	
+	T_PRODUITS_CHARGEE,	
+	T_OPERATEUR,	
+	T_SECTEUR
+WHERE 
+	T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
+	AND		T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_SECTEUR.CAT_SECTEUR = 1
+	)
+GROUP BY 
+	T_CHARGEMENT.DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_CHARGEMENT.HEURE_SORTIE,	
+	T_CHARGEMENT.HEURE_ENTREE,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_SECTEUR.CAT_SECTEUR
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_realisation_globale(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SECTEUR.code_secteur AS code_secteur,	
+	T_ZONE.NOM_ZONE AS NOM_ZONE,	
+	T_BLOC.NOM_BLOC AS NOM_BLOC,	
+	SUM(( ( T_PRODUITS_CHARGEE.QTE_CHARGEE_POINTE + T_PRODUITS_CHARGEE.QTE_CHARGEE_SUPP ) * T_PRODUITS_CHARGEE.PRIX ) ) AS VAL_CHARGEE,	
+	SUM(( ( T_PRODUITS_CHARGEE.TOTAL_VENDU + T_PRODUITS_CHARGEE.CREDIT ) * T_PRODUITS_CHARGEE.PRIX ) ) AS VAL_VENTE,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_VENDU * T_PRODUITS_CHARGEE.PRIX ) ) AS VAL_VNETTE,	
+	SUM(( T_PRODUITS_CHARGEE.CREDIT * T_PRODUITS_CHARGEE.PRIX ) ) AS VAL_VCAC,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE * T_PRODUITS_CHARGEE.PRIX ) ) AS VAL_INVENDU,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_RENDUS_POINTE * T_PRODUITS_CHARGEE.PRIX ) ) AS VAL_RENDUS,	
+	T_ZONE.CODE_SUPERVISEUR AS CODE_SUPERVISEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_CHARGEMENT.CHARGEMENT_CAC AS CHARGEMENT_CAC
+FROM 
+	T_ZONE,	
+	T_BLOC,	
+	T_SECTEUR,	
+	T_CHARGEMENT,	
+	T_OPERATEUR,	
+	T_PRODUITS_CHARGEE,	
+	T_PRODUITS,	
+	T_ARTICLES
+WHERE 
+	T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
+	AND		T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
+	AND		T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
+	AND		T_BLOC.CODE_ZONE = T_ZONE.CODE_ZONE
+	AND		T_PRODUITS_CHARGEE.CODE_ARTICLE = T_ARTICLES.CODE_ARTICLE
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_date1} AND {Param_date2}
+		AND	T_PRODUITS.CODE_FAMILLE = {param_code_famille}
+		AND	T_PRODUITS.CODE_PRODUIT = {param_code_produit}
+		AND	T_PRODUITS.CAT_PRODUIT = {param_cat_produit}
+		AND	T_ZONE.CODE_SUPERVISEUR = {param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {param_code_resp_vente}
+	)
+GROUP BY 
+	T_CHARGEMENT.DATE_CHARGEMENT,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_ZONE.NOM_ZONE,	
+	T_ZONE.CODE_SUPERVISEUR,	
+	T_OPERATEUR.FONCTION,	
+	T_CHARGEMENT.CHARGEMENT_CAC,	
+	T_BLOC.NOM_BLOC,	
+	T_SECTEUR.code_secteur
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recap_factures_produits(self, kwargs):
+        query = '''
+SELECT 
+	CAST( T_FACTURE.DATE_HEURE  AS DATE )  AS DATE_FACTURE,	
+	CAST( T_FACTURE.DATE_HEURE  AS TIME )  AS HEURE_FACTURE,	
+	T_RESP.NOM_OPERATEUR AS NOM_RESP_VENTE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_SUPERVISEUR,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR,	
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_DT_FACTURE.PRIX AS PRIX,	
+	T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT,	
+	SUM(T_DT_FACTURE.QTE_VENTE) AS QTE_VENTE,	
+	SUM(T_DT_FACTURE.QTE_PERTE) AS QTE_PERTE,	
+	SUM(T_DT_FACTURE.QTE_PROMO) AS QTE_PROMO,	
+	SUM(T_DT_FACTURE.QTE_REMISE) AS QTE_REMISE
+FROM 
+	T_FACTURE,	
+	T_DT_FACTURE,	
+	T_OPERATEUR,	
+	T_OPERATEUR T_RESP,	
+	T_CLIENTS,	
+	T_SOUS_SECTEUR,	
+	T_SECTEUR,	
+	T_ARTICLES,	
+	T_PRODUITS,	
+	T_ZONE,	
+	T_BLOC
+WHERE 
+	T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_RESP.CODE_OPERATEUR = T_ZONE.RESP_VENTE
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}
+		AND	T_SECTEUR.code_secteur = {Param_code_secteur}
+		AND	T_CLIENTS.CLASSE = {param_eg_classe}
+		AND	T_CLIENTS.CLASSE <> {param_diff_classe}
+		AND	T_PRODUITS.CODE_FAMILLE = {param_code_famille}
+	)
+GROUP BY 
+	CAST( T_FACTURE.DATE_HEURE  AS DATE ) ,	
+	CAST( T_FACTURE.DATE_HEURE  AS TIME ) ,	
+	T_FACTURE.CODE_CLIENT,	
+	T_DT_FACTURE.PRIX,	
+	T_PRODUITS.CODE_PRODUIT,	
+	T_PRODUITS.NOM_PRODUIT,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_RESP.NOM_OPERATEUR
+ORDER BY 
+	DATE_FACTURE ASC,	
+	HEURE_FACTURE ASC,	
+	NOM_SECTEUR ASC,	
+	NOM_CLIENT ASC,	
+	NOM_PRODUIT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recap_factures_produits_cumul(self, kwargs):
+        query = '''
+SELECT 
+	T_RESP.NOM_OPERATEUR AS NOM_RESP_VENTE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_SUPERVISEUR,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR,	
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,		
+	T_DT_FACTURE.PRIX AS PRIX,	
+	T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT,	
+	SUM(T_DT_FACTURE.QTE_VENTE) AS QTE_VENTE,	
+	SUM(T_DT_FACTURE.QTE_PERTE) AS QTE_PERTE,	
+	SUM(T_DT_FACTURE.QTE_PROMO) AS QTE_PROMO,	
+	SUM(T_DT_FACTURE.QTE_REMISE) AS QTE_REMISE
+FROM 
+	T_FACTURE,	
+	T_DT_FACTURE,	
+	T_OPERATEUR,	
+	T_OPERATEUR T_RESP,	
+	T_CLIENTS,	
+	T_SOUS_SECTEUR,	
+	T_SECTEUR,	
+	T_ARTICLES,	
+	T_PRODUITS,
+	T_ZONE,
+	T_BLOC
+WHERE 
+	T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR
+	AND		T_RESP.CODE_OPERATEUR = T_ZONE.RESP_VENTE
+	AND		T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}
+		AND	T_SECTEUR.code_secteur = {Param_code_secteur}
+		AND	T_CLIENTS.CLASSE = {param_eg_classe}
+		AND	T_CLIENTS.CLASSE <> {param_diff_classe}
+	)
+GROUP BY 
+	T_FACTURE.CODE_CLIENT,	
+	T_DT_FACTURE.PRIX,	
+	T_PRODUITS.CODE_PRODUIT,	
+	T_PRODUITS.NOM_PRODUIT,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_OPERATEUR.NOM_OPERATEUR,
+	NOM_RESP_VENTE
+ORDER BY NOM_SECTEUR,NOM_CLIENT,NOM_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recap_factures_valeur(self, kwargs):
+        query = '''
+SELECT 
+	T_RESP.NOM_OPERATEUR AS NOM_RESP_VENTE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_SUPERVISEUR,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR,	
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,		
+	SUM(T_DT_FACTURE.QTE_VENTE * T_DT_FACTURE.PRIX) AS VAL_VENTE,	
+	SUM(T_DT_FACTURE.QTE_PERTE * T_DT_FACTURE.PRIX) AS VAL_PERTE,	
+	SUM(T_DT_FACTURE.QTE_PROMO * T_DT_FACTURE.PRIX) AS VAL_PROMO,	
+	SUM(T_DT_FACTURE.QTE_REMISE * T_DT_FACTURE.PRIX) AS VAL_REMISE
+FROM 
+	T_FACTURE,	
+	T_DT_FACTURE,	
+	T_OPERATEUR,	
+	T_OPERATEUR T_RESP,	
+	T_CLIENTS,	
+	T_SOUS_SECTEUR,	
+	T_SECTEUR,	
+	T_ARTICLES,	
+	T_PRODUITS,
+	T_ZONE,
+	T_BLOC
+WHERE 
+	T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR
+	AND		T_RESP.CODE_OPERATEUR = T_ZONE.RESP_VENTE
+	AND		T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}
+		AND	T_SECTEUR.code_secteur = {Param_code_secteur}
+		AND	T_CLIENTS.CLASSE = {param_eg_classe}
+		AND	T_CLIENTS.CLASSE <> {param_diff_classe}
+		AND	T_PRODUITS.CODE_FAMILLE = {param_code_famille}
+	)
+GROUP BY 
+	
+	T_FACTURE.CODE_CLIENT,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_OPERATEUR.NOM_OPERATEUR,
+	T_RESP.NOM_OPERATEUR
+ORDER BY NOM_SECTEUR,NOM_CLIENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recap_factures_valeur_date(self, kwargs):
+        query = '''
+SELECT 
+	CAST( T_FACTURE.DATE_HEURE  AS DATE )  AS DATE_FACTURE,	
+	T_RESP.NOM_OPERATEUR AS NOM_RESP_VENTE,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_SUPERVISEUR,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR,	
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	MIN(T_FACTURE.DATE_HEURE) AS DATE_PR_FACTURE,	
+	SUM(( T_DT_FACTURE.QTE_VENTE * T_DT_FACTURE.PRIX ) ) AS VAL_VENTE,	
+	SUM(( T_DT_FACTURE.QTE_PERTE * T_DT_FACTURE.PRIX ) ) AS VAL_PERTE,	
+	SUM(( T_DT_FACTURE.QTE_PROMO * T_DT_FACTURE.PRIX ) ) AS VAL_PROMO,	
+	SUM(( T_DT_FACTURE.QTE_REMISE * T_DT_FACTURE.PRIX ) ) AS VAL_REMISE
+FROM 
+	T_FACTURE,	
+	T_DT_FACTURE,	
+	T_OPERATEUR,	
+	T_OPERATEUR T_RESP,	
+	T_CLIENTS,	
+	T_SOUS_SECTEUR,	
+	T_SECTEUR,	
+	T_ARTICLES,	
+	T_PRODUITS,	
+	T_ZONE,	
+	T_BLOC
+WHERE 
+	T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_RESP.CODE_OPERATEUR = T_ZONE.RESP_VENTE
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}
+		AND	T_SECTEUR.code_secteur = {Param_code_secteur}
+		AND	T_CLIENTS.CLASSE = {param_eg_classe}
+		AND	T_CLIENTS.CLASSE <> {param_diff_classe}
+		AND	T_PRODUITS.CODE_FAMILLE = {param_code_famille}
+	)
+GROUP BY 
+	CAST( T_FACTURE.DATE_HEURE  AS DATE ) ,	
+	T_FACTURE.CODE_CLIENT,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_RESP.NOM_OPERATEUR
+ORDER BY 
+	NOM_SECTEUR ASC,	
+	NOM_CLIENT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recensement_clts_nt(self, kwargs):
+        query = '''
+SELECT 
+	T_RECENSEMENT.ID_RECENSEMENT AS ID_RECENSEMENT,	
+	T_RECENSEMENT.CODE_CLIENT AS CODE_CLIENT,	
+	T_RECENSEMENT.NOM_CLIENT AS NOM_CLIENT,	
+	T_RECENSEMENT.PRENOM AS PRENOM,	
+	T_RECENSEMENT.RAISON_SOCIAL AS RAISON_SOCIAL,	
+	T_RECENSEMENT.TEL_CLIENT AS TEL_CLIENT,	
+	T_RECENSEMENT.ADRESSE_CLIENT AS ADRESSE_CLIENT,	
+	T_RECENSEMENT.QUARTIER AS QUARTIER,	
+	T_RECENSEMENT.CODE_GPS AS CODE_GPS,	
+	T_RECENSEMENT.ITINERAIRE AS ITINERAIRE,	
+	T_RECENSEMENT.SOUS_SECTEUR AS SOUS_SECTEUR,	
+	T_RECENSEMENT.TOURNEES AS TOURNEES,	
+	T_RECENSEMENT.TYPOLOGIE AS TYPOLOGIE,	
+	T_RECENSEMENT.CLASSE_CLIENT AS CLASSE_CLIENT,	
+	T_RECENSEMENT.CLIENT_EN_COMPTE AS CLIENT_EN_COMPTE,	
+	T_RECENSEMENT.REMISE_COPAG AS REMISE_COPAG,	
+	T_RECENSEMENT.REMISE_CONCURENT AS REMISE_CONCURENT,	
+	T_RECENSEMENT.VITRINE_COPAG AS VITRINE_COPAG,	
+	T_RECENSEMENT.VITRINE_CONCURENT AS VITRINE_CONCURENT,	
+	T_RECENSEMENT.TYPE_REGELEMENT AS TYPE_REGELEMENT,	
+	T_RECENSEMENT.LONGITUDE_GPS AS LONGITUDE_GPS,	
+	T_RECENSEMENT.LATITUDE_GPS AS LATITUDE_GPS,	
+	T_RECENSEMENT.NUM_ARRET AS NUM_ARRET,	
+	T_RECENSEMENT.DUREE_VISITE AS DUREE_VISITE,	
+	T_RECENSEMENT.CODE_TOURNEE AS CODE_TOURNEE,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_CLASSE_CLIENTS.NOM_CLASSE AS NOM_CLASSE,	
+	T_CAT_CLIENTS.NOM_CATEGORIE AS NOM_CATEGORIE,	
+	T_RECENSEMENT.VALID AS VALID,	
+	T_RECENSEMENT.TYPE_PRESENTOIRE AS TYPE_PRESENTOIRE
+FROM 
+	T_RECENSEMENT,	
+	T_SOUS_SECTEUR,	
+	T_SECTEUR,	
+	T_CLASSE_CLIENTS,	
+	T_CAT_CLIENTS
+WHERE 
+	T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_RECENSEMENT.SOUS_SECTEUR
+	AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
+	AND		T_CLASSE_CLIENTS.CODE_CLASSE = T_RECENSEMENT.CLASSE_CLIENT
+	AND		T_CAT_CLIENTS.CODE_CAT_CLIENT = T_RECENSEMENT.TYPOLOGIE
+	AND
+	(
+		T_RECENSEMENT.CODE_CLIENT = {Param_egale}
+		AND	T_RECENSEMENT.CODE_CLIENT <> {Param_diff}
+		AND	T_RECENSEMENT.VALID = {Param_valid}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recherche_client_code_interne(self, kwargs):
+        query = '''
+SELECT 
+	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_CLIENTS.ACTIF AS ACTIF,	
+	T_CLIENTS.GROUP_CLIENT AS GROUP_CLIENT,	
+	T_CLIENTS.SOLDE_C_STD AS SOLDE_C_STD
+FROM 
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.ACTIF = 1
+	AND	T_CLIENTS.SOLDE_C_STD = {Param_code_in}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recherche_operateur(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.MDP AS MDP,	
+	T_OPERATEUR.ACTIF AS ACTIF,	
+	T_FONCTION.NOM_FONCTION AS NOM_FONCTION,	
+	T_OPERATEUR.FONCTION AS FONCTION
+FROM 
+	T_FONCTION,	
+	T_OPERATEUR
+WHERE 
+	T_FONCTION.CODE_FONCTION = T_OPERATEUR.FONCTION
+	AND
+	(
+		T_OPERATEUR.ACTIF = 1
+		AND	T_OPERATEUR.NOM_OPERATEUR LIKE %{Param_nom_operateur}%
+		AND	T_OPERATEUR.FONCTION = {Param_code_fonction}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recherche_operateur_affectation(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.MDP AS MDP,	
+	T_OPERATEUR.ACTIF AS ACTIF,	
+	T_FONCTION.NOM_FONCTION AS NOM_FONCTION,	
+	T_OPERATEUR.FONCTION AS FONCTION
+FROM 
+	T_FONCTION,	
+	T_OPERATEUR
+WHERE 
+	T_FONCTION.CODE_FONCTION = T_OPERATEUR.FONCTION
+	AND
+	(
+		T_OPERATEUR.ACTIF = 1
+		AND	T_OPERATEUR.NOM_OPERATEUR LIKE %{Param_nom_operateur}%
+		AND	T_OPERATEUR.FONCTION IN ({Param_fonction}) 
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recherche_par_matricule(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_OPERATEUR.FONCTION AS FONCTION
+FROM 
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.FONCTION IN ({Param_fonction}) 
+	AND	T_OPERATEUR.Matricule = {Param_matricule}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recherche_prevision(self, kwargs):
+        query = '''
+SELECT 
+	T_PREVISION.Date_Debut AS Date_Debut,	
+	T_PREVISION.Date_Fin AS Date_Fin,	
+	T_PREVISION.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PREVISION.QTE AS QTE
+FROM 
+	T_PREVISION
+WHERE 
+	T_PREVISION.Date_Debut <= {Param_date}
+	AND	T_PREVISION.Date_Fin >= {Param_date}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_recherche_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SECTEUR.code_secteur AS code_secteur
+FROM 
+	T_SECTEUR
+WHERE 
+	T_SECTEUR.NOM_SECTEUR = {Param_nom_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_reconaissances_operateur(self, kwargs):
+        query = '''
+SELECT 
+	T_RECONAISSANCES.DATE_RECONAISS AS DATE_RECONAISS,	
+	T_RECONAISSANCES.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_RECONAISSANCES.SOLDE_C_STD AS SOLDE_C_STD,	
+	T_RECONAISSANCES.SOLDE_P_AG AS SOLDE_P_AG,	
+	T_RECONAISSANCES.SOLDE_P_UHT AS SOLDE_P_UHT,	
+	T_RECONAISSANCES.SOLDE_C_AG AS SOLDE_C_AG,	
+	T_RECONAISSANCES.SOLDE_C_PR AS SOLDE_C_PR,	
+	T_RECONAISSANCES.SOLDE_C_BLC AS SOLDE_C_BLC,	
+	T_RECONAISSANCES.SOLDE_P_EURO AS SOLDE_P_EURO
+FROM 
+	T_RECONAISSANCES
+WHERE 
+	T_RECONAISSANCES.DATE_RECONAISS = {Param_date_reconaissance}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_regularisation_sans_MS_magasin(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.MOTIF AS MOTIF,	
+	T_MOUVEMENTS.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT
+FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'G'
+	AND	T_MOUVEMENTS.MOTIF NOT IN (21, 22) 
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.MOTIF,	
+	T_MOUVEMENTS.CODE_MAGASIN,	
+	T_MOUVEMENTS.TYPE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_releve_client_cac(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	T_LIVRAISON.NUM_COMMANDE AS NUM_COMMANDE,	
+	SUM(T_PRODUITS_LIVREES.MONTANT) AS la_somme_MONTANT,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_GROUP_CLIENTS.NOM_GROUP AS NOM_GROUP,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR
+FROM 
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES,	
+	T_CLIENTS,	
+	T_GROUP_CLIENTS,	
+	T_OPERATEUR
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND		T_LIVRAISON.CODE_CLIENT = T_CLIENTS.CODE_CLIENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_LIVRAISON.code_vendeur
+	AND		T_GROUP_CLIENTS.ID_GP_CLIENT = T_CLIENTS.GROUP_CLIENT
+	AND
+	(
+		T_LIVRAISON.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
+		AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
+		AND	T_LIVRAISON.STATUT <> 'A'
+		AND	T_LIVRAISON.DATE_LIVRAISON BETWEEN {Param_dtl1} AND {Param_dtl2}
+	)
+GROUP BY 
+	T_LIVRAISON.NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_VALIDATION,	
+	T_LIVRAISON.TYPE_MVT,	
+	T_LIVRAISON.NUM_COMMANDE,	
+	T_LIVRAISON.CODE_CLIENT,	
+	T_GROUP_CLIENTS.NOM_GROUP,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_LIVRAISON.DATE_LIVRAISON
+ORDER BY 
+	TYPE_MVT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_releve_client_details(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_FACTURE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_FACTURE.DATE_HEURE AS DATE_HEURE,	
+	T_FACTURE.MONTANT_FACTURE AS MONTANT_FACTURE,	
+	T_FACTURE.MONTANT_PERTE AS MONTANT_PERTE,	
+	T_FACTURE.VALID AS VALID,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_DT_FACTURE.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_DT_FACTURE.PRIX AS PRIX,	
+	T_DT_FACTURE.QTE_VENTE AS QTE_VENTE,	
+	T_DT_FACTURE.QTE_PERTE AS QTE_PERTE,	
+	T_DT_FACTURE.QTE_PROMO AS QTE_PROMO,	
+	T_DT_FACTURE.QTE_REMISE AS QTE_REMISE,	
+	T_ARTICLES.LIBELLE_COURT AS LIBELLE_COURT,	
+	( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX )  AS MT,
+	( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX * T_DT_FACTURE.TX_GRATUIT )  AS MT_GRATUIT
+FROM 
+	T_ARTICLES,	
+	T_DT_FACTURE,	
+	T_FACTURE,	
+	T_OPERATEUR,	
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_FACTURE.CODE_OPERATEUR
+	AND		T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT IN ({Param_code_client}) 
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+ORDER BY 
+	DATE_HEURE ASC,	
+	NUM_FACTURE ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_releve_client_details_produits(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_FACTURE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_FACTURE.DATE_HEURE AS DATE_HEURE,	
+	T_FACTURE.MONTANT_FACTURE AS MONTANT_FACTURE,	
+	T_FACTURE.MONTANT_PERTE AS MONTANT_PERTE,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_PRODUITS.CODE_PRODUIT AS CODE_ARTICLE,	
+	T_PRODUITS.NOM_PRODUIT AS LIBELLE_COURT,	
+	MAX(T_DT_FACTURE.PRIX) AS PRIX,	
+	SUM(T_DT_FACTURE.QTE_VENTE) AS QTE_VENTE,	
+	SUM(T_DT_FACTURE.QTE_PERTE) AS QTE_PERTE,	
+	SUM(T_DT_FACTURE.QTE_PROMO) AS QTE_PROMO,	
+	SUM(T_DT_FACTURE.QTE_REMISE) AS QTE_REMISE,	
+	SUM(( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX ) ) AS MT
+FROM 
+	T_ARTICLES,	
+	T_DT_FACTURE,	
+	T_FACTURE,	
+	T_OPERATEUR,	
+	T_CLIENTS,	
+	T_PRODUITS
+WHERE 
+	T_ARTICLES.CODE_PRODUIT = T_PRODUITS.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_FACTURE.CODE_OPERATEUR
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT IN ({Param_code_client}) 
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_FACTURE.NUM_FACTURE,	
+	T_FACTURE.CODE_CLIENT,	
+	T_FACTURE.CODE_OPERATEUR,	
+	T_FACTURE.DATE_HEURE,	
+	T_FACTURE.MONTANT_FACTURE,	
+	T_FACTURE.MONTANT_PERTE,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_PRODUITS.CODE_PRODUIT,	
+	T_PRODUITS.NOM_PRODUIT
+ORDER BY 
+	DATE_HEURE ASC,	
+	NUM_FACTURE ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_releve_client_global_produit(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	MIN(T_ARTICLES.RANG) AS le_minimum_RANG,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_DT_FACTURE.PRIX AS PRIX,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT,	
+	SUM(( ( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX ) - ( ( ( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX ) * T_DT_FACTURE.TX_GRATUIT ) /  100) ) ) AS MT,	
+	SUM(T_DT_FACTURE.QTE_VENTE) AS la_somme_QTE_VENTE,	
+	SUM(T_DT_FACTURE.QTE_PERTE) AS la_somme_QTE_PERTE,	
+	SUM(T_DT_FACTURE.QTE_PROMO) AS la_somme_QTE_PROMO,	
+	SUM(T_DT_FACTURE.QTE_REMISE) AS la_somme_QTE_REMISE
+FROM 
+	T_FACTURE,	
+	T_DT_FACTURE,	
+	T_CLIENTS,	
+	T_ARTICLES,	
+	T_PRODUITS
+WHERE 
+	T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT IN ({Param_code_client}) 
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_FACTURE.CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_DT_FACTURE.PRIX,	
+	T_PRODUITS.NOM_PRODUIT
+ORDER BY 
+	CODE_CLIENT ASC,	
+	le_minimum_RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_releve_client_globale(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_FACTURE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_FACTURE.DATE_HEURE AS DATE_HEURE,	
+	T_FACTURE.VALID AS VALID,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	SUM(( ( T_DT_FACTURE.PRIX * ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) ) - ( ( ( T_DT_FACTURE.TX_GRATUIT * T_DT_FACTURE.PRIX ) /  100) * ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) ) ) ) AS MONTANT_FACTURE,	
+	SUM(( ( ( ( T_DT_FACTURE.PRIX * ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) ) - ( ( ( T_DT_FACTURE.TX_GRATUIT * T_DT_FACTURE.PRIX ) /  100) * ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) ) ) *  100) / (  100+ T_ARTICLES.TVA ) ) ) AS MONTANT_HT
+FROM 
+	T_FACTURE,	
+	T_DT_FACTURE,	
+	T_OPERATEUR,	
+	T_CLIENTS,	
+	T_ARTICLES
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_FACTURE.CODE_OPERATEUR
+	AND		T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_FACTURE.NUM_FACTURE,	
+	T_FACTURE.CODE_CLIENT,	
+	T_FACTURE.CODE_OPERATEUR,	
+	T_FACTURE.DATE_HEURE,	
+	T_FACTURE.VALID,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_OPERATEUR.NOM_OPERATEUR
+ORDER BY 
+	DATE_HEURE ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_releve_client_tva(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_ARTICLES.TVA AS TVA,	
+	SUM(( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX ) ) AS MT,	
+	SUM(( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * ( (  100* T_DT_FACTURE.PRIX ) / (  100+ T_ARTICLES.TVA ) ) ) ) AS MT_HT
+FROM 
+	T_ARTICLES,	
+	T_DT_FACTURE,	
+	T_FACTURE,	
+	T_CLIENTS
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+	AND
+	(
+		T_FACTURE.VALID = 1
+		AND	T_FACTURE.CODE_CLIENT IN ({Param_code_client}) 
+		AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_FACTURE.CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT,	
+	T_ARTICLES.TVA
+ORDER BY 
+	CODE_CLIENT ASC,	
+	TVA ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_releve_dons(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	T_LIVRAISON.ORDONATEUR AS ORDONATEUR,	
+	T_LIVRAISON.BENEFICIAIRE AS BENEFICIAIRE,	
+	SUM(( T_PRODUITS_LIVREES.QTE_CHARGEE * T_PRODUITS_LIVREES.PRIX ) ) AS la_somme_MT
+FROM 
+	T_PRODUITS_LIVREES,	
+	T_LIVRAISON
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.DATE_LIVRAISON BETWEEN {Param_Dt1} AND {Param_Dt2}
+		AND	T_LIVRAISON.TYPE_MVT = 'D'
+		AND	T_LIVRAISON.code_secteur = {param_code_sect}
+	)
+GROUP BY 
+	T_LIVRAISON.DATE_LIVRAISON,	
+	T_LIVRAISON.NUM_LIVRAISON,	
+	T_LIVRAISON.TYPE_MVT,	
+	T_LIVRAISON.ORDONATEUR,	
+	T_LIVRAISON.BENEFICIAIRE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_relve_cac(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON_T_,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_LIVRAISON,	
+	T_GROUP_CLIENTS.NOM_GROUP AS ENSEIGNE,	
+	T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_VENDEUR,	
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.NUM_COMMANDE AS NUM_COMMANDE,	
+	T_PRODUITS_LIVREES.TYPE_MVT AS TYPE_MVT,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES.LIBELLE AS LIBELLE,	
+	T_PRODUITS_LIVREES.PRIX AS PRIX,	
+	CASE WHEN ( T_PRODUITS_LIVREES.TYPE_MVT =  'L')  THEN T_PRODUITS_LIVREES.QTE_CHARGEE  ELSE -( T_PRODUITS_LIVREES.QTE_CHARGEE )  END  AS QTE,	
+	( CASE WHEN ( T_PRODUITS_LIVREES.TYPE_MVT =  'L')  THEN T_PRODUITS_LIVREES.QTE_CHARGEE  ELSE -( T_PRODUITS_LIVREES.QTE_CHARGEE )  END * T_PRODUITS_LIVREES.PRIX )  AS MONTANT
+FROM 
+	T_GROUP_CLIENTS,	
+	T_CLIENTS,	
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES,	
+	T_ARTICLES,	
+	T_OPERATEUR
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_PRODUITS_LIVREES.CODE_ARTICLE
+	AND		T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND		T_LIVRAISON.code_vendeur = T_OPERATEUR.CODE_OPERATEUR
+	AND		T_CLIENTS.GROUP_CLIENT = T_GROUP_CLIENTS.ID_GP_CLIENT
+	AND		T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
+	AND
+	(
+		T_LIVRAISON.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_LIVRAISON.STATUT <> 'A'
+		AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
+		AND	T_LIVRAISON.DATE_LIVRAISON BETWEEN {Param_dtj1} AND {Param_dtj2}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_remarque_journee(self, kwargs):
+        query = '''
+SELECT 
+	T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_JOURNEE.TEMP_MIN AS TEMP_MIN,	
+	T_JOURNEE.TEMP_MAX AS TEMP_MAX,	
+	T_JOURNEE.PLUV AS PLUV,	
+	T_JOURNEE.COMMENTAIRE AS COMMENTAIRE
+FROM 
+	T_JOURNEE
+WHERE 
+	T_JOURNEE.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_remise_client(self, kwargs):
+        query = '''
+SELECT 
+	T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
+	T_REMISE_CLIENT.CODE_CLIENT AS CODE_CLIENT,	
+	T_REMISE_CLIENT.TX_DERIVES AS TX_DERIVES,	
+	T_REMISE_CLIENT.MT_REMISE AS MT_REMISE,	
+	T_REMISE_CLIENT.TX_LAIT AS TX_LAIT,	
+	T_REMISE_CLIENT.MT_REMISE_LAIT AS MT_REMISE_LAIT
+FROM 
+	T_REMISE_CLIENT
+WHERE 
+	T_REMISE_CLIENT.Date_Debut = {Param_DATE_DEBUT}
+	AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_CODE_CLIENT}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_remise_clt(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_DT_REMISE_CLASSE.TX_REMISE AS TX_REMISE,	
+	SUM(( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX ) ) AS CA,	
+	T_ARTICLES.TVA AS TVA
+FROM 
+	T_DT_FACTURE,	
+	T_DT_REMISE_CLASSE,	
+	T_FACTURE,	
+	T_ARTICLES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_DT_FACTURE.CODE_ARTICLE = T_DT_REMISE_CLASSE.CODE_ARTICLE
+	AND
+	(
+		T_DT_REMISE_CLASSE.CODE_CLASSE = {Param_code_classe}
+		AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+		AND	T_FACTURE.DATE_HEURE >= {Param_dt1}
+		AND	T_FACTURE.DATE_HEURE <= {Param_dt2}
+		AND	T_FACTURE.VALID = 1
+	)
+GROUP BY 
+	T_FACTURE.CODE_CLIENT,	
+	T_DT_REMISE_CLASSE.TX_REMISE,	
+	T_ARTICLES.TVA
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_remise_clt_produit(self, kwargs):
+        query = '''
+SELECT 
+	T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
+	T_DT_REMISE_CLASSE.TX_REMISE AS TX_REMISE,	
+	SUM(( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX ) ) AS CA,	
+	T_ARTICLES.TVA AS TVA,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT
+FROM 
+	T_DT_FACTURE,	
+	T_DT_REMISE_CLASSE,	
+	T_FACTURE,	
+	T_ARTICLES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
+	AND		T_FACTURE.NUM_FACTURE = T_DT_FACTURE.NUM_FACTURE
+	AND		T_DT_FACTURE.CODE_ARTICLE = T_DT_REMISE_CLASSE.CODE_ARTICLE
+	AND
+	(
+		T_DT_REMISE_CLASSE.CODE_CLASSE = {Param_code_classe}
+		AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+		AND	T_FACTURE.DATE_HEURE >= {Param_dt1}
+		AND	T_FACTURE.DATE_HEURE <= {Param_dt2}
+		AND	T_FACTURE.VALID = 1
+	)
+GROUP BY 
+	T_FACTURE.CODE_CLIENT,	
+	T_DT_REMISE_CLASSE.TX_REMISE,	
+	T_ARTICLES.TVA,	
+	T_ARTICLES.CODE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_repartition(self, kwargs):
+        query = '''
+SELECT 
+	T_REPARTITION.DATE_REPARTITION AS DATE_REPARTITION,	
+	T_REPARTITION.CODE_AGENCE AS CODE_AGENCE,	
+	T_REPARTITION.LIVRAISONS AS LIVRAISONS,	
+	T_REPARTITION.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_REPARTITION.VALIDATION AS VALIDATION,	
+	T_REPARTITION.CONTROLEUR_PRODUIT AS CONTROLEUR_PRODUIT,	
+	T_REPARTITION.CONTROLEUR_COND AS CONTROLEUR_COND
+FROM 
+	T_REPARTITION
+WHERE 
+	T_REPARTITION.DATE_REPARTITION = {Param_date_repartition}
+	AND	T_REPARTITION.CODE_AGENCE = {Param_code_agence}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_sit_caisserie(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION AS SOUS_TYPE_OPERATION,	
+	T_OPERATIONS.REF AS REF,	
+	T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
+	T_MOUVEMENTS_CAISSERIE.QTE_REEL AS QTE_REEL,	
+	T_MOUVEMENTS_CAISSERIE.QTE_THEORIQUE AS QTE_THEORIQUE,	
+	T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS.CODE_AGCE1 AS CODE_AGCE1,	
+	T_OPERATIONS.CODE_AGCE2 AS CODE_AGCE2,	
+	T_Ordre_Mission_Agence.Matricule_Vehicule AS Matricule
+FROM 
+	T_Ordre_Mission_Agence,	
+	T_OPERATIONS,	
+	T_MOUVEMENTS_CAISSERIE
+WHERE 
+	T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS_CAISSERIE.ORIGINE
+	AND		T_Ordre_Mission_Agence.Id_Ordre_Mission = T_OPERATIONS.NUM_CONVOYAGE
+	AND
+	(
+		T_OPERATIONS.TYPE_OPERATION IN ('R', 'T') 
+		AND	T_OPERATIONS.DATE_OPERATION = {Param_date_reception}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_solde_initial_caisse(self, kwargs):
+        query = '''
+SELECT 
+	T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_SOLDE_INITIAL_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
+	T_SOLDE_INITIAL_CAISSE.SOLDE_INITIAL AS SOLDE_INITIAL
+FROM 
+	T_SOLDE_INITIAL_CAISSE
+WHERE 
+	T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = {Param_date_journee}
+	AND	T_SOLDE_INITIAL_CAISSE.CODE_CAISSE = {Param_code_caisse}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_solde_initial_client(self, kwargs):
+        query = '''
+SELECT 
+	T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_SOLDE_INITIAL_CLIENT.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.CAT_CLIENT AS CAT_CLIENT,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_PRODUITS AS SOLDE_PRODUITS,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_CONDITIONNEMENT AS SOLDE_CONDITIONNEMENT,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_C_STD AS SOLDE_C_STD,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_P_AG AS SOLDE_P_AG,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_P_UHT AS SOLDE_P_UHT,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_C_AG AS SOLDE_C_AG,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_C_PR AS SOLDE_C_PR,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_P_EURO AS SOLDE_P_EURO,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_C_BLC AS SOLDE_C_BLC,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_CS1 AS SOLDE_CS1,	
+	T_SOLDE_INITIAL_CLIENT.SOLDE_CS2 AS SOLDE_CS2
+FROM 
+	T_CLIENTS,	
+	T_SOLDE_INITIAL_CLIENT
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_SOLDE_INITIAL_CLIENT.CODE_CLIENT
+	AND
+	(
+		T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = {Param_date_journee}
+		AND	T_SOLDE_INITIAL_CLIENT.CODE_CLIENT = {Param_client}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_solde_operateur(self, kwargs):
+        query = '''
+SELECT 
+	T_SOLDE_INITIAL.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_SOLDE_INITIAL.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_SOLDE_INITIAL.SOLDE_PRODUITS AS SOLDE_PRODUITS,	
+	T_SOLDE_INITIAL.SOLDE_CONDITIONNEMENT AS SOLDE_CONDITIONNEMENT,	
+	T_SOLDE_INITIAL.MT_VERSER AS MT_VERSER,	
+	T_SOLDE_INITIAL.MT_CHEQUES AS MT_CHEQUES,	
+	T_SOLDE_INITIAL.TOTAL_VERSER AS TOTAL_VERSER,	
+	T_SOLDE_INITIAL.MT_ECART AS MT_ECART,	
+	T_SOLDE_INITIAL.SOLDE_C_STD AS SOLDE_C_STD,	
+	T_SOLDE_INITIAL.SOLDE_P_AG AS SOLDE_P_AG,	
+	T_SOLDE_INITIAL.SOLDE_P_UHT AS SOLDE_P_UHT,	
+	T_SOLDE_INITIAL.SOLDE_C_AG AS SOLDE_C_AG,	
+	T_SOLDE_INITIAL.SOLDE_C_PR AS SOLDE_C_PR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_SOLDE_INITIAL.MT_A_VERSER AS MT_A_VERSER,	
+	T_SOLDE_INITIAL.SOLDE_C_BLC AS SOLDE_C_BLC,	
+	T_SOLDE_INITIAL.SOLDE_P_EURO AS SOLDE_P_EURO,	
+	T_SOLDE_INITIAL.SOLDE_CS1 AS SOLDE_CS1,	
+	T_SOLDE_INITIAL.SOLDE_CS2 AS SOLDE_CS2
+FROM 
+	T_OPERATEUR,	
+	T_SOLDE_INITIAL
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_SOLDE_INITIAL.CODE_OPERATEUR
+	AND
+	(
+		T_SOLDE_INITIAL.DATE_JOURNEE = {Param_date_journee}
+		AND	T_SOLDE_INITIAL.CODE_OPERATEUR = {Param_code_operateur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ss_tournee(self, kwargs):
+        query = '''
+SELECT 
+	T_TOURNEES_SS.CODE_TOURNEE AS CODE_TOURNEE,	
+	T_TOURNEES_SS.CODE_SS AS CODE_SS,	
+	T_TOURNEES_SS.LUNDI AS LUNDI,	
+	T_TOURNEES_SS.MARDI AS MARDI,	
+	T_TOURNEES_SS.MERCREDI AS MERCREDI,	
+	T_TOURNEES_SS.JEUDI AS JEUDI,	
+	T_TOURNEES_SS.VENDREDI AS VENDREDI,	
+	T_TOURNEES_SS.SAMEDI AS SAMEDI,	
+	T_TOURNEES_SS.DIMANCHE AS DIMANCHE,	
+	T_SOUS_SECTEUR.NOM_SOUS_SECTEUR AS NOM_SOUS_SECTEUR
+FROM 
+	T_SOUS_SECTEUR,	
+	T_TOURNEES_SS
+WHERE 
+	T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_TOURNEES_SS.CODE_SS
+	AND
+	(
+		T_TOURNEES_SS.CODE_TOURNEE = {Param_code_tournee}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_stock_article_magasin(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES_MAGASINS.MAGASIN AS MAGASIN,	
+	T_ARTICLES_MAGASINS.CATEGORIE AS CATEGORIE,	
+	T_ARTICLES_MAGASINS.QTE_STOCK AS QTE_STOCK
+FROM 
+	T_ARTICLES_MAGASINS
+WHERE 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE = {Param_code_article}
+	AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_magasin}
+	AND	T_ARTICLES_MAGASINS.CATEGORIE = {Param_categorie}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_stock_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_MAGASIN_COND.CODE_CP AS CODE_CP,	
+	SUM(T_MAGASIN_COND.QTE_STOCK) AS la_somme_QTE_STOCK
+FROM 
+	T_MAGASINS,	
+	T_MAGASIN_COND
+WHERE 
+	T_MAGASINS.CODE_MAGASIN = T_MAGASIN_COND.CODE_MAGASIN
+	AND
+	(
+		T_MAGASIN_COND.CODE_CP = {Param_code_cp}
+		AND	T_MAGASINS.NOM_MAGASIN <> 'HALLE CAISSERIE'
+	)
+GROUP BY 
+	T_MAGASIN_COND.CODE_CP
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_stock_inital_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_STOCK_INITI_COND.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_STOCK_INITI_COND.CODE_CP AS CODE_CP,	
+	SUM(T_STOCK_INITI_COND.STOCK_INIT) AS la_somme_STOCK_INIT
+FROM 
+	T_STOCK_INITI_COND
+WHERE 
+	T_STOCK_INITI_COND.DATE_JOURNEE = {Param_date_journee}
+GROUP BY 
+	T_STOCK_INITI_COND.DATE_JOURNEE,	
+	T_STOCK_INITI_COND.CODE_CP
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_stock_inital_cond_magasin(self, kwargs):
+        query = '''
+SELECT 
+	T_STOCK_INITI_COND.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_STOCK_INITI_COND.CODE_CP AS CODE_CP,	
+	T_STOCK_INITI_COND.CODE_MAGASIN AS CODE_MAGASIN,	
+	SUM(T_STOCK_INITI_COND.STOCK_INIT) AS la_somme_STOCK_INIT
+FROM 
+	T_STOCK_INITI_COND
+WHERE 
+	T_STOCK_INITI_COND.DATE_JOURNEE = {Param_date_journee}
+GROUP BY 
+	T_STOCK_INITI_COND.DATE_JOURNEE,	
+	T_STOCK_INITI_COND.CODE_CP,	
+	T_STOCK_INITI_COND.CODE_MAGASIN
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_stock_initial(self, kwargs):
+        query = '''
+SELECT 
+	T_STOCK_INIT.DATE_PS AS DATE_PS,	
+	T_STOCK_INIT.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_STOCK_INIT.CATEGORIE AS CATEGORIE,	
+	SUM(T_STOCK_INIT.QTE_INIT) AS la_somme_QTE_INIT
+FROM 
+	T_STOCK_INIT
+WHERE 
+	T_STOCK_INIT.CATEGORIE = {Param_categorie}
+	AND	T_STOCK_INIT.DATE_PS = {Param_date_stock}
+GROUP BY 
+	T_STOCK_INIT.DATE_PS,	
+	T_STOCK_INIT.CODE_ARTICLE,	
+	T_STOCK_INIT.CATEGORIE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_stock_initial_magasins(self, kwargs):
+        query = '''
+SELECT 
+	T_STOCK_INIT.DATE_PS AS DATE_PS,	
+	T_STOCK_INIT.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_STOCK_INIT.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_STOCK_INIT.CATEGORIE AS CATEGORIE,	
+	T_STOCK_INIT.QTE_INIT AS QTE_INIT
+FROM 
+	T_STOCK_INIT
+WHERE 
+	T_STOCK_INIT.DATE_PS = {Param_date}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_stock_produit_magasin(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_ARTICLES_MAGASINS.QTE_STOCK) AS la_somme_QTE_STOCK
+FROM 
+	T_ARTICLES_MAGASINS
+WHERE 
+	T_ARTICLES_MAGASINS.CATEGORIE = 'PRODUIT'
+	AND	T_ARTICLES_MAGASINS.MAGASIN = {Paramcode_magasin}
+GROUP BY 
+	T_ARTICLES_MAGASINS.CODE_ARTICLE
+HAVING 
+	SUM(T_ARTICLES_MAGASINS.QTE_STOCK) <> 0
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_stock_recep_temp(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_REEL) AS la_somme_QTE_REEL
+FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.TYPE_MOUVEMENT = 'X'
+	AND	T_MOUVEMENTS.CODE_ARTICLE = {Param_code_article}
+GROUP BY 
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_sup_chargement_secteur(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_CHARGEMENT
+WHERE 
+	T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+	AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_bl_mission(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_Mission_BL
+WHERE 
+	T_Mission_BL.Id_Det = {Param_id_det}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_budget(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_BUDGET_MENSUEL
+WHERE 
+	T_BUDGET_MENSUEL.DATE_BUDGET = {Param_date_budget}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_chargement_cac(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_CHARGEMENT
+WHERE 
+	T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+	AND	T_CHARGEMENT.CHARGEMENT_CAC = 1
+	AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_cond_livree(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_COND_LIVRAISON
+WHERE 
+	T_COND_LIVRAISON.NUM_LIVRAISON = {Param_nbl}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_dt_reclamation(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_DT_RECLAMATION
+WHERE 
+	T_DT_RECLAMATION.ID_RECLAMATION = {Param_id_reclamation}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_hist_clients(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_MOY_VENTE_CLIENTS
+WHERE 
+	T_MOY_VENTE_CLIENTS.DATE_VENTE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_hist_secteur(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_MOY_VENTE_ARTICLE
+WHERE 
+	T_MOY_VENTE_ARTICLE.DATE_VENTE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_initial_client(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_SOLDE_INITIAL_CLIENT
+WHERE 
+	T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_itinéraire(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_ITINERAIRES
+WHERE 
+	T_ITINERAIRES.CODE_TOURNEE = {Param_code_tournee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_justification_caisserie(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_AUTORISATION_SOLDE_CAISSERIE
+WHERE 
+	T_AUTORISATION_SOLDE_CAISSERIE.ID_JUSTIFICATION = {Param_id_justification}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_justification_solde(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_AUTORISATIONS_SOLDE
+WHERE 
+	T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION = {Param_id_justification}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_mouvement_operation(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.ORIGINE = {Param_code_operation}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_moy_vente(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_MOY_VENTE_ARTICLE
+WHERE 
+	T_MOY_VENTE_ARTICLE.DATE_VENTE = {Param_date}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_moy_vente_clients(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_MOY_VENTE_CLIENTS
+WHERE 
+	T_MOY_VENTE_CLIENTS.DATE_VENTE = {Param_date}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_mvente(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_MOYENNE_VENTE
+WHERE 
+	T_MOYENNE_VENTE.DATE_VENTE = {Param_date_mvente}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_mvt_caisse(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_MOUVEMENTS_CAISSE
+WHERE 
+	T_MOUVEMENTS_CAISSE.ORIGINE = {Param_code_operation}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_mvt_caisserie(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_MOUVEMENTS_CAISSERIE
+WHERE 
+	T_MOUVEMENTS_CAISSERIE.ORIGINE = {Param_code_operation}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_obj_clients(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_OBJECTIF_CLIENTS
+WHERE 
+	T_OBJECTIF_CLIENTS.DATE_OBJECTIF = {Param_date}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_obj_secteurs(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_OBJECTIF_SECTEURS
+WHERE 
+	T_OBJECTIF_SECTEURS.DATE_OBJECTIF = {Param_date}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_objectif(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_OBJECTIF_VENTE
+WHERE 
+	T_OBJECTIF_VENTE.DATE_OBJECTIF = {Param_date_objectif}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_objectif_agence(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_OBJECTIF_AGENCE
+WHERE 
+	T_OBJECTIF_AGENCE.DATE_OBJECTIF = {Param_date_objectif}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_objectif_clients(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_OBJECTIF_CLIENTS
+WHERE 
+	T_OBJECTIF_CLIENTS.DATE_OBJECTIF = {Param_date_journee}
+	AND	T_OBJECTIF_CLIENTS.CODE_CLIENT = {Param_code_client}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_objectif_rendus(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_OBJECTIF_RENDUS
+WHERE 
+	T_OBJECTIF_RENDUS.DATE_OBJECTIF = {Param_date_objectif}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_prevision(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_PREVISION
+WHERE 
+	T_PREVISION.Date_Debut = {Param_date_debut}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_produit_comm(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_PRODUITS_COMMANDES
+WHERE 
+	T_PRODUITS_COMMANDES.ID_COMMANDE = {Param_id_commande}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_produits_chargees(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_PRODUITS_CHARGEE
+WHERE 
+	T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur}
+	AND	T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_produits_livree(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_PRODUITS_LIVREES
+WHERE 
+	T_PRODUITS_LIVREES.NUM_LIVRAISON = {Param_nbl}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_remise(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_REMISE_CLIENT
+WHERE 
+	T_REMISE_CLIENT.Date_Debut = {Param_date_debut}
+	AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_code_client}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_solde_caisse(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_SOLDE_INITIAL_CAISSE
+WHERE 
+	T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_solde_init_caisse(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_SOLDE_INITIAL_CAISSE
+WHERE 
+	T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_solde_init_client(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_SOLDE_INITIAL_CLIENT
+WHERE 
+	T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = {Param_date_journee}
+	AND	T_SOLDE_INITIAL_CLIENT.CODE_CLIENT = {Param_code_client}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_solde_initial_operateur(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_SOLDE_INITIAL
+WHERE 
+	T_SOLDE_INITIAL.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_statistique(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_STATISTIQUES
+WHERE 
+	T_STATISTIQUES.DATE_JOURNEE = {Param_date_journee}
+	AND	T_STATISTIQUES.code_secteur = {Param_code_secteur}
+	AND	
+	(
+		
+		(
+			T_STATISTIQUES.CODE_CLIENT = 0
+			AND	T_STATISTIQUES.CATEGORIE = 'GMS'
+		)
+		OR	T_STATISTIQUES.CATEGORIE = 'SEC'
+		OR	T_STATISTIQUES.CATEGORIE = 'DEP'
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_statistiques_clients(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_STATISTIQUES
+WHERE 
+	T_STATISTIQUES.DATE_JOURNEE = {Param_date_journee}
+	AND	T_STATISTIQUES.CODE_CLIENT <> 0
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_statistiques_stock(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_STATISTIQUES_STOCK
+WHERE 
+	T_STATISTIQUES_STOCK.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_stock_init_cond(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_STOCK_INITI_COND
+WHERE 
+	T_STOCK_INITI_COND.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_supp_stock_initial(self, kwargs):
+        query = '''
+DELETE FROM 
+	T_STOCK_INIT
+WHERE 
+	T_STOCK_INIT.DATE_PS = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def req_susp_cond_chargement_journee(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_COND_CHARGEE.CODE_COND AS CODE_COND,	
+	SUM(( T_COND_CHARGEE.QTE_CHARGEE_VAL - T_COND_CHARGEE.QTE_POINTE ) ) AS AVOIR,	
+	SUM(( ( T_COND_CHARGEE.QTE_POINTE + T_COND_CHARGEE.QTE_CHAR_SUPP ) - T_COND_CHARGEE.QTE_RETOUR ) ) AS SUSP,	
+	SUM(T_COND_CHARGEE.CREDIT) AS la_somme_CREDIT,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_CHARGEMENT.CHARGEMENT_CAC AS CHARGEMENT_CAC,	
+	T_CHARGEMENT.VALID AS VALID
+FROM 
+	T_CHARGEMENT,	
+	T_COND_CHARGEE,	
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_COND_CHARGEE.CODE_OPERATEUR
+	AND		T_COND_CHARGEE.CODE_CHARGEMENT = T_CHARGEMENT.CODE_CHARGEMENT
+	AND
+	(
+		T_COND_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+		AND	T_COND_CHARGEE.CODE_OPERATEUR = {Param_operateur}
+		AND	T_COND_CHARGEE.CODE_COND = {Param_code_cp}
+	)
+GROUP BY 
+	T_COND_CHARGEE.DATE_CHARGEMENT,	
+	T_COND_CHARGEE.CODE_COND,	
+	T_OPERATEUR.FONCTION,	
+	T_CHARGEMENT.CHARGEMENT_CAC,	
+	T_CHARGEMENT.VALID
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_susp_emballage(self, kwargs):
+        query = '''
+SELECT 
+	T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_JOURNEE.AS_C_STD AS AS_C_STD,	
+	T_JOURNEE.AS_C_AG AS AS_C_AG,	
+	T_JOURNEE.AS_C_PR AS AS_C_PR,	
+	T_JOURNEE.AS_P_AG AS AS_P_AG,	
+	T_JOURNEE.AS_P_UHT AS AS_P_UHT,	
+	T_JOURNEE.NS_C_STD AS NS_C_STD,	
+	T_JOURNEE.NS_P_AG AS NS_P_AG,	
+	T_JOURNEE.NS_P_UHT AS NS_P_UHT,	
+	T_JOURNEE.NS_C_AG AS NS_C_AG,	
+	T_JOURNEE.NS_C_PR AS NS_C_PR,	
+	T_JOURNEE.AS_P_EURO AS AS_P_EURO,	
+	T_JOURNEE.AS_CS_BLC AS AS_CS_BLC,	
+	T_JOURNEE.NS_PAL_EURO AS NS_PAL_EURO,	
+	T_JOURNEE.NS_CS_BLC AS NS_CS_BLC,	
+	T_JOURNEE.AS_CS1 AS AS_CS1,	
+	T_JOURNEE.AS_CS2 AS AS_CS2,	
+	T_JOURNEE.NV_CS1 AS NV_CS1,	
+	T_JOURNEE.NV_CS2 AS NV_CS2
+FROM 
+	T_JOURNEE
+WHERE 
+	T_JOURNEE.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_synthese_livraison_date(self, kwargs):
+        query = '''
+SELECT 
+	T_SYNTHESE_LIVRAISON.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_SYNTHESE_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_SYNTHESE_LIVRAISON.CODE_AGCE AS CODE_AGCE,	
+	T_SYNTHESE_LIVRAISON.PROGRAMME AS PROGRAMME,	
+	T_SYNTHESE_LIVRAISON.COMMANDE AS COMMANDE,	
+	T_SYNTHESE_LIVRAISON.LIVRE AS LIVRE,	
+	T_SYNTHESE_LIVRAISON.MOTIF_NON_COMMANDE AS MOTIF_NON_COMMANDE,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT
+FROM 
+	T_CLIENTS,	
+	T_SYNTHESE_LIVRAISON
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_SYNTHESE_LIVRAISON.CODE_CLIENT
+	AND
+	(
+		T_SYNTHESE_LIVRAISON.DATE_JOURNEE = {Param_DATE_JOURNEE}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_tache_operateur(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERTEURS_TACHES.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_OPERTEURS_TACHES.ID_TACHE AS ID_TACHE
+FROM 
+	T_OPERTEURS_TACHES
+WHERE 
+	T_OPERTEURS_TACHES.CODE_OPERATEUR = {Param_code_operateur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_almientation_caisse2(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION,	
+	SUM(T_OPERATIONS_CAISSE.MONTANT) AS la_somme_MONTANT
+FROM 
+	T_OPERATIONS_CAISSE
+WHERE 
+	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+	AND	T_OPERATIONS_CAISSE.TYPE_OPERATION = 'A'
+GROUP BY 
+	T_OPERATIONS_CAISSE.TYPE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_autorisation_caisserie(self, kwargs):
+        query = '''
+SELECT 
+	T_AUTORISATION_SOLDE_CAISSERIE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_AUTORISATION_SOLDE_CAISSERIE.CS_STD AS CS_STD,	
+	T_AUTORISATION_SOLDE_CAISSERIE.CS_PR AS CS_PR,	
+	T_AUTORISATION_SOLDE_CAISSERIE.CS_AG AS CS_AG,	
+	T_AUTORISATION_SOLDE_CAISSERIE.CS_BLC AS CS_BLC,	
+	T_AUTORISATION_SOLDE_CAISSERIE.PAL_AG AS PAL_AG,	
+	T_AUTORISATION_SOLDE_CAISSERIE.PAL_UHT AS PAL_UHT,	
+	T_AUTORISATION_SOLDE_CAISSERIE.PAL_EURO AS PAL_EURO
+FROM 
+	T_AUTORISATION_SOLDE_CAISSERIE
+WHERE 
+	T_AUTORISATION_SOLDE_CAISSERIE.DATE_HEURE <= {Param_dt}
+	AND	T_AUTORISATION_SOLDE_CAISSERIE.DATE_ECHU >= {Param_dt}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_avoir(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_PRODUITS_CHARGEE.COMPTE_ECART AS COMPTE_ECART,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	SUM(( T_PRODUITS_CHARGEE.QTE_ECART * T_PRODUITS_CHARGEE.PRIX ) ) AS Expr1
+FROM 
+	T_CHARGEMENT,	
+	T_PRODUITS_CHARGEE,	
+	T_OPERATEUR
+WHERE 
+	T_PRODUITS_CHARGEE.COMPTE_ECART = T_OPERATEUR.CODE_OPERATEUR
+	AND		T_PRODUITS_CHARGEE.CODE_CHARGEMENT = T_CHARGEMENT.CODE_CHARGEMENT
+	AND
+	(
+		T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+		AND	T_PRODUITS_CHARGEE.QTE_ECART <> 0
+	)
+GROUP BY 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT,	
+	T_PRODUITS_CHARGEE.COMPTE_ECART,	
+	T_OPERATEUR.FONCTION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_avoir_mvt(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.COMPTE_ECART AS COMPTE_ECART,	
+	SUM(T_MOUVEMENTS.MONTANT_ECART) AS la_somme_MONTANT_ECART,	
+	T_OPERATEUR.FONCTION AS FONCTION
+FROM 
+	T_OPERATEUR,	
+	T_MOUVEMENTS
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_MOUVEMENTS.COMPTE_ECART
+	AND
+	(
+		T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	)
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.COMPTE_ECART,	
+	T_OPERATEUR.FONCTION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_chargement(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_VENDU) AS la_somme_TOTAL_VENDU,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE) AS la_somme_TOTAL_INVENDU_POINTE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_COM) AS la_somme_TOTAL_RENDUS_COM,	
+	SUM(T_PRODUITS_CHARGEE.CREDIT) AS la_somme_CREDIT
+FROM 
+	T_PRODUITS_CHARGEE
+WHERE 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+GROUP BY 
+	T_PRODUITS_CHARGEE.CODE_ARTICLE,	
+	T_PRODUITS_CHARGEE.code_secteur
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_chargement_supp_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_PRODUITS_LIVREES.TYPE_MVT AS TYPE_MVT,	
+	SUM(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_somme_QTE_CHARGEE
+FROM 
+	T_PRODUITS_LIVREES
+WHERE 
+	T_PRODUITS_LIVREES.code_secteur = {Param_code_secteur}
+	AND	T_PRODUITS_LIVREES.TYPE_MVT = 'C'
+	AND	T_PRODUITS_LIVREES.DATE_VALIDATION = {Param_date_validation}
+GROUP BY 
+	T_PRODUITS_LIVREES.code_secteur,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.DATE_VALIDATION,	
+	T_PRODUITS_LIVREES.TYPE_MVT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_cmd_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_COMMANDES.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_ARTICLES.LIBELLE AS LIBELLE,	
+	T_ARTICLES.QTE_PACK AS QTE_PACK,	
+	SUM(T_PRODUITS_COMMANDES.QTE_U) AS la_somme_QTE_U,	
+	SUM(( T_PRODUITS_COMMANDES.QTE_U / T_ARTICLES.QTE_PACK ) ) AS la_somme_QTE_PACK,	
+	SUM(T_PRODUITS_COMMANDES.QTE_C) AS la_somme_QTE_C
+FROM 
+	T_COMMANDES,	
+	T_PRODUITS_COMMANDES,	
+	T_SECTEUR,	
+	T_ARTICLES,	
+	T_PRODUITS
+WHERE 
+	T_ARTICLES.CODE_PRODUIT = T_PRODUITS.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRODUITS_COMMANDES.CODE_ARTICLE
+	AND		T_COMMANDES.ID_COMMANDE = T_PRODUITS_COMMANDES.ID_COMMANDE
+	AND		T_SECTEUR.code_secteur = T_COMMANDES.code_secteur
+	AND
+	(
+		T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_COMMANDES.TYPE_COMMANDE <> 'U'
+		AND	T_PRODUITS.CODE_FAMILLE IN ({param_lst_famille}) 
+	)
+GROUP BY 
+	T_COMMANDES.DATE_LIVRAISON,	
+	T_COMMANDES.code_secteur,	
+	T_PRODUITS_COMMANDES.CODE_ARTICLE,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_ARTICLES.LIBELLE,	
+	T_ARTICLES.QTE_PACK
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_commande_usine(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDES.TYPE_COMMANDE AS TYPE_COMMANDE,	
+	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_PRODUITS_COMMANDES.QTE_U) AS la_somme_QTE_U,	
+	SUM(T_PRODUITS_COMMANDES.QTE_C) AS la_somme_QTE_C,	
+	SUM(T_PRODUITS_COMMANDES.QTE_P) AS la_somme_QTE_P
+FROM 
+	T_COMMANDES,	
+	T_PRODUITS_COMMANDES
+WHERE 
+	T_COMMANDES.ID_COMMANDE = T_PRODUITS_COMMANDES.ID_COMMANDE
+	AND
+	(
+		T_COMMANDES.TYPE_COMMANDE = 'U'
+		AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_PRODUITS_COMMANDES.CODE_ARTICLE = {Param_code_article}
+	)
+GROUP BY 
+	T_COMMANDES.TYPE_COMMANDE,	
+	T_COMMANDES.DATE_LIVRAISON,	
+	T_PRODUITS_COMMANDES.CODE_ARTICLE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_commandes(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_PRODUITS_COMMANDES.QTE_U) AS la_somme_QTE_U,	
+	SUM(T_PRODUITS_COMMANDES.QTE_P) AS la_somme_QTE_P,	
+	SUM(T_PRODUITS_COMMANDES.QTE_C) AS la_somme_QTE_C
+FROM 
+	T_COMMANDES,	
+	T_PRODUITS_COMMANDES
+WHERE 
+	T_COMMANDES.ID_COMMANDE = T_PRODUITS_COMMANDES.ID_COMMANDE
+	AND
+	(
+		T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_COMMANDES.TYPE_COMMANDE IN ('S', 'C') 
+	)
+GROUP BY 
+	T_PRODUITS_COMMANDES.CODE_ARTICLE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_commandes_periode(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_PRODUITS_COMMANDES.QTE_U) AS la_somme_QTE_U,	
+	SUM(T_PRODUITS_COMMANDES.QTE_C) AS la_somme_QTE_C
+FROM 
+	T_COMMANDES,	
+	T_PRODUITS_COMMANDES
+WHERE 
+	T_COMMANDES.ID_COMMANDE = T_PRODUITS_COMMANDES.ID_COMMANDE
+	AND
+	(
+		T_COMMANDES.DATE_LIVRAISON BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_COMMANDES.TYPE_COMMANDE <> 'U'
+	)
+GROUP BY 
+	T_PRODUITS_COMMANDES.CODE_ARTICLE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_cond_charg_supp_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_LIVRAISON.code_secteur AS code_secteur,	
+	T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
+	T_COND_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_COND_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	SUM(T_COND_LIVRAISON.QTE_CHARGEE) AS la_somme_QTE_CHARGEE
+FROM 
+	T_COND_LIVRAISON
+WHERE 
+	T_COND_LIVRAISON.code_secteur = {Param_code_secteur}
+	AND	T_COND_LIVRAISON.TYPE_MVT = 'C'
+	AND	T_COND_LIVRAISON.DATE_VALIDATION = {Param_date_validation}
+GROUP BY 
+	T_COND_LIVRAISON.code_secteur,	
+	T_COND_LIVRAISON.CODE_CP,	
+	T_COND_LIVRAISON.DATE_VALIDATION,	
+	T_COND_LIVRAISON.TYPE_MVT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_cond_retour_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
+	T_COND_LIVRAISON.code_secteur AS code_secteur,	
+	T_COND_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	T_COND_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	SUM(T_COND_LIVRAISON.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	SUM(T_COND_LIVRAISON.VALEUR_CHARGEE) AS la_somme_VALEUR_CHARGEE
+FROM 
+	T_LIVRAISON,	
+	T_COND_LIVRAISON
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_COND_LIVRAISON.NUM_LIVRAISON
+	AND
+	(
+		T_COND_LIVRAISON.code_secteur = {Param_code_secteur}
+		AND	T_COND_LIVRAISON.TYPE_MVT = 'R'
+		AND	T_COND_LIVRAISON.DATE_VALIDATION = {Param_date_validation}
+		AND	T_LIVRAISON.STATUT <> 'A'
+	)
+GROUP BY 
+	T_COND_LIVRAISON.code_secteur,	
+	T_COND_LIVRAISON.TYPE_MVT,	
+	T_COND_LIVRAISON.DATE_VALIDATION,	
+	T_COND_LIVRAISON.CODE_CP
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_conseig_decons(self, kwargs):
+        query = '''
+SELECT 
+	T_REGELEMENT_COND.CODE_OPERTAEUR AS CODE_OPERTAEUR,	
+	T_REGELEMENT_COND.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_REGELEMENT_COND.REGLER_C_STD AS REGLER_C_STD,	
+	T_REGELEMENT_COND.REGLER_P_AG AS REGLER_P_AG,	
+	T_REGELEMENT_COND.REGLER_P_UHT AS REGLER_P_UHT,	
+	T_REGELEMENT_COND.REGLER_C_AG AS REGLER_C_AG,	
+	T_REGELEMENT_COND.REGLER_C_PR AS REGLER_C_PR,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_REGELEMENT_COND.REGLER_C_BLC AS REGLER_C_BLC,	
+	T_REGELEMENT_COND.REGLER_P_EURO AS REGLER_P_EURO,	
+	T_REGELEMENT_COND.REGLER_CS1 AS REGLER_CS1,	
+	T_REGELEMENT_COND.REGLER_CS2 AS REGLER_CS2
+FROM 
+	T_OPERATEUR,	
+	T_REGELEMENT_COND
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_REGELEMENT_COND.CODE_OPERTAEUR
+	AND
+	(
+		T_REGELEMENT_COND.DATE_VALIDATION = {Param_date_validation}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_conseigne_mag_operateur(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_OPERATEUR.Matricule AS Matricule,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
+	SUM(T_COND_LIVRAISON.QTE_CHARGEE) AS la_somme_QTE_CHARGEE
+FROM 
+	T_OPERATEUR,	
+	T_LIVRAISON,	
+	T_COND_LIVRAISON,	
+	T_CHARGEMENT
+WHERE 
+	T_CHARGEMENT.code_secteur = T_LIVRAISON.code_secteur
+	AND	T_CHARGEMENT.DATE_CHARGEMENT = T_LIVRAISON.DATE_LIVRAISON
+	AND		T_CHARGEMENT.code_vendeur = T_OPERATEUR.CODE_OPERATEUR
+	AND		T_LIVRAISON.NUM_LIVRAISON = T_COND_LIVRAISON.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.CODE_CLIENT = {Param_code_client}
+		AND	T_LIVRAISON.DATE_LIVRAISON BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_COND_LIVRAISON.CODE_CP = 1
+		AND	T_LIVRAISON.STATUT <> 'A'
+	)
+GROUP BY 
+	T_LIVRAISON.DATE_LIVRAISON,	
+	T_LIVRAISON.CODE_CLIENT,	
+	T_COND_LIVRAISON.CODE_CP,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_OPERATEUR.Matricule,	
+	T_LIVRAISON.TYPE_MVT
+ORDER BY 
+	TYPE_MVT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_credit_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
+	SUM(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	SUM(T_PRODUITS_LIVREES.MONTANT) AS la_somme_MONTANT,	
+	T_PRODUITS_LIVREES.TYPE_MVT AS TYPE_MVT,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION
+FROM 
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_PRODUITS_LIVREES.code_secteur = {Param_code_secteur}
+		AND	T_PRODUITS_LIVREES.TYPE_MVT = 'L'
+		AND	T_LIVRAISON.STATUT <> 'A'
+		AND	T_LIVRAISON.DATE_VALIDATION = {Param_date_validation}
+	)
+GROUP BY 
+	T_PRODUITS_LIVREES.CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.code_secteur,	
+	T_PRODUITS_LIVREES.TYPE_MVT,	
+	T_LIVRAISON.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_credit_secteur_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_LIVRAISON.code_secteur AS code_secteur,	
+	T_COND_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
+	SUM(T_COND_LIVRAISON.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	SUM(T_COND_LIVRAISON.VALEUR_CHARGEE) AS la_somme_VALEUR_CHARGEE,	
+	T_COND_LIVRAISON.TYPE_MVT AS TYPE_MVT
+FROM 
+	T_LIVRAISON,	
+	T_COND_LIVRAISON
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_COND_LIVRAISON.NUM_LIVRAISON
+	AND
+	(
+		T_COND_LIVRAISON.code_secteur = {Param_code_secteur}
+		AND	T_COND_LIVRAISON.DATE_VALIDATION = {Param_date_validation}
+		AND	T_COND_LIVRAISON.TYPE_MVT = 'L'
+		AND	T_LIVRAISON.STATUT <> 'A'
+	)
+GROUP BY 
+	T_COND_LIVRAISON.code_secteur,	
+	T_COND_LIVRAISON.CODE_CP,	
+	T_COND_LIVRAISON.DATE_VALIDATION,	
+	T_COND_LIVRAISON.TYPE_MVT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_decompte(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_DECOMPTE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_DECOMPTE.REGLEMENT AS REGLEMENT,	
+	SUM(T_DECOMPTE.MONTANT) AS la_somme_MONTANT,	
+	T_OPERATEUR.FONCTION AS FONCTION
+FROM 
+	T_OPERATEUR,	
+	T_DECOMPTE
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_DECOMPTE.CODE_OPERATEUR
+	AND
+	(
+		T_DECOMPTE.DATE_VALIDATION = {Param_date_validation}
+		AND	T_DECOMPTE.MODE_PAIEMENT <> 'R'
+	)
+GROUP BY 
+	T_DECOMPTE.CODE_OPERATEUR,	
+	T_DECOMPTE.DATE_VALIDATION,	
+	T_DECOMPTE.REGLEMENT,	
+	T_OPERATEUR.FONCTION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_decompte_espece(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	T_DECOMPTE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_DECOMPTE.REGLEMENT AS REGLEMENT,	
+	SUM(T_DECOMPTE.MONTANT) AS la_somme_MONTANT,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_DECOMPTE.MODE_PAIEMENT AS MODE_PAIEMENT
+FROM 
+	T_OPERATEUR,	
+	T_DECOMPTE
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_DECOMPTE.CODE_OPERATEUR
+	AND
+	(
+		T_DECOMPTE.DATE_VALIDATION = {Param_date_validation}
+		AND	T_DECOMPTE.MODE_PAIEMENT = 'E'
+	)
+GROUP BY 
+	T_DECOMPTE.CODE_OPERATEUR,	
+	T_DECOMPTE.DATE_VALIDATION,	
+	T_DECOMPTE.REGLEMENT,	
+	T_OPERATEUR.FONCTION,	
+	T_DECOMPTE.MODE_PAIEMENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_depense_categorie(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_MOUVEMENTS_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
+	SUM(T_OPERATIONS_CAISSE.MONTANT) AS la_somme_MONTANT,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_OPERATIONS_CAISSE.NATURE AS NATURE
+FROM 
+	T_OPERATIONS_CAISSE,	
+	T_MOUVEMENTS_CAISSE
+WHERE 
+	T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
+	AND
+	(
+		T_OPERATIONS_CAISSE.TYPE_OPERATION IN ({Param_type_operation}) 
+		AND	T_MOUVEMENTS_CAISSE.CODE_CAISSE = {Param_code_caisse}
+		AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+	)
+GROUP BY 
+	T_OPERATIONS_CAISSE.TYPE_OPERATION,	
+	T_MOUVEMENTS_CAISSE.CODE_CAISSE,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION,	
+	T_OPERATIONS_CAISSE.NATURE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_don(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	T_LIVRAISON.LIVRAISON_TOURNEE AS LIVRAISON_TOURNEE,	
+	T_LIVRAISON.Type_Livraison AS Type_Livraison
+FROM 
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_LIVRAISON.TYPE_MVT = 'D'
+		AND	T_LIVRAISON.LIVRAISON_TOURNEE <> 1
+	)
+GROUP BY 
+	T_LIVRAISON.DATE_LIVRAISON,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE,	
+	T_LIVRAISON.TYPE_MVT,	
+	T_LIVRAISON.LIVRAISON_TOURNEE,	
+	T_LIVRAISON.Type_Livraison
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_dons_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.TYPE_MVT AS TYPE_MVT,	
+	T_PRODUITS_LIVREES.DATE_VALIDATION AS DATE_VALIDATION,	
+	SUM(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_somme_QTE_CHARGEE
+FROM 
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_PRODUITS_LIVREES.TYPE_MVT = 'D'
+		AND	T_PRODUITS_LIVREES.code_secteur = {Param_code_secteur}
+		AND	T_PRODUITS_LIVREES.DATE_VALIDATION = {Param_date_validation}
+		AND	T_LIVRAISON.Type_Livraison = 1
+	)
+GROUP BY 
+	T_PRODUITS_LIVREES.code_secteur,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.TYPE_MVT,	
+	T_PRODUITS_LIVREES.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_ecart_chargement(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_COND_CHARGEE.COMPTE_ECART AS COMPTE_ECART,	
+	T_COND_CHARGEE.CODE_COND AS CODE_COND,	
+	SUM(T_COND_CHARGEE.ECART) AS la_somme_ECART
+FROM 
+	T_COND_CHARGEE
+WHERE 
+	T_COND_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+	AND	T_COND_CHARGEE.CODE_COND = {Param_code_cp}
+GROUP BY 
+	T_COND_CHARGEE.DATE_CHARGEMENT,	
+	T_COND_CHARGEE.CODE_COND,	
+	T_COND_CHARGEE.COMPTE_ECART
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_ecart_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
+	SUM(T_MOUVEMENTS_CAISSERIE.QTE_ECART) AS la_somme_QTE_ECART,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART AS COMPTE_ECART
+FROM 
+	T_OPERATIONS,	
+	T_MOUVEMENTS_CAISSERIE,	
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_MOUVEMENTS_CAISSERIE.COMPTE_ECART
+	AND		T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS_CAISSERIE.ORIGINE
+	AND
+	(
+		T_OPERATIONS.DATE_OPERATION = {Param_date_mvt}
+		AND	T_MOUVEMENTS_CAISSERIE.CODE_CP = {Param_code_cp}
+		AND	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART = {Param_operateur}
+	)
+GROUP BY 
+	T_MOUVEMENTS_CAISSERIE.CODE_CP,	
+	T_OPERATEUR.FONCTION,	
+	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_ecart_inventaires(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT
+FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'I'
+	AND	T_MOUVEMENTS.TYPE_PRODUIT = 'PRODUIT'
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.TYPE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_livraison(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	SUM(T_PRODUITS_LIVREES.QTE_IMPORTE) AS la_somme_QTE_IMPORTE
+FROM 
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_LIVRAISON.STATUT <> 'A'
+	)
+GROUP BY 
+	T_LIVRAISON.DATE_LIVRAISON,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_livraison_client(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.Type_Livraison AS Type_Livraison,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.CODE_CLIENT AS CODE_CLIENT,	
+	SUM(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT
+FROM 
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
+		AND	T_LIVRAISON.STATUT <> 'A'
+	)
+GROUP BY 
+	T_LIVRAISON.Type_Livraison,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.CODE_CLIENT,	
+	T_LIVRAISON.TYPE_MVT
+ORDER BY 
+	TYPE_MVT ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_livraison_sec_gms(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	SUM(T_PRODUITS_LIVREES.QTE_IMPORTE) AS la_somme_QTE_IMPORTE,	
+	T_SECTEUR.CAT_SECTEUR AS CAT_SECTEUR
+FROM 
+	T_SECTEUR,	
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES
+WHERE 
+	T_LIVRAISON.code_secteur = T_SECTEUR.code_secteur
+	AND		T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_LIVRAISON.STATUT <> 'A'
+		AND	T_SECTEUR.CAT_SECTEUR = 2
+	)
+GROUP BY 
+	T_LIVRAISON.DATE_LIVRAISON,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE,	
+	T_SECTEUR.CAT_SECTEUR
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_montant_cheques(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_DECOMPTE.MODE_PAIEMENT AS MODE_PAIEMENT,	
+	SUM(T_DECOMPTE.MONTANT) AS la_somme_MONTANT
+FROM 
+	T_DECOMPTE
+WHERE 
+	T_DECOMPTE.MODE_PAIEMENT = 'C'
+	AND	T_DECOMPTE.DATE_VALIDATION = {Param_date_validation}
+GROUP BY 
+	T_DECOMPTE.DATE_VALIDATION,	
+	T_DECOMPTE.MODE_PAIEMENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_mvt_caisse(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
+	SUM(T_MOUVEMENTS_CAISSE.MONTANT) AS la_somme_MONTANT,	
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION
+FROM 
+	T_OPERATIONS_CAISSE,	
+	T_MOUVEMENTS_CAISSE
+WHERE 
+	T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
+	AND
+	(
+		T_OPERATIONS_CAISSE.DATE_OPERATION = {Param_date_operation}
+		AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+	)
+GROUP BY 
+	T_MOUVEMENTS_CAISSE.CODE_CAISSE,	
+	T_OPERATIONS_CAISSE.DATE_OPERATION,	
+	T_OPERATIONS_CAISSE.TYPE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_mvt_chargement(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_PRODUITS_CHARGEE.QTE_CHARGEE_VAL) AS la_somme_QTE_CHARGEE_VAL,	
+	SUM(T_PRODUITS_CHARGEE.QTE_CHARGEE_POINTE) AS la_somme_QTE_CHARGEE_POINTE,	
+	SUM(T_PRODUITS_CHARGEE.QTE_CHARGEE_SUPP) AS la_somme_QTE_CHARGEE_SUPP,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE) AS la_somme_TOTAL_INVENDU_POINTE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_AG) AS la_somme_TOTAL_RENDUS_AG,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_US) AS la_somme_TOTAL_RENDUS_US,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_COM) AS la_somme_TOTAL_RENDUS_COM,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_SP) AS la_somme_TOTAL_RENDUS_SP,	
+	SUM(T_PRODUITS_CHARGEE.QTE_ECART) AS la_somme_QTE_ECART,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_VENDU) AS la_somme_TOTAL_VENDU,	
+	SUM(T_PRODUITS_CHARGEE.CREDIT) AS la_somme_CREDIT,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_GRATUIT) AS la_somme_TOTAL_GRATUIT,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_DONS) AS la_somme_TOTAL_DONS,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_ECHANGE) AS la_somme_TOTAL_ECHANGE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_REMISE) AS la_somme_TOTAL_REMISE,	
+	SUM(T_PRODUITS_CHARGEE.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	T_CHARGEMENT.VALID AS VALID,	
+	T_OPERATEUR.FONCTION AS FONCTION
+FROM 
+	T_CHARGEMENT,	
+	T_PRODUITS_CHARGEE,	
+	T_OPERATEUR
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
+	AND		T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
+	AND
+	(
+		T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+	)
+GROUP BY 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT,	
+	T_PRODUITS_CHARGEE.CODE_ARTICLE,	
+	T_CHARGEMENT.VALID,	
+	T_OPERATEUR.FONCTION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_mvt_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
+	SUM(T_MOUVEMENTS_CAISSERIE.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION AS SOUS_TYPE_OPERATION,	
+	T_OPERATIONS.CODE_AGCE1 AS CODE_AGCE1,	
+	T_OPERATIONS.CODE_AGCE2 AS CODE_AGCE2
+FROM 
+	T_OPERATIONS,	
+	T_MOUVEMENTS_CAISSERIE
+WHERE 
+	T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS_CAISSERIE.ORIGINE
+	AND
+	(
+		T_OPERATIONS.DATE_OPERATION = {Param_date_operation}
+		AND	T_OPERATIONS.TYPE_OPERATION = {Param_type_operation}
+		AND	T_OPERATIONS.SOUS_TYPE_OPERATION = {Param_sous_type}
+	)
+GROUP BY 
+	T_OPERATIONS.DATE_OPERATION,	
+	T_OPERATIONS.TYPE_OPERATION,	
+	T_MOUVEMENTS_CAISSERIE.CODE_CP,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION,	
+	T_OPERATIONS.CODE_AGCE1,	
+	T_OPERATIONS.CODE_AGCE2
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_mvt_cond_cac(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
+	T_COND_LIVRAISON.TYPE_CLIENT AS TYPE_CLIENT,	
+	T_COND_LIVRAISON.QTE_CHARGEE AS QTE_CHARGEE,	
+	T_COND_LIVRAISON.QTE_IMPORTE AS QTE_IMPORTE,	
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	T_LIVRAISON.STATUT AS STATUT,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION_T_
+FROM 
+	T_LIVRAISON,	
+	T_COND_LIVRAISON
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_COND_LIVRAISON.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.TYPE_MVT = {Param_type_mvt}
+		AND	T_LIVRAISON.STATUT <> 'A'
+		AND	T_LIVRAISON.DATE_VALIDATION = {Param_date_val}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_mvt_operation(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION AS SOUS_TYPE_OPERATION,	
+	T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
+	T_MOUVEMENTS_CAISSERIE.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS_CAISSERIE.QTE_REEL) AS la_somme_QTE_REEL,	
+	SUM(T_MOUVEMENTS_CAISSERIE.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS_CAISSERIE.QTE_ECART) AS la_somme_QTE_ECART,	
+	T_OPERATIONS.MOTIF AS MOTIF
+FROM 
+	T_OPERATIONS,	
+	T_MOUVEMENTS_CAISSERIE
+WHERE 
+	T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS_CAISSERIE.ORIGINE
+	AND
+	(
+		T_OPERATIONS.DATE_OPERATION = {Param_date_operation}
+		AND	T_MOUVEMENTS_CAISSERIE.TYPE_MOUVEMENT = {Param_type_mouvement}
+		AND	T_OPERATIONS.SOUS_TYPE_OPERATION = {Param_sous_type}
+		AND	T_OPERATIONS.MOTIF IN ({Param_ls_motifs}) 
+	)
+GROUP BY 
+	T_OPERATIONS.DATE_OPERATION,	
+	T_MOUVEMENTS_CAISSERIE.CODE_CP,	
+	T_MOUVEMENTS_CAISSERIE.TYPE_MOUVEMENT,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION,	
+	T_OPERATIONS.MOTIF
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_mvt_vente(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
+	T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_CHARGEE.PRIX AS PRIX,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_CHARGEE * T_PRODUITS_CHARGEE.PRIX ) ) AS la_somme_TOTAL_CHARGEE,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_RENDUS_COM * T_PRODUITS_CHARGEE.PRIX ) ) AS la_somme_TOTAL_RENDUS_COM,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE * T_PRODUITS_CHARGEE.PRIX ) ) AS la_somme_TOTAL_INVENDU_POINTE,	
+	SUM(T_PRODUITS_CHARGEE.MONTANT) AS la_somme_MONTANT,	
+	SUM(T_PRODUITS_CHARGEE.MONTANT_CREDIT) AS la_somme_MONTANT_CREDIT
+FROM 
+	T_PRODUITS_CHARGEE
+WHERE 
+	T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur}
+	AND	T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+GROUP BY 
+	T_PRODUITS_CHARGEE.code_secteur,	
+	T_PRODUITS_CHARGEE.CODE_ARTICLE,	
+	T_PRODUITS_CHARGEE.PRIX
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_position_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_MAGASIN_COND.CODE_CP AS CODE_CP,	
+	SUM(T_MAGASIN_COND.QTE_STOCK) AS la_somme_QTE_STOCK
+FROM 
+	T_MAGASIN_COND
+GROUP BY 
+	T_MAGASIN_COND.CODE_CP
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_prelev(self, kwargs):
+        query = '''
+SELECT 
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	SUM(( T_DT_PRELEVEMENT_COND.SOLDE_STD - T_DT_PRELEVEMENT_COND.DECON_STD ) ) AS la_somme_SOLDE_STD
+FROM 
+	T_PRELEVEMENT_SUSP_COND,	
+	T_DT_PRELEVEMENT_COND
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
+	AND
+	(
+		T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION <> '19000101000000000'
+	)
+GROUP BY 
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_prelev_journalier(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
+	SUM(T_DT_PRELEVEMENT_COND.SUSP_VENTE) AS la_somme_SUSP_VENTE,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_STD) AS la_somme_SOLDE_STD,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_AGR) AS la_somme_SOLDE_AGR,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PRM) AS la_somme_SOLDE_PRM,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PAG) AS la_somme_SOLDE_PAG,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PUHT) AS la_somme_SOLDE_PUHT,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_STD) AS la_somme_DECON_STD,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_AGR) AS la_somme_DECON_AGR,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_PRM) AS la_somme_DECON_PRM,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_PAG) AS la_somme_DECON_PAG,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_PUHT) AS la_somme_DECON_PUHT,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_STD) AS la_somme_PRIME_STD,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_AGR) AS la_somme_PRIME_AGR,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_PRM) AS la_somme_PRIME_PRM,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_PAG) AS la_somme_PRIME_PAG,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_PUHT) AS la_somme_PRIME_PUHT,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_EURO) AS la_somme_SOLDE_EURO,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_CBL) AS la_somme_SOLDE_CBL,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_EURO) AS la_somme_DECON_EURO,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_CBL) AS la_somme_DECON_CBL,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_CS1) AS la_somme_DECON_CS1,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_CS1) AS la_somme_SOLDE_CS1
+FROM 
+	T_PRELEVEMENT_SUSP_COND,	
+	T_DT_PRELEVEMENT_COND,	
+	T_OPERATEUR
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_DT_PRELEVEMENT_COND.CODE_OPERATEUR
+	AND
+	(
+		T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = {Param_date_validation}
+	)
+GROUP BY 
+	T_OPERATEUR.FONCTION,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_prelevement(self, kwargs):
+        query = '''
+SELECT 
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_STD) AS la_somme_SOLDE_STD,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_AGR) AS la_somme_SOLDE_AGR,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PRM) AS la_somme_SOLDE_PRM,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PAG) AS la_somme_SOLDE_PAG,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PUHT) AS la_somme_SOLDE_PUHT,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_STD) AS la_somme_DECON_STD,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_AGR) AS la_somme_DECON_AGR,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_PRM) AS la_somme_DECON_PRM,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_PAG) AS la_somme_DECON_PAG,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_PUHT) AS la_somme_DECON_PUHT,	
+	SUM(T_DT_PRELEVEMENT_COND.SUSP_VENTE) AS la_somme_SUSP_VENTE,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_STD) AS la_somme_PRIME_STD,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_AGR) AS la_somme_PRIME_AGR,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_PAG) AS la_somme_PRIME_PAG,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_PRM) AS la_somme_PRIME_PRM,	
+	SUM(T_DT_PRELEVEMENT_COND.PRIME_PUHT) AS la_somme_PRIME_PUHT,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_CBL) AS la_somme_DECON_CBL,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_EURO) AS la_somme_DECON_EURO,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_CBL) AS la_somme_SOLDE_CBL,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_EURO) AS la_somme_SOLDE_EURO,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_CS1) AS la_somme_SOLDE_CS1,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_CS2) AS la_somme_SOLDE_CS2,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_CS1) AS la_somme_DECON_CS1,	
+	SUM(T_DT_PRELEVEMENT_COND.DECON_CS2) AS la_somme_DECON_CS2
+FROM 
+	T_PRELEVEMENT_SUSP_COND,	
+	T_DT_PRELEVEMENT_COND
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
+	AND
+	(
+		T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = {Param_date_validation}
+	)
+GROUP BY 
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR,	
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_qte_chargement_cond(self, kwargs):
+        query = '''
+SELECT 
+	T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_COND_CHARGEE.CODE_COND AS CODE_COND,	
+	SUM(T_COND_CHARGEE.QTE_CHARGEE_VAL) AS la_somme_QTE_CHARGEE_VAL,	
+	SUM(T_COND_CHARGEE.QTE_CHAR_SUPP) AS la_somme_QTE_CHAR_SUPP,	
+	SUM(T_COND_CHARGEE.QTE_RETOUR) AS la_somme_QTE_RETOUR,	
+	SUM(T_COND_CHARGEE.ECART) AS la_somme_ECART,	
+	SUM(T_COND_CHARGEE.QTE_CHARGEE) AS la_somme_QTE_CHARGEE,	
+	T_CHARGEMENT.VALID AS VALID
+FROM 
+	T_CHARGEMENT,	
+	T_COND_CHARGEE
+WHERE 
+	T_CHARGEMENT.CODE_CHARGEMENT = T_COND_CHARGEE.CODE_CHARGEMENT
+	AND
+	(
+		T_COND_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+	)
+GROUP BY 
+	T_COND_CHARGEE.DATE_CHARGEMENT,	
+	T_COND_CHARGEE.CODE_COND,	
+	T_CHARGEMENT.VALID
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_reception(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_CAISSE) AS la_somme_QTE_CAISSE,	
+	SUM(T_MOUVEMENTS.QTE_PAL) AS la_somme_QTE_PAL
+FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.TYPE_MOUVEMENT = 'R'
+	AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	AND	T_MOUVEMENTS.CODE_ARTICLE = {Param_code_article}
+GROUP BY 
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.DATE_MVT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_reconaissances(self, kwargs):
+        query = '''
+SELECT 
+	T_RECONAISSANCES.DATE_RECONAISS AS DATE_RECONAISS,	
+	SUM(T_RECONAISSANCES.SOLDE_C_STD) AS la_somme_SOLDE_C_STD,	
+	SUM(T_RECONAISSANCES.SOLDE_P_AG) AS la_somme_SOLDE_P_AG,	
+	SUM(T_RECONAISSANCES.SOLDE_P_UHT) AS la_somme_SOLDE_P_UHT,	
+	SUM(T_RECONAISSANCES.SOLDE_C_AG) AS la_somme_SOLDE_C_AG,	
+	SUM(T_RECONAISSANCES.SOLDE_C_PR) AS la_somme_SOLDE_C_PR,	
+	SUM(T_RECONAISSANCES.SOLDE_C_BLC) AS la_somme_SOLDE_C_BLC,	
+	SUM(T_RECONAISSANCES.SOLDE_P_EURO) AS la_somme_SOLDE_P_EURO
+FROM 
+	T_RECONAISSANCES
+WHERE 
+	T_RECONAISSANCES.DATE_RECONAISS = {Param_date_reconaissance}
+	AND	T_RECONAISSANCES.DATE_RECONAISS <= {Param_date_max}
+GROUP BY 
+	T_RECONAISSANCES.DATE_RECONAISS
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_reglement(self, kwargs):
+        query = '''
+SELECT 
+	T_DECOMPTE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_DECOMPTE.REGLEMENT AS REGLEMENT,	
+	SUM(T_DECOMPTE.MONTANT) AS la_somme_MONTANT
+FROM 
+	T_DECOMPTE
+WHERE 
+	T_DECOMPTE.REGLEMENT = {Param_type_reg}
+	AND	T_DECOMPTE.DATE_VALIDATION = {Param_date_reglement}
+	AND	T_DECOMPTE.MODE_PAIEMENT <> 'R'
+GROUP BY 
+	T_DECOMPTE.DATE_VALIDATION,	
+	T_DECOMPTE.REGLEMENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_regularisation_MS(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT,	
+	T_MOUVEMENTS.MOTIF AS MOTIF
+FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'G'
+	AND	T_MOUVEMENTS.TYPE_PRODUIT = 'PRODUIT'
+	AND	T_MOUVEMENTS.MOTIF IN ({Param_motif}) 
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT,	
+	T_MOUVEMENTS.MOTIF,	
+	T_MOUVEMENTS.CODE_MAGASIN
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_remise_ca(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	SUM(( T_PRODUITS_CHARGEE.TOTAL_VENDU * ( T_PRODUITS_CHARGEE.PRIX - T_PRODUITS_CHARGEE.PRIX_VNT ) ) ) AS la_somme_Remise_CA
+FROM 
+	T_PRODUITS_CHARGEE
+WHERE 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_DATE_CHARGEMENT}
+GROUP BY 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_retour_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
+	T_PRODUITS_LIVREES.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.TYPE_MVT AS TYPE_MVT,	
+	SUM(T_PRODUITS_LIVREES.QTE_CHARGEE) AS la_somme_QTE_CHARGEE
+FROM 
+	T_LIVRAISON,	
+	T_PRODUITS_LIVREES
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
+	AND
+	(
+		T_PRODUITS_LIVREES.TYPE_MVT = 'R'
+		AND	T_PRODUITS_LIVREES.code_secteur = {Param_code_secteur}
+		AND	T_PRODUITS_LIVREES.DATE_VALIDATION = {Param_date_validation}
+		AND	T_LIVRAISON.STATUT <> 'A'
+	)
+GROUP BY 
+	T_PRODUITS_LIVREES.code_secteur,	
+	T_PRODUITS_LIVREES.CODE_ARTICLE,	
+	T_PRODUITS_LIVREES.TYPE_MVT,	
+	T_PRODUITS_LIVREES.DATE_VALIDATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_solde_autorise(self, kwargs):
+        query = '''
+SELECT 
+	T_AUTORISATIONS_SOLDE.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	SUM(T_AUTORISATIONS_SOLDE.MONTANT) AS la_somme_MONTANT
+FROM 
+	T_AUTORISATIONS_SOLDE
+WHERE 
+	T_AUTORISATIONS_SOLDE.DATE_OPERATION <= {Param_dt}
+	AND	T_AUTORISATIONS_SOLDE.DATE_ECHU >= {Param_dt}
+GROUP BY 
+	T_AUTORISATIONS_SOLDE.CODE_OPERATEUR
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_solde_init_clients(self, kwargs):
+        query = '''
+SELECT 
+	T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE AS DATE_JOURNEE,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_C_STD) AS la_somme_SOLDE_C_STD,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_P_AG) AS la_somme_SOLDE_P_AG,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_P_UHT) AS la_somme_SOLDE_P_UHT,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_C_AG) AS la_somme_SOLDE_C_AG,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_C_PR) AS la_somme_SOLDE_C_PR,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_P_EURO) AS la_somme_SOLDE_P_EURO,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_C_BLC) AS la_somme_SOLDE_C_BLC,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_CS1) AS la_somme_SOLDE_CS1,	
+	SUM(T_SOLDE_INITIAL_CLIENT.SOLDE_CS2) AS la_somme_SOLDE_CS2
+FROM 
+	T_SOLDE_INITIAL_CLIENT
+WHERE 
+	T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = {Param_date_journee}
+GROUP BY 
+	T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_solde_initial(self, kwargs):
+        query = '''
+SELECT 
+	T_SOLDE_INITIAL.DATE_JOURNEE AS DATE_JOURNEE,	
+	SUM(T_SOLDE_INITIAL.SOLDE_PRODUITS) AS la_somme_SOLDE_PRODUITS,	
+	T_OPERATEUR.FONCTION AS FONCTION,	
+	SUM(T_SOLDE_INITIAL.MT_ECART) AS la_somme_MT_ECART,	
+	SUM(T_SOLDE_INITIAL.MT_A_VERSER) AS la_somme_MT_A_VERSER,	
+	SUM(T_SOLDE_INITIAL.MT_VERSER) AS la_somme_MT_VERSER,	
+	SUM(T_SOLDE_INITIAL.MT_CHEQUES) AS la_somme_MT_CHEQUES
+FROM 
+	T_OPERATEUR,	
+	T_SOLDE_INITIAL
+WHERE 
+	T_OPERATEUR.CODE_OPERATEUR = T_SOLDE_INITIAL.CODE_OPERATEUR
+	AND
+	(
+		T_SOLDE_INITIAL.DATE_JOURNEE = {Param_date_journee}
+	)
+GROUP BY 
+	T_SOLDE_INITIAL.DATE_JOURNEE,	
+	T_OPERATEUR.FONCTION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_sortie_rendus(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT AS QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT
+FROM 
+	T_MOUVEMENTS,	
+	T_OPERATIONS
+WHERE 
+	T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS.ORIGINE
+	AND
+	(
+		T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
+		AND	T_OPERATIONS.SOUS_TYPE_OPERATION = 'V'
+		AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+		AND	T_MOUVEMENTS.QTE_MOUVEMENT < 0
+		AND	T_MOUVEMENTS.TYPE_PRODUIT <> 'PRODUIT'
+	)
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_statistiques(self, kwargs):
+        query = '''
+SELECT 
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
+	SUM(T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
+	SUM(T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
+	SUM(T_STATISTIQUES.VENTE) AS la_somme_VENTE
+FROM 
+	T_ARTICLES,	
+	T_STATISTIQUES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
+	AND
+	(
+		T_STATISTIQUES.code_secteur = {Param_code_secteur}
+		AND	T_STATISTIQUES.DATE_JOURNEE BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_ARTICLES.CODE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_statistiques_canal(self, kwargs):
+        query = '''
+SELECT 
+	T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
+	SUM(T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
+	SUM(T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
+	SUM(T_STATISTIQUES.VENTE) AS la_somme_VENTE
+FROM 
+	T_ARTICLES,	
+	T_STATISTIQUES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
+	AND
+	(
+		T_STATISTIQUES.code_secteur = {Param_code_secteur}
+		AND	T_STATISTIQUES.DATE_JOURNEE BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_ARTICLES.CODE_PRODUIT,	
+	T_STATISTIQUES.CATEGORIE
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_statistiques_client(self, kwargs):
+        query = '''
+SELECT 
+	T_STATISTIQUES.CODE_CLIENT AS CODE_CLIENT,	
+	T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
+	SUM(T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
+	SUM(T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
+	SUM(T_STATISTIQUES.VENTE) AS la_somme_VENTE
+FROM 
+	T_ARTICLES,	
+	T_STATISTIQUES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
+	AND
+	(
+		T_STATISTIQUES.DATE_JOURNEE BETWEEN {Param_dt1} AND {Param_dt2}
+		AND	T_STATISTIQUES.CODE_CLIENT = {Param_code_client}
+	)
+GROUP BY 
+	T_ARTICLES.CODE_PRODUIT,	
+	T_STATISTIQUES.CATEGORIE,	
+	T_STATISTIQUES.CODE_CLIENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_susp_operateur(self, kwargs):
+        query = '''
+SELECT 
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_STD + T_DT_PRELEVEMENT_COND.DECON_STD + T_DT_PRELEVEMENT_COND.PRIME_STD) AS DR_STD,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_AGR + T_DT_PRELEVEMENT_COND.DECON_AGR + T_DT_PRELEVEMENT_COND.PRIME_AGR) AS DR_AGR,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PRM + T_DT_PRELEVEMENT_COND.DECON_PRM + T_DT_PRELEVEMENT_COND.PRIME_PRM) AS DR_PRM,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PAG + T_DT_PRELEVEMENT_COND.DECON_PAG + T_DT_PRELEVEMENT_COND.PRIME_PAG) AS DR_PAG,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_PUHT + T_DT_PRELEVEMENT_COND.DECON_PUHT + T_DT_PRELEVEMENT_COND.PRIME_PUHT) AS DR_PUHT
+FROM 
+	T_PRELEVEMENT_SUSP_COND,	
+	T_DT_PRELEVEMENT_COND
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
+	AND
+	(
+		T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION <> '19000101000000'
+	)
+GROUP BY 
+	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION,	
+	T_DT_PRELEVEMENT_COND.CODE_OPERATEUR
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_transfert_entree(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT AS QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION AS SOUS_TYPE_OPERATION
+FROM 
+	T_OPERATIONS,	
+	T_MOUVEMENTS
+WHERE 
+	T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS.ORIGINE
+	AND
+	(
+		T_MOUVEMENTS.QTE_MOUVEMENT > 0
+		AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+		AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
+		AND	T_MOUVEMENTS.TYPE_PRODUIT = 'PRODUIT'
+		AND	T_OPERATIONS.SOUS_TYPE_OPERATION <> {Param_sous_type}
+	)
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_transfert_produit_entre_mags(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT AS QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT,	
+	T_MOUVEMENTS.CODE_MAGASIN AS CODE_MAGASIN
+FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
+	AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	AND	T_MOUVEMENTS.TYPE_PRODUIT = 'PRODUIT'
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT,	
+	T_MOUVEMENTS.CODE_MAGASIN
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_transfert_rendus(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT AS QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT
+FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
+	AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	AND	T_MOUVEMENTS.QTE_MOUVEMENT > 0
+	AND	T_MOUVEMENTS.TYPE_PRODUIT <> 'PRODUIT'
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_transfert_sortie(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT AS QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT,	
+	T_OPERATIONS.CODE_MAGASIN2 AS CODE_MAGASIN2
+FROM 
+	T_OPERATIONS,	
+	T_MOUVEMENTS
+WHERE 
+	T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS.ORIGINE
+	AND
+	(
+		T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+		AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
+		AND	T_MOUVEMENTS.TYPE_PRODUIT = 'PRODUIT'
+		AND	T_OPERATIONS.CODE_MAGASIN2 = 0
+		AND	T_MOUVEMENTS.QTE_MOUVEMENT < 0
+	)
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT,	
+	T_OPERATIONS.CODE_MAGASIN2
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_total_transferts_produit(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT AS QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT
+FROM 
+	T_OPERATIONS,	
+	T_MOUVEMENTS
+WHERE 
+	T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS.ORIGINE
+	AND
+	(
+		T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+		AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
+		AND	T_MOUVEMENTS.TYPE_PRODUIT = 'PRODUIT'
+		AND	T_OPERATIONS.CODE_MAGASIN2 = {Param_code_mag2}
+	)
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_tournee_chargement(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur AS code_secteur,	
+	T_CHARGEMENT.CODE_TOURNEE AS CODE_TOURNEE,	
+	T_TOURNEES.NOM_TOURNEE AS NOM_TOURNEE
+FROM 
+	T_CHARGEMENT,	
+	T_TOURNEES
+WHERE 
+	T_CHARGEMENT.CODE_TOURNEE = T_TOURNEES.CODE_TOURNEE
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+		AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_tournee_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_TOURNEES.CODE_TOURNEE AS CODE_TOURNEE,	
+	T_TOURNEES.code_secteur AS code_secteur,	
+	T_SECTEUR.ACTIF AS ACTIF
+FROM 
+	T_SECTEUR,	
+	T_TOURNEES
+WHERE 
+	T_SECTEUR.code_secteur = T_TOURNEES.code_secteur
+	AND
+	(
+		T_SECTEUR.ACTIF = 1
+		AND	T_TOURNEES.code_secteur = {Param_code_secteur}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_transfert_rendus_par_categorie(self, kwargs):
+        query = '''
+SELECT 
+	T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT AS TYPE_PRODUIT,	
+	T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT AS QTE_MOUVEMENT,	
+	SUM(T_MOUVEMENTS.QTE_MOUVEMENT) AS la_somme_QTE_MOUVEMENT
+FROM 
+	T_MOUVEMENTS
+WHERE 
+	T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
+	AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+	AND	T_MOUVEMENTS.QTE_MOUVEMENT > 0
+	AND	T_MOUVEMENTS.TYPE_PRODUIT <> 'PRODUIT'
+GROUP BY 
+	T_MOUVEMENTS.DATE_MVT,	
+	T_MOUVEMENTS.TYPE_MOUVEMENT,	
+	T_MOUVEMENTS.TYPE_PRODUIT,	
+	T_MOUVEMENTS.CODE_ARTICLE,	
+	T_MOUVEMENTS.QTE_MOUVEMENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_type_produit_mag(self, kwargs):
+        query = '''
+SELECT 
+	T_TYPE_PRODUIT_MAG.CODE_MAGASIN AS CODE_MAGASIN,	
+	T_TYPE_PRODUIT_MAG.PRODUIT AS PRODUIT
+FROM 
+	T_TYPE_PRODUIT_MAG
+WHERE 
+	T_TYPE_PRODUIT_MAG.CODE_MAGASIN = {Param_code_magasin}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_upd_chargement_1(self, kwargs):
+        query = '''
+UPDATE 
+	T_CHARGEMENT
+SET
+	VALID = {Param_VALID},	
+	MONTANT_A_VERSER = {Param_MONTANT_A_VERSER},	
+	CODE_PREVENDEUR = {Param_CODE_PREVENDEUR}
+WHERE 
+	T_CHARGEMENT.CODE_CHARGEMENT = {Param_CODE_CHARGEMENT}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_upd_etat_liv(self, kwargs):
+        query = '''
+UPDATE 
+	T_LIVRAISON
+SET
+	MOTIF_ENVOI = {Param_motif}
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = {Param_num_livraison}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_upd_maj_secteur(self, kwargs):
+        query = '''
+UPDATE 
+	T_SECTEUR
+SET
+	DERNIER_MAJ = {Param_dernier_maj}
+WHERE 
+	T_SECTEUR.code_secteur = {Param_cde_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_upd_num_commande(self, kwargs):
+        query = '''
+UPDATE 
+	T_COMMANDES
+SET
+	NUM_COMMANDE = {Param_NUM_COMMANDE}
+WHERE 
+	T_COMMANDES.ID_COMMANDE = {Param_ID_COMMANDE}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_upd_remise_lait(self, kwargs):
+        query = '''
+UPDATE 
+	T_REMISE_CLIENT
+SET
+	CA_MOY_LAIT = {Param_CA_MOY_LAIT},	
+	MT_REMISE_LAIT = {Param_MT_REMISE_LAIT},	
+	TX_LAIT = {Param_TX_LAIT}
+WHERE 
+	T_REMISE_CLIENT.Date_Debut = {Param_DATE_DEBUT}
+	AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_CODE_CLIENT}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_upd_statut_remise(self, kwargs):
+        query = '''
+UPDATE 
+	T_REMISE_CLIENT
+SET
+	STATUT = {Param_STATUT}
+WHERE 
+	T_REMISE_CLIENT.Date_Debut = {Param_DATE_DEBUT}
+	AND	T_REMISE_CLIENT.STATUT = {Param_STATUT_ACT}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_upd_statut_remise_client(self, kwargs):
+        query = '''
+UPDATE 
+	T_REMISE_CLIENT
+SET
+	STATUT = {Param_STATUT}
+WHERE 
+	T_REMISE_CLIENT.Date_Debut = {Param_DATE_DEBUT}
+	AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_CODE_CLIENT}
+	AND	T_REMISE_CLIENT.STATUT = {Param_STATUT_ACT}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_affectation_bl(self, kwargs):
+        query = '''
+UPDATE 
+	T_LIVRAISON
+SET
+	code_vendeur = {Param_code_vendeur}
+WHERE 
+	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+	AND	T_LIVRAISON.code_secteur = {Param_code_secteur}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_affectation_logistique(self, kwargs):
+        query = '''
+UPDATE 
+	T_CHARGEMENT
+SET
+	Id_Vehicule = {ParamID_VEHICULE},	
+	ID_VEHICULE_PV = {ParamID_VEHICULE_PV},	
+	ID_TRANSPORTEUR = {id_proprietaire}
+WHERE 
+	T_CHARGEMENT.DATE_CHARGEMENT = {ParamDATE_CHARGEMENT}
+	AND	T_CHARGEMENT.code_secteur = {ParamCODE_SECTEUR}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_cloture2(self, kwargs):
+        query = '''
+UPDATE 
+	T_JOURNEE
+SET
+	CLOTURE = {Param_CLOTURE}
+WHERE 
+	T_JOURNEE.DATE_JOURNEE = {Param_DATE_JOURNEE}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_commande(self, kwargs):
+        query = '''
+UPDATE 
+	T_COMMANDES
+SET
+	TYPE_COMMANDE = {Param_type_commande},	
+	DATE_LIVRAISON = {Param_date_livraison},	
+	code_secteur = {Param_code_secteur},	
+	CODE_CLIENT = {Param_code_client},	
+	NUM_COMMANDE = {Param_num_commande},	
+	OS = {ParamOS}
+WHERE 
+	T_COMMANDES.ID_COMMANDE = {Param_id_commande}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_cond(self, kwargs):
+        query = '''
+UPDATE 
+	T_MAGASIN_COND
+SET
+	QTE_STOCK = {Param_qte}
+WHERE 
+	T_MAGASIN_COND.CODE_MAGASIN = {Param_magasin}
+	AND	T_MAGASIN_COND.CODE_CP = {Param_code_cp}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_dispo(self, kwargs):
+        query = '''
+UPDATE 
+	T_ARTICLES
+SET
+	DISPO = {Param_dispo}
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = {Param_code_article}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_info_trajet(self, kwargs):
+        query = '''
+UPDATE 
+	T_CHARGEMENT
+SET
+	HEURE_SORTIE = {Param_dateheure_sortie},	
+	HEURE_ENTREE = {Param_dateheure_entree},	
+	KM_PARCOURUS = {Param_km_parcourus},	
+	HEURE_ENTREE_EXEMP = {Param_heure_exemp}
+WHERE 
+	T_CHARGEMENT.CODE_CHARGEMENT = {Param_code_chargement}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_ligne_commande(self, kwargs):
+        query = '''
+UPDATE 
+	T_LIGNE_COMMANDE
+SET
+	QTE_LIVREE = {Param_qte_livree},	
+	QTE_PROMO = {Param_qte_promo},	
+	PRIX = {Param_prix},	
+	TX_GRATUIT = {Param_tx_gratuit}
+WHERE 
+	T_LIGNE_COMMANDE.ID_COMMANDE = {Param_id_commande}
+	AND	T_LIGNE_COMMANDE.CODE_ARTICLE = {Param_code_article}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_motif_non_commande(self, kwargs):
+        query = '''
+UPDATE 
+	T_SYNTHESE_LIVRAISON
+SET
+	MOTIF_NON_COMMANDE = {Param_MOTIF_NON_COMMANDE}
+WHERE 
+	T_SYNTHESE_LIVRAISON.DATE_JOURNEE = {Param_DATE_JOURNEE}
+	AND	T_SYNTHESE_LIVRAISON.CODE_CLIENT = {Param_CODE_CLIENT}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_motif_non_livraison(self, kwargs):
+        query = '''
+UPDATE 
+	T_LIVRAISON
+SET
+	MOTIF_NON_VALIDATION = {Param_MOTIF_NON_VALIDATION}
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = {Param_NUM_LIVRAISON}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_NS_CAISSERIE(self, kwargs):
+        query = '''
+UPDATE 
+	T_JOURNEE
+SET
+	SOLDE_EMB = {Param_solde_emballage},	
+	NS_C_STD = {Param_NS_STD},	
+	NS_P_AG = {Param_NS_P_AG},	
+	NS_P_UHT = {Param_NS_P_UHT},	
+	NS_C_AG = {Param_NS_C_AG},	
+	NS_C_PR = {Param_NS_C_PR},	
+	NS_PAL_EURO = {Param_NS_EURO},	
+	NS_CS_BLC = {Param_NS_C_BLC},	
+	NV_CS1 = {Param_NV_CS1}
+WHERE 
+	T_JOURNEE.DATE_JOURNEE = {Param_date_journee}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_operateur_versement(self, kwargs):
+        query = '''
+UPDATE 
+	T_DECOMPTE
+SET
+	CODE_OPERATEUR = {Param_nouv_operateur}
+WHERE 
+	T_DECOMPTE.CODE_OPERATEUR = {Param_operateur}
+	AND	T_DECOMPTE.DATE_DECOMPTE = {Param_date_decompte}
+	AND	T_DECOMPTE.MODE_PAIEMENT = 'E'
+	AND	T_DECOMPTE.REGLEMENT = 0
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_prix(self, kwargs):
+        query = '''
+UPDATE 
+	T_PRIX_AGENCE
+SET
+	PRIX_VENTE = {Param_prix}
+WHERE 
+	T_PRIX_AGENCE.CODE_AGCE = {Param_code_agce}
+	AND	T_PRIX_AGENCE.CODE_ARTICLE = {Param_code_article}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_tx_couverture_article(self, kwargs):
+        query = '''
+UPDATE 
+	T_ARTICLES
+SET
+	TX_COUVERTURE = {Param_tx_couverture}
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = {Param_code_article}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_vendeur_chargement(self, kwargs):
+        query = '''
+UPDATE 
+	T_PRODUITS_CHARGEE
+SET
+	code_vendeur = {Param_code_vendeur}
+WHERE 
+	T_PRODUITS_CHARGEE.CODE_CHARGEMENT = {Param_code_chargement}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_update_vendeur_cond(self, kwargs):
+        query = '''
+UPDATE 
+	T_COND_CHARGEE
+SET
+	CODE_OPERATEUR = {Param_code_vendeur}
+WHERE 
+	T_COND_CHARGEE.CODE_CHARGEMENT = {Param_code_chargement}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_val_livraison(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON
+FROM 
+	T_LIVRAISON
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = {Param_num_livraison}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_val_objectif_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_OBJECTIF_SECTEURS.DATE_OBJECTIF AS DATE_OBJECTIF,	
+	T_OBJECTIF_SECTEURS.code_secteur AS code_secteur,	
+	SUM(( T_OBJECTIF_SECTEURS.QTE_OBJECTIF * T_PRIX.PRIX ) ) AS VALEUR_OBJECTIF
+FROM 
+	T_PRIX,	
+	T_OBJECTIF_SECTEURS,	
+	T_ARTICLES,	
+	T_PRODUITS
+WHERE 
+	T_OBJECTIF_SECTEURS.CODE_PRODUIT = T_PRIX.CODE_ARTICLE
+	AND		T_ARTICLES.CODE_PRODUIT = T_PRODUITS.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_OBJECTIF_SECTEURS.CODE_PRODUIT
+	AND
+	(
+		T_PRIX.Date_Debut <= {Param_dt}
+		AND	T_PRIX.Date_Fin >= {Param_dt}
+		AND	T_OBJECTIF_SECTEURS.DATE_OBJECTIF = {Param_dt}
+		AND	T_OBJECTIF_SECTEURS.code_secteur = {Param_code_secteur}
+		AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}
+		AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
+		AND	T_PRODUITS.CAT_PRODUIT = {Param_cat_produit}
+	)
+GROUP BY 
+	T_OBJECTIF_SECTEURS.DATE_OBJECTIF,	
+	T_OBJECTIF_SECTEURS.code_secteur
+        '''
+        return query.format(**kwargs)
+
+    
+    def req_valeur_chargement_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	SUM(( T_PRODUITS_CHARGEE.QTE_CHARGEE * T_PRODUITS_CHARGEE.PRIX ) ) AS VALEUR_CHARGEE,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_SECTEUR.RANG AS RANG,	
+	T_CHARGEMENT.vehicule AS vehicule
+FROM 
+	T_CHARGEMENT,	
+	T_PRODUITS_CHARGEE,	
+	T_SECTEUR,	
+	T_BLOC,	
+	T_ZONE,	
+	T_PRODUITS,	
+	T_ARTICLES
+WHERE 
+	T_ARTICLES.CODE_ARTICLE = T_PRODUITS_CHARGEE.CODE_ARTICLE
+	AND		T_ARTICLES.CODE_PRODUIT = T_PRODUITS.CODE_PRODUIT
+	AND		T_ZONE.CODE_ZONE = T_BLOC.CODE_ZONE
+	AND		T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
+	AND		T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
+	AND		T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
+	AND
+	(
+		T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+		AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+		AND	T_ZONE.RESP_VENTE = {Param_resp_vente}
+		AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}
+		AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
+	)
+GROUP BY 
+	T_PRODUITS_CHARGEE.code_secteur,	
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_SECTEUR.RANG,	
+	T_CHARGEMENT.vehicule
+ORDER BY 
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_valeur_chargements(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur AS code_secteur,	
+	T_CHARGEMENT.CODE_TOURNEE AS CODE_TOURNEE,	
+	T_CHARGEMENT.code_vendeur AS code_vendeur,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_TOURNEES.NOM_TOURNEE AS NOM_TOURNEE,	
+	SUM(T_CHARGEMENT.MONTANT_A_VERSER) AS la_somme_MONTANT_A_VERSER,	
+	T_CHARGEMENT.VALID AS VALID,	
+	T_OPERATEUR.Matricule AS Matricule
+FROM 
+	T_CHARGEMENT,	
+	T_TOURNEES,	
+	T_OPERATEUR
+WHERE 
+	T_CHARGEMENT.code_vendeur = T_OPERATEUR.CODE_OPERATEUR
+	AND		T_CHARGEMENT.CODE_TOURNEE = T_TOURNEES.CODE_TOURNEE
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+		AND	T_CHARGEMENT.VALID = 1
+	)
+GROUP BY 
+	T_CHARGEMENT.DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur,	
+	T_CHARGEMENT.CODE_TOURNEE,	
+	T_CHARGEMENT.code_vendeur,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_TOURNEES.NOM_TOURNEE,	
+	T_CHARGEMENT.VALID,	
+	T_OPERATEUR.Matricule
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_valeur_commande(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
+	T_COMMANDES.TYPE_COMMANDE AS TYPE_COMMANDE,	
+	T_COMMANDES.code_secteur AS code_secteur,	
+	T_COMMANDES.CODE_CLIENT AS CODE_CLIENT,	
+	SUM(( T_PRODUITS_COMMANDES.QTE_U * T_PRIX.PRIX ) ) AS VALEUR_COMMANDE
+FROM 
+	T_ARTICLES,	
+	T_PRIX,	
+	T_PRODUITS_COMMANDES,	
+	T_COMMANDES,	
+	T_PRODUITS
+WHERE 
+	T_COMMANDES.ID_COMMANDE = T_PRODUITS_COMMANDES.ID_COMMANDE
+	AND		T_ARTICLES.CODE_PRODUIT = T_PRODUITS.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRODUITS_COMMANDES.CODE_ARTICLE
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRIX.CODE_ARTICLE
+	AND
+	(
+		T_COMMANDES.TYPE_COMMANDE = {Param_type_commande}
+		AND	T_COMMANDES.code_secteur = {Param_code_secteur}
+		AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}
+		AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
+		AND	T_PRODUITS.CAT_PRODUIT = {Param_cat_produit}
+		AND	T_COMMANDES.CODE_CLIENT = {Param_code_client}
+		AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+		AND	T_PRIX.Date_Debut <= {Param_date_livraison}
+		AND	T_PRIX.Date_Fin >= {Param_date_livraison}
+	)
+GROUP BY 
+	T_COMMANDES.DATE_LIVRAISON,	
+	T_COMMANDES.TYPE_COMMANDE,	
+	T_COMMANDES.code_secteur,	
+	T_COMMANDES.CODE_CLIENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_validation_cond_livraison(self, kwargs):
+        query = '''
+UPDATE 
+	T_COND_LIVRAISON
+SET
+	QTE_CHARGEE = {Param_qte_chargee},	
+	DATE_VALIDATION = {Param_date_validation}
+WHERE 
+	T_COND_LIVRAISON.NUM_LIVRAISON = {Param_nbl}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_validation_livraison_prevente(self, kwargs):
+        query = '''
+UPDATE T_LIGNE_COMMANDE
+SET QTE_LIVREE = QTE_COMMANDE
+WHERE ID_COMMANDE IN (SELECT ID_COMMANDE FROM T_COMMANDE_CLIENT WHERE DATE_COMMANDE={param_date} AND code_secteur={param_code_secteur})
+AND CODE_ARTICLE={param_code_article}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_validation_produits_livraison(self, kwargs):
+        query = '''
+UPDATE 
+	T_PRODUITS_LIVREES
+SET
+	DATE_VALIDATION = {Param_date_validation}
+WHERE 
+	T_PRODUITS_LIVREES.NUM_LIVRAISON = {Param_nbl}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_validation_repartition(self, kwargs):
+        query = '''
+UPDATE 
+	T_REPARTITION
+SET
+	VALIDATION = 1,	
+	CONTROLEUR_PRODUIT = {Param_cont_produit},	
+	CONTROLEUR_COND = {Param_cont_cond}
+WHERE 
+	T_REPARTITION.DATE_REPARTITION = {Param_date_repartition}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_vent_n1_produit(self, kwargs):
+        query = '''
+SELECT 
+	T_MOY_VENTE_ARTICLE.DATE_VENTE AS DATE_VENTE,	
+	T_MOY_VENTE_ARTICLE.CODE_PRODUIT AS CODE_ARTICLE,	
+	T_MOY_VENTE_ARTICLE.code_secteur AS code_secteur,	
+	T_MOY_VENTE_ARTICLE.QTE_VENTE AS QTE_VENTE,	
+	T_MOY_VENTE_ARTICLE.QTE_PERTE AS QTE_PERTE,	
+	T_MOY_VENTE_ARTICLE.QTE_INVENDU AS QTE_INVENDU,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT
+FROM 
+	T_ARTICLES,	
+	T_MOY_VENTE_ARTICLE,	
+	T_PRODUITS
+WHERE 
+	T_ARTICLES.CODE_PRODUIT = T_PRODUITS.CODE_PRODUIT
+	AND		T_ARTICLES.CODE_ARTICLE = T_MOY_VENTE_ARTICLE.CODE_PRODUIT
+	AND
+	(
+		T_MOY_VENTE_ARTICLE.DATE_VENTE = {Param_date}
+		AND	T_MOY_VENTE_ARTICLE.code_secteur = {Param_code_secteur}
+		AND	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}
+		AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_vente_n1_client(self, kwargs):
+        query = '''
+SELECT 
+	T_MOY_VENTE_CLIENTS.DATE_VENTE AS DATE_VENTE,	
+	T_MOY_VENTE_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_MOY_VENTE_CLIENTS.CODE_PRODUIT AS CODE_ARTICLE,	
+	T_MOY_VENTE_CLIENTS.QTE_VENTE AS QTE_VENTE,	
+	T_MOY_VENTE_CLIENTS.QTE_PERTE AS QTE_PERTE
+FROM 
+	T_MOY_VENTE_CLIENTS
+WHERE 
+	T_MOY_VENTE_CLIENTS.DATE_VENTE = {Param_date}
+	AND	T_MOY_VENTE_CLIENTS.CODE_CLIENT = {Param_code_client}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_vente_nette(self, kwargs):
+        query = '''
+SELECT 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	SUM(T_PRODUITS_CHARGEE.MONTANT) AS la_somme_MONTANT
+FROM 
+	T_PRODUITS_CHARGEE
+WHERE 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+GROUP BY 
+	T_PRODUITS_CHARGEE.DATE_CHARGEMENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ventes_secteur(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
+	T_ARTICLES.LIBELLE_COURT AS LIBELLE_COURT,	
+	T_PRODUITS_CHARGEE.PRIX AS PRIX,	
+	T_PRODUITS_CHARGEE.TOTAL_CHARGEE AS TOTAL_CHARGEE,	
+	T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE AS TOTAL_INVENDU_POINTE,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_COM AS TOTAL_RENDUS_COM,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_US AS TOTAL_RENDUS_US,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_AG AS TOTAL_RENDUS_AG,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_SP AS TOTAL_RENDUS_SP,	
+	T_PRODUITS_CHARGEE.TOTAL_GRATUIT AS TOTAL_GRATUIT,	
+	T_PRODUITS_CHARGEE.TOTAL_DONS AS TOTAL_DONS,	
+	T_PRODUITS_CHARGEE.TOTAL_REMISE AS TOTAL_REMISE,	
+	T_SECTEUR.RANG AS RANG_secteur,	
+	T_ARTICLES.RANG AS RANG_article,	
+	T_PRODUITS_CHARGEE.QTE_ECART AS QTE_ECART,	
+	T_PRODUITS_CHARGEE.TOTAL_VENDU AS TOTAL_VENDU,	
+	T_PRODUITS_CHARGEE.CREDIT AS CREDIT,	
+	T_PRODUITS_CHARGEE.QTE_CHARGEE_POINTE AS QTE_CHARGEE_POINTE,	
+	T_PRODUITS_CHARGEE.QTE_CHARGEE_VAL AS QTE_CHARGEE_VAL,	
+	T_PRODUITS_CHARGEE.QTE_CHARGEE_SUPP AS QTE_CHARGEE_SUPP,	
+	T_PRODUITS_CHARGEE.MONTANT AS MONTANT,	
+	T_PRODUITS_CHARGEE.MONTANT_CREDIT AS MONTANT_CREDIT,	
+	T_PRODUITS_CHARGEE.TOTAL_RENDUS_POINTE AS TOTAL_RENDUS_POINTE,	
+	T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
+	T_PRODUITS_CHARGEE.MONTANT_ECART AS MONTANT_ECART
+FROM 
+	T_ARTICLES,	
+	T_PRODUITS_CHARGEE,	
+	T_CHARGEMENT,	
+	T_SECTEUR
+WHERE 
+	T_CHARGEMENT.code_secteur = T_SECTEUR.code_secteur
+	AND		T_PRODUITS_CHARGEE.CODE_CHARGEMENT = T_CHARGEMENT.CODE_CHARGEMENT
+	AND		T_PRODUITS_CHARGEE.CODE_ARTICLE = T_ARTICLES.CODE_ARTICLE
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+ORDER BY 
+	RANG_secteur ASC,	
+	RANG_article ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_ventes_secteur_produit(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur AS code_secteur,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT,	
+	T_PRODUITS_CHARGEE.PRIX AS PRIX,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_CHARGEE) AS la_somme_TOTAL_CHARGEE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE) AS la_somme_TOTAL_INVENDU_POINTE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_COM) AS la_somme_TOTAL_RENDUS_COM,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_US) AS la_somme_TOTAL_RENDUS_US,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_AG) AS la_somme_TOTAL_RENDUS_AG,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_SP) AS la_somme_TOTAL_RENDUS_SP,	
+	SUM(T_PRODUITS_CHARGEE.QTE_CHARGEE_VAL) AS la_somme_QTE_CHARGEE_VAL,	
+	SUM(T_PRODUITS_CHARGEE.MONTANT_ECART) AS la_somme_MONTANT_ECART,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_POINTE) AS la_somme_TOTAL_RENDUS_POINTE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_REMISE) AS la_somme_TOTAL_REMISE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_DONS) AS la_somme_TOTAL_DONS,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_GRATUIT) AS la_somme_TOTAL_GRATUIT,	
+	SUM(T_PRODUITS_CHARGEE.MONTANT_CREDIT) AS la_somme_MONTANT_CREDIT,	
+	SUM(T_PRODUITS_CHARGEE.CREDIT) AS la_somme_CREDIT,	
+	SUM(T_PRODUITS_CHARGEE.MONTANT) AS la_somme_MONTANT,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_VENDU) AS la_somme_TOTAL_VENDU,	
+	SUM(T_PRODUITS_CHARGEE.QTE_ECART) AS la_somme_QTE_ECART,	
+	SUM(T_PRODUITS_CHARGEE.QTE_CHARGEE_SUPP) AS la_somme_QTE_CHARGEE_SUPP,	
+	SUM(T_PRODUITS_CHARGEE.QTE_CHARGEE_POINTE) AS la_somme_QTE_CHARGEE_POINTE,	
+	T_SECTEUR.RANG AS RANG_SECTEUR,	
+	MAX(T_ARTICLES.RANG) AS le_maximum_RANG,	
+	MIN(T_PRODUITS_CHARGEE.CODE_ARTICLE) AS le_minimum_CODE_ARTICLE
+FROM 
+	T_ARTICLES,	
+	T_PRODUITS_CHARGEE,	
+	T_CHARGEMENT,	
+	T_SECTEUR,	
+	T_PRODUITS
+WHERE 
+	T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND		T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
+	AND		T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRODUITS_CHARGEE.CODE_ARTICLE
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_CHARGEMENT.DATE_CHARGEMENT,	
+	T_CHARGEMENT.code_secteur,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_PRODUITS.NOM_PRODUIT,	
+	T_PRODUITS_CHARGEE.PRIX,	
+	T_SECTEUR.RANG
+ORDER BY 
+	RANG_SECTEUR ASC,	
+	le_minimum_CODE_ARTICLE ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_chargement(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.code_secteur AS code_secteur,	
+	T_CHARGEMENT.HEURE_SORTIE AS HEURE_SORTIE,	
+	T_CHARGEMENT.HEURE_ENTREE AS HEURE_ENTREE,	
+	T_CHARGEMENT.KM_PARCOURUS AS KM_PARCOURUS,	
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT
+FROM 
+	T_SECTEUR,	
+	T_CHARGEMENT
+WHERE 
+	T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
+	AND
+	(
+		T_SECTEUR.NOM_SECTEUR = {Param_nom_secteur}
+		AND	T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+	)
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_envoi_perte(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS.CATEGORIE1 AS CATEGORIE1,	
+	T_OPERATIONS.SOUS_TYPE_OPERATION AS SOUS_TYPE_OPERATION
+FROM 
+	T_OPERATIONS
+WHERE 
+	T_OPERATIONS.DATE_OPERATION = {Param_date_operation}
+	AND	T_OPERATIONS.CATEGORIE1 LIKE 'PNC%'
+	AND	T_OPERATIONS.SOUS_TYPE_OPERATION = 'V'
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_n1_clients(self, kwargs):
+        query = '''
+SELECT 
+	T_MOY_VENTE_CLIENTS.DATE_VENTE AS DATE_VENTE,	
+	T_MOY_VENTE_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT AS NOM_CLIENT,	
+	SUM(( T_MOY_VENTE_CLIENTS.QTE_VENTE * T_PRIX.PRIX ) ) AS CA_MOY
+FROM 
+	T_MOY_VENTE_CLIENTS,	
+	T_PRIX,	
+	T_CLIENTS
+WHERE 
+	T_CLIENTS.CODE_CLIENT = T_MOY_VENTE_CLIENTS.CODE_CLIENT
+	AND		T_MOY_VENTE_CLIENTS.CODE_PRODUIT = T_PRIX.CODE_ARTICLE
+	AND
+	(
+		T_PRIX.Date_Debut <= {param_dt}
+		AND	T_PRIX.Date_Fin >= {param_dt}
+		AND	T_MOY_VENTE_CLIENTS.DATE_VENTE = {param_dt}
+	)
+GROUP BY 
+	T_MOY_VENTE_CLIENTS.DATE_VENTE,	
+	T_MOY_VENTE_CLIENTS.CODE_CLIENT,	
+	T_CLIENTS.NOM_CLIENT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_n1_secteurs(self, kwargs):
+        query = '''
+SELECT 
+	T_MOY_VENTE_ARTICLE.DATE_VENTE AS DATE_VENTE,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	SUM(( T_MOY_VENTE_ARTICLE.QTE_VENTE * T_PRIX.PRIX ) ) AS CA_MOY
+FROM 
+	T_MOY_VENTE_ARTICLE,	
+	T_ARTICLES,	
+	T_PRIX,	
+	T_SECTEUR
+WHERE 
+	T_SECTEUR.code_secteur = T_MOY_VENTE_ARTICLE.code_secteur
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRIX.CODE_ARTICLE
+	AND		T_ARTICLES.CODE_ARTICLE = T_MOY_VENTE_ARTICLE.CODE_PRODUIT
+	AND
+	(
+		T_MOY_VENTE_ARTICLE.DATE_VENTE = {Param_dt}
+		AND	T_PRIX.Date_Debut <= {Param_dt}
+		AND	T_PRIX.Date_Fin >= {Param_dt}
+	)
+GROUP BY 
+	T_MOY_VENTE_ARTICLE.DATE_VENTE,	
+	T_SECTEUR.NOM_SECTEUR
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_nbl(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS.REF AS REF
+FROM 
+	T_OPERATIONS
+WHERE 
+	T_OPERATIONS.REF = {Param_num_bl}
+	AND	T_OPERATIONS.TYPE_OPERATION = 'R'
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_num_commande(self, kwargs):
+        query = '''
+SELECT 
+	T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
+	T_COMMANDES.NUM_COMMANDE AS NUM_COMMANDE
+FROM 
+	T_COMMANDES
+WHERE 
+	T_COMMANDES.NUM_COMMANDE = {Param_num_commande}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_prelev_caisserie(self, kwargs):
+        query = '''
+SELECT 
+	T_PRELEVEMENT_SUSP_COND.DATE_PRELEV AS DATE_PRELEV,	
+	SUM(T_DT_PRELEVEMENT_COND.SOLDE_STD) AS la_somme_SOLDE_STD
+FROM 
+	T_PRELEVEMENT_SUSP_COND,	
+	T_DT_PRELEVEMENT_COND
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
+	AND
+	(
+		T_PRELEVEMENT_SUSP_COND.DATE_PRELEV = {Param_date_prelev}
+	)
+GROUP BY 
+	T_PRELEVEMENT_SUSP_COND.DATE_PRELEV
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_prelevement(self, kwargs):
+        query = '''
+SELECT 
+	T_PRELEVEMENT_SUSP_COND.DATE_PRELEV AS DATE_PRELEV,	
+	SUM(T_DT_PRELEVEMENT_COND.SUSP_VENTE) AS la_somme_SUSP_VENTE
+FROM 
+	T_PRELEVEMENT_SUSP_COND,	
+	T_DT_PRELEVEMENT_COND
+WHERE 
+	T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
+	AND
+	(
+		T_PRELEVEMENT_SUSP_COND.DATE_PRELEV = {Param_date_prelev}
+	)
+GROUP BY 
+	T_PRELEVEMENT_SUSP_COND.DATE_PRELEV
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_synchro(self, kwargs):
+        query = '''
+SELECT 
+	T_SYNCHRO.OPERATION AS OPERATION,	
+	T_SYNCHRO.SOUS_OPERATION AS SOUS_OPERATION,	
+	T_SYNCHRO.ID_OPERATION AS ID_OPERATION
+FROM 
+	T_SYNCHRO
+WHERE 
+	T_SYNCHRO.OPERATION = {Param_operation}
+	AND	T_SYNCHRO.SOUS_OPERATION = {Param_sous_operation}
+	AND	T_SYNCHRO.ID_OPERATION = {Param_id_operation}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_trait_pda(self, kwargs):
+        query = '''
+SELECT 
+	T_HIST_TRAITEMENT_PDA.code_secteur AS code_secteur,	
+	T_HIST_TRAITEMENT_PDA.DATE_JOURNEE AS DATE_JOURNEE,	
+	T_HIST_TRAITEMENT_PDA.VALID AS VALID,	
+	T_HIST_TRAITEMENT_PDA.MT_A_VERSER AS MT_A_VERSER
+FROM 
+	T_HIST_TRAITEMENT_PDA
+WHERE 
+	T_HIST_TRAITEMENT_PDA.code_secteur = {Param_code_secteur}
+	AND	T_HIST_TRAITEMENT_PDA.DATE_JOURNEE = {Param_date_journee}
+	AND	T_HIST_TRAITEMENT_PDA.VALID = 1
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_traitement(self, kwargs):
+        query = '''
+SELECT 
+	T_HISTORIQUE_OPERATIONS.COMMENTAIRE AS COMMENTAIRE
+FROM 
+	T_HISTORIQUE_OPERATIONS
+WHERE 
+	T_HISTORIQUE_OPERATIONS.COMMENTAIRE = {Param_cmt}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_verif_tx_remise(self, kwargs):
+        query = '''
+SELECT DISTINCT 
+	T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
+	T_REMISE_CLIENT.TX_DERIVES AS TX_DERIVES
+FROM 
+	T_REMISE_CLIENT
+WHERE 
+	T_REMISE_CLIENT.Date_Debut = {Param_date_debut}
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_versement_non_envoyer(self, kwargs):
+        query = '''
+SELECT 
+	T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
+	T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
+	T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
+	T_OPERATIONS_CAISSE.NUM_PIECE AS NUM_PIECE,	
+	T_OPERATIONS_CAISSE.COMPTE_VERSEMENT AS COMPTE_VERSEMENT,	
+	T_OPERATIONS_CAISSE.COMMENTAIRE AS COMMENTAIRE,	
+	T_OPERATIONS_CAISSE.MONTANT AS MONTANT,	
+	T_COMPTES.NUM_COMPTE AS NUM_COMPTE,	
+	T_BANQUES.LIBELLE AS LIBELLE,	
+	T_OPERATIONS_CAISSE.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_OPERATIONS_CAISSE.MOTIF_ENVOI AS MOTIF_ENVOI
+FROM 
+	T_BANQUES,	
+	T_COMPTES,	
+	T_OPERATIONS_CAISSE
+WHERE 
+	T_COMPTES.CODE_COMPTE = T_OPERATIONS_CAISSE.COMPTE_VERSEMENT
+	AND		T_BANQUES.NUM_BANQUE = T_COMPTES.BANQUE
+	AND
+	(
+		T_OPERATIONS_CAISSE.MOTIF_ENVOI <> 1
+	)
+ORDER BY 
+	CODE_OPERATION DESC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Req_zero_stock(self, kwargs):
+        query = '''
+UPDATE 
+	T_ARTICLES_MAGASINS
+SET
+	QTE_STOCK = 0
+        '''
+        return query.format(**kwargs)
+
+    
+    def Requ_mvt_cond_gms(self, kwargs):
+        query = '''
+SELECT 
+	T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
+	T_LIVRAISON.DATE_VALIDATION AS DATE_VALIDATION,	
+	T_LIVRAISON.STATUT AS STATUT,	
+	T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+	T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
+	SUM(T_COND_LIVRAISON.QTE_CHARGEE) AS la_somme_QTE_CHARGEE
+FROM 
+	T_LIVRAISON,	
+	T_COND_LIVRAISON
+WHERE 
+	T_LIVRAISON.NUM_LIVRAISON = T_COND_LIVRAISON.NUM_LIVRAISON
+	AND
+	(
+		T_LIVRAISON.DATE_VALIDATION = {Param_date_livraison}
+		AND	T_LIVRAISON.STATUT <> 'A'
+		AND	T_COND_LIVRAISON.CODE_CP = {Param_code_cp}
+		AND	T_LIVRAISON.TYPE_MVT IN ('l', 'R') 
+	)
+GROUP BY 
+	T_LIVRAISON.DATE_VALIDATION,	
+	T_LIVRAISON.STATUT,	
+	T_LIVRAISON.CODE_CLIENT,	
+	T_COND_LIVRAISON.CODE_CP,	
+	T_LIVRAISON.TYPE_MVT
+        '''
+        return query.format(**kwargs)
+
+    
+    def Requête1(self, kwargs):
+        query = '''
+SELECT 
+	T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
+	T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
+	T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR,	
+	T_GAMME.NOM_GAMME AS NOM_GAMME,	
+	T_FAMILLE.NOM_FAMILLE AS NOM_FAMILLE,	
+	T_PRODUITS.NOM_PRODUIT AS NOM_PRODUIT,	
+	T_ARTICLES.LIBELLE_COURT AS LIBELLE_COURT,	
+	T_ARTICLES.RANG AS RANG,	
+	T_PRODUITS_CHARGEE.PRIX AS PRIX,	
+	SUM(T_PRODUITS_CHARGEE.MONTANT) AS la_somme_MONTANT,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_CHARGEE) AS la_somme_TOTAL_CHARGEE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_VENDU) AS la_somme_TOTAL_VENDU,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_INVENDU_POINTE) AS la_somme_TOTAL_INVENDU_POINTE,	
+	SUM(T_PRODUITS_CHARGEE.TOTAL_RENDUS_POINTE) AS la_somme_TOTAL_RENDUS_POINTE
+FROM 
+	T_GAMME,	
+	T_FAMILLE,	
+	T_PRODUITS,	
+	T_ARTICLES,	
+	T_PRODUITS_CHARGEE,	
+	T_CHARGEMENT,	
+	T_OPERATEUR,	
+	T_SECTEUR
+WHERE 
+	T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
+	AND		T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
+	AND		T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
+	AND		T_ARTICLES.CODE_ARTICLE = T_PRODUITS_CHARGEE.CODE_ARTICLE
+	AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
+	AND		T_FAMILLE.CODE_FAMILLE = T_PRODUITS.CODE_FAMILLE
+	AND		T_GAMME.CODE_GAMME = T_FAMILLE.CODE_GAMME
+	AND
+	(
+		T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+	)
+GROUP BY 
+	T_CHARGEMENT.DATE_CHARGEMENT,	
+	T_SECTEUR.NOM_SECTEUR,	
+	T_OPERATEUR.NOM_OPERATEUR,	
+	T_PRODUITS_CHARGEE.PRIX,	
+	T_ARTICLES.RANG,	
+	T_ARTICLES.LIBELLE_COURT,	
+	T_FAMILLE.NOM_FAMILLE,	
+	T_GAMME.NOM_GAMME,	
+	T_PRODUITS.NOM_PRODUIT
+ORDER BY 
+	DATE_CHARGEMENT ASC,	
+	NOM_SECTEUR ASC,	
+	NOM_GAMME ASC,	
+	NOM_FAMILLE ASC,	
+	NOM_PRODUIT ASC,	
+	RANG ASC
+        '''
+        return query.format(**kwargs)
+
+    
+    def Requête12(self, kwargs):
+        query = '''
+SELECT art.CODE_ARTICLE, art.LIBELLE AS nom_article,
+cm.CODE_CHARGEMENT AS cde_chargement, cm.QTE_CHARGEE AS qte_cmd
+FROM
+T_ARTICLES art
+LEFT OUTER JOIN T_PRODUITS_CHARGEE cm
+ON cm.CODE_ARTICLE = art.CODE_ARTICLE
+
+WHERE 
+cm.CODE_CHARGEMENT = 13000003
+
+        '''
+        return query.format(**kwargs)
