@@ -3500,13 +3500,20 @@ WHERE
 	AND
 	(
 		T_DECOMPTE.MODE_PAIEMENT = 'R'
-		AND	T_DECOMPTE.DATE_HEURE_VERS BETWEEN {Param1} AND {Param2}
-		AND	T_DT_DECOMPTE.GP_CLIENT = {Param_gp_client}
+		AND	T_DECOMPTE.DATE_HEURE_VERS BETWEEN '{Param1}' AND '{Param2}'
+		{OPTIONAL_ARG_1}
 	)
 ORDER BY 
 	NUM_DECOMPTE DESC
         '''
-        return query.format(**kwargs)
+        
+        kwargs['Param1'] = validate_date(kwargs['Param1'], 0)
+        kwargs['Param2'] = validate_date(kwargs['Param2'], 1)
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND T_DT_DECOMPTE.GP_CLIENT = {Param_gp_client}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_gp_client'] in (None, '', 'Null') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     @staticmethod
     def Req_ls_cheques_non_remis(kwargs):
