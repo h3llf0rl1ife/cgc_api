@@ -3353,7 +3353,6 @@ class Queries(object):
         kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_agce'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
         kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_aff_commande'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
 
-
         return query.format(**kwargs)
 
     
@@ -11694,7 +11693,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs).format(**kwargs)
 
     
-    def Req_verif_envoi_perte(self, args):
+    def Req_verif_envoi_perte(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -11703,11 +11702,23 @@ class Queries(object):
             FROM 
                 T_OPERATIONS
             WHERE 
-                T_OPERATIONS.DATE_OPERATION = {Param_date_operation}
-                AND	T_OPERATIONS.CATEGORIE1 LIKE 'PNC%'
+                T_OPERATIONS.DATE_OPERATION = '{Param_date_operation}' AND
+                T_OPERATIONS.CATEGORIE1 LIKE 'PNC%'
                 AND	T_OPERATIONS.SOUS_TYPE_OPERATION = 'V'
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_operation': args[0]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
+        kwargs['OPTIONAL_ARG_1'] = '''T_OPERATIONS.DATE_OPERATION = '{Param_date_operation}' AND'''
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_operation'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_verif_n1_clients(self, args):
