@@ -6757,7 +6757,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_modele_taches(self, args):
+    def Req_modele_taches(self, args): #Done
         query = '''
             SELECT 
                 T_MODELE_TACHES.ID_MODELE AS ID_MODELE,	
@@ -6768,6 +6768,17 @@ class Queries(object):
             WHERE 
                 T_MODELE_TACHES.ID_MODELE = {Param_id_modele}
         '''
+                
+        try:
+            kwargs = {
+                'Param_id_modele': args[0]
+            }
+        except IndexError:
+            raise
+        
+        if kwargs['Param_id_modele'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
