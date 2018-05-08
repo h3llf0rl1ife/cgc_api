@@ -4,27 +4,45 @@ from cgc_api.queries import Queries
 
 
 class APIRequest(Resource):
+    queries = Queries("192.168.64.234", "gestcom", "miftah", "Eljadida")
+
+
     def get(self):
-        return "Ok"
-
-    def put(self):
         pass
-    
+
+
     def post(self):
+        keys = {
+            'username': "OA6iJ1qRtmfnLzJyFRDJROfJahq8B5Kn",
+            'password': "3AisU6jiTgvsO9YcMtc0CYQpqDVhmxCN"
+        }
+        auth = request.authorization
+
+        if auth != None:
+            if auth.username != keys['username'] or auth.password != keys['password']:
+                return {'Status': 401}
+        else:
+            return {'Status': 401}
+
+
         data = request.get_json()
-        print(data)
+        print('data', data)
         
-        query = getattr(Queries, data['query'])
-        print(query)
+        try:
+            query = getattr(self.queries, data['Parameters']['query'])
+            #print(query)
+        except (TypeError, KeyError):
+            return {'status': 400}
+
+        kwargs = data['Parameters']['kwargs']
+
+        #print('kwargs', kwargs)
+        print('querykwargs', query(kwargs))
+
+        try:
+            return self.queries.executeQuery(query(kwargs))
+        except IndexError:
+            raise
         
-        kwargs = data['kwargs']
-        print(kwargs)
-
-        for key in kwargs:
-            kwargs[key] = 0 if kwargs[key] == '' else kwargs[key]
-
-        print(query(kwargs))
-        return {'status': 200}
-    
-    def delete(self):
-        pass
+        return {'status': 400}
+ 
