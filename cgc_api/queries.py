@@ -3366,7 +3366,7 @@ class Queries(object):
         kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_agce'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
         kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_aff_commande'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
 
-        return query.format(**kwargs)
+        return query.format(**kwargs).format(**kwargs)
 
     
     def req_ls_articles_livrees_newrest(self, args):
@@ -12319,24 +12319,24 @@ class Queries(object):
         return query.format(**kwargs)
     
 
-        def Req_conv_affiche_ls_inventaire_nom_magasin(self, kwargs): #Done2
-            query = '''
-                SELECT
-                    T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN
-                FROM
-                    T_MAGASINS
-                WHERE
-                    T_MAGASINS.CODE_MAGASIN = {code_magasin}
-            '''
+    def Req_conv_affiche_ls_inventaire_nom_magasin(self, kwargs): #Done2
+        query = '''
+            SELECT
+                T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN
+            FROM
+                T_MAGASINS
+            WHERE
+                T_MAGASINS.CODE_MAGASIN = {code_magasin}
+        '''
 
-            try:
-                kwargs = {
-                    'code_magasin': args[0]
-                }
-            except IndexError:
-                raise
-            
-            if kwargs['code_magasin'] in (None, 'NULL'):
-                raise ValueError
-            
-            return query.format(**kwargs)
+        try:
+            kwargs = {
+                'code_magasin': args[0]
+            }
+        except IndexError:
+            raise
+        
+        if kwargs['code_magasin'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
