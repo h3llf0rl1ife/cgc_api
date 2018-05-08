@@ -5326,13 +5326,34 @@ class Queries(object):
                 AND		OP.CODE_OPERATEUR = T_OPERATIONS.CODE_OPERATEUR
                 AND		T_Ordre_Mission_Agence.Id_Ordre_Mission = T_OPERATIONS.NUM_CONVOYAGE
                 AND
-                (
-                    T_OPERATIONS.CODE_AGCE1 = {Param_code_agce}
-                    AND	T_OPERATIONS.TYPE_OPERATION = {Param_type_operation}
-                    AND	T_OPERATIONS.DATE_OPERATION = {Param_date_operation}
-                )
+                {CODE_BLOCK_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_agce': args[0],
+                'Param_type_operation': args[1],
+                'Param_date_operation': args[2]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
+        kwargs['CODE_BLOCK_1'] = '''AND
+                (
+                    {OPTIONAL_ARG_1}	
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                )'''
+        kwargs['OPTIONAL_ARG_1'] = 'T_OPERATIONS.CODE_AGCE1 = {Param_code_agce} AND'
+        kwargs['OPTIONAL_ARG_2'] = 'T_OPERATIONS.TYPE_OPERATION = {Param_type_operation} AND'
+        kwargs['OPTIONAL_ARG_3'] = '''T_OPERATIONS.DATE_OPERATION = '{Param_date_operation}' '''
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_agce'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_type_operation'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_date_operation'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+
+        return query.format(**kwargs).format(**kwargs).format(**kwargs)
 
     
     def Req_ls_operations_caisse(self, args):
