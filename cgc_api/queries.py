@@ -12395,3 +12395,26 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart(self, kwargs): #Done2
+        query = '''
+            SELECT
+                T_MOUVEMENTS_CAISSERIE.COMPTE_ECART AS COMPTE_ECART
+            FROM
+                T_MOUVEMENTS_CAISSERIE
+            WHERE
+                T_MOUVEMENTS_CAISSERIE.ID_MOUVEMENT = {id_mouvement}
+        '''
+
+        try:
+            kwargs = {
+                'id_mouvement': args[0]
+            }
+        except IndexError:
+            raise
+        
+        if kwargs['id_mouvement'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
