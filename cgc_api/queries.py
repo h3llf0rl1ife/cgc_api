@@ -12340,3 +12340,26 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+    
+
+    def Req_conv_affiche_ls_inventaire_nom_operateur(self, kwargs): #Done2
+        query = '''
+            SELECT
+                T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR
+            FROM
+                T_OPERATEUR
+            WHERE
+                T_OPERATEUR.CODE_OPERATEUR = {code_operateur}
+        '''
+
+        try:
+            kwargs = {
+                'code_operateur': args[0]
+            }
+        except IndexError:
+            raise
+        
+        if kwargs['code_operateur'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
