@@ -12218,7 +12218,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
 
-    def Req_conv_generation_in_1(self, args):
+    def Req_conv_generation_in_1(self, args): #Done2
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE,
@@ -12258,7 +12258,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
 
-    def Req_conv_generation_in_2(self, args):
+    def Req_conv_generation_in_2(self, args): #Done2
         query = '''
             select T_PRODUITS.CODE_PRODUIT,NOM_PRODUIT,NOM_FAMILLE,NOM_GAMME,CYCLE from T_PRODUITS,T_FAMILLE,T_GAMME
             where T_PRODUITS.CODE_FAMILLE = T_FAMILLE.CODE_FAMILLE and T_GAMME.CODE_GAMME = T_FAMILLE.CODE_GAMME
@@ -12267,7 +12267,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_generation_in_3(self, args):
+    def Req_conv_generation_in_3(self, args): #Done2
         query = '''
             select CODE_SECTEUR,NOM_SECTEUR,CODE_ZONE,(select COUNT(*) from T_TOURNEES where T_TOURNEES.CODE_SECTEUR = T_SECTEUR.CODE_SECTEUR and T_TOURNEES.ACTIF=1)AS NB_TRN from T_SECTEUR,T_BLOC
             where T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
@@ -12276,7 +12276,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_generation_in_4(self, args):
+    def Req_conv_generation_in_4(self, args): #Done2
         query = '''
             SELECT CODE_SOUS_SECTEUR,NOM_SOUS_SECTEUR FROM T_SOUS_SECTEUR
         '''
@@ -12284,7 +12284,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_generation_in_5(self, args):
+    def Req_conv_generation_in_5(self, args): #Done2
         query = '''
             select CODE_ZONE,NOM_ZONE,SP.NOM_OPERATEUR AS SUP,RV.NOM_OPERATEUR AS RVENTE from T_ZONE,T_OPERATEUR SP,T_OPERATEUR RV
             where SP.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR
@@ -12294,7 +12294,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_generation_in_6(self, args):
+    def Req_conv_generation_in_6(self, args): #Done2
         query = '''
             select CODE_CAT_CLIENT,NOM_CATEGORIE from T_CAT_CLIENTS
         '''
@@ -12302,7 +12302,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_generation_in_7(self, args):
+    def Req_conv_generation_in_7(self, args): #Done2
         query = '''
             select T_CLIENTS.CODE_CLIENT,NOM_CLIENT,CAT_CLIENT,CLASSE,TELEPHONE,CODE_SECTEUR,TYPE_PRESENTOIRE,(select COUNT(*) from T_ITINERAIRES,T_TOURNEES where CODE_CLIENT = T_CLIENTS.CODE_CLIENT and T_ITINERAIRES.CODE_TOURNEE=T_TOURNEES.CODE_TOURNEE and T_TOURNEES.ACTIF=1) AS FRQ,ADRESSE,SOUS_SECTEUR
             from T_CLIENTS,T_SOUS_SECTEUR
@@ -12313,7 +12313,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_generation_in_8(self, args):
+    def Req_conv_generation_in_8(self, args): #Done2
         query = '''
             select T_SOUS_SECTEUR.CODE_SECTEUR,T_FACTURE.CODE_OPERATEUR,NOM_OPERATEUR,COUNT(NUM_FACTURE) as NB_FACTURE from T_FACTURE,T_CLIENTS,T_SOUS_SECTEUR,T_OPERATEUR where DATE_HEURE>='20150401' and VALID=1 and T_CLIENTS.CODE_CLIENT=T_FACTURE.CODE_CLIENT and T_CLIENTS.SOUS_SECTEUR=T_SOUS_SECTEUR.CODE_SOUS_SECTEUR
             and T_FACTURE.CODE_OPERATEUR = T_OPERATEUR.CODE_OPERATEUR
@@ -12323,7 +12323,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_generation_in_9(self, args):
+    def Req_conv_generation_in_9(self, args): #Done2
         query = '''
             select CODE_CLIENT,SUM(QTE_VENTE*PRIX)/('{param_nbj}') AS CA_MOY,COUNT( distinct T_FACTURE.NUM_FACTURE) as NB_FACTS,COUNT( distinct T_ARTICLES.CODE_PRODUIT) as NB_PRODUITS
             from T_FACTURE,T_DT_FACTURE,T_ARTICLES
@@ -12464,3 +12464,4 @@ class Queries(object):
                 raise ValueError
             
             return query.format(**kwargs)
+
