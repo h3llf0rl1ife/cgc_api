@@ -12044,7 +12044,7 @@ class Queries(object):
     def Req_conv_parametres(self, args): #Done2
         query = '''
             SELECT
-                T_PARAMETRES.ID_LIGNE AS ID_LIGNE
+                T_PARAMETRES.ID_LIGNE AS ID_LIGNE,
                 T_PARAMETRES.VALEUR AS VALEUR
             FROM
                 T_PARAMETRES
