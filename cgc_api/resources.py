@@ -20,9 +20,9 @@ class APIRequest(Resource):
 
         if auth != None:
             if auth.username != keys['username'] or auth.password != keys['password']:
-                return {'Status': 401}
+                return {'Status': 401, 'Message': 'Unauthorized access.'}
         else:
-            return {'Status': 401}
+            return {'Status': 401, 'Message': 'Unauthorized access.'}
 
 
         data = request.get_json()
@@ -31,8 +31,10 @@ class APIRequest(Resource):
         try:
             query = getattr(self.queries, data['Parameters']['query'])
             #print(query)
-        except (TypeError, KeyError):
-            return {'status': 400}
+        except AttributeError:
+            return {'Status': 404, 'Message': 'Query not found.'}
+        except (KeyError, TypeError):
+            return {'Status': 400, 'Message': 'Bad request.'}
 
         kwargs = data['Parameters']['kwargs']
 
@@ -42,7 +44,9 @@ class APIRequest(Resource):
         try:
             return self.queries.executeQuery(query(kwargs))
         except IndexError:
+            return {'Status': 400, 'Message': 'One or more arguments missing.'}
+        except ValueError:
             raise
         
-        return {'status': 400}
+        return {'Status': 400, 'Message': 'Bad request.'}
  
