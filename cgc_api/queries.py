@@ -2014,7 +2014,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dt_mouvement_cond(self, args):
+    def Req_dt_mouvement_cond(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS_CAISSERIE.ID_MOUVEMENT AS ID_MOUVEMENT,	
@@ -2037,11 +2037,22 @@ class Queries(object):
             WHERE 
                 T_CAISSES_PALETTES.CODE_TYPE = T_MOUVEMENTS_CAISSERIE.CODE_CP
                 AND		T_OPERATEUR.CODE_OPERATEUR = T_MOUVEMENTS_CAISSERIE.COMPTE_ECART
-                AND
+                {OPTIONAL_ARG_1}
+        '''
+
+        try:
+            kwargs = {
+                'Param_origine': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['OPTIONAL_ARG_1'] = '''AND
                 (
                     T_MOUVEMENTS_CAISSERIE.ORIGINE = {Param_origine}
-                )
-        '''
+                )'''
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_origine'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
         return query.format(**kwargs)
 
     
