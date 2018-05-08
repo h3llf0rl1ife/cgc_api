@@ -12317,3 +12317,26 @@ class Queries(object):
             raise ValueError
 
         return query.format(**kwargs)
+    
+
+        def Req_conv_affiche_ls_inventaire_nom_magasin(self, kwargs): #Done2
+            query = '''
+                SELECT
+                    T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN
+                FROM
+                    T_MAGASINS
+                WHERE
+                    T_MAGASINS.CODE_MAGASIN = {code_magasin}
+            '''
+
+            try:
+                kwargs = {
+                    'code_magasin': args[0]
+                }
+            except IndexError:
+                raise
+            
+            if kwargs['code_magasin'] in (None, 'NULL'):
+                raise ValueError
+            
+            return query.format(**kwargs)
