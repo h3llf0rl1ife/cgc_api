@@ -5292,7 +5292,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_operations(self, args):
+    def Req_ls_operations(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION,	
