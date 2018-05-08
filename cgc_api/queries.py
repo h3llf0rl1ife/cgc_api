@@ -9073,7 +9073,7 @@ class Queries(object):
             DELETE FROM 
                 T_SOLDE_INITIAL_CAISSE
             WHERE 
-                T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = {Param_date_journee}
+                T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = '{Param_date_journee}'
         '''
         
         try:
