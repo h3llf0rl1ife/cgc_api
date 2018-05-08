@@ -8842,13 +8842,26 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_initial_client(self, args):
+    def Req_supp_initial_client(self, args): #Done
         query = '''
             DELETE FROM 
                 T_SOLDE_INITIAL_CLIENT
             WHERE 
-                T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = {Param_date_journee}
+                T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = '{Param_date_journee}'
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_journee': args[0]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+        
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
