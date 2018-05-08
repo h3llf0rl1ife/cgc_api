@@ -2053,7 +2053,7 @@ class Queries(object):
                 )'''
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_origine'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
 
-        return query.format(**kwargs)
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_dt_operation(self, args):
