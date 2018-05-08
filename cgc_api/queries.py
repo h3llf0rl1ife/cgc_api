@@ -9114,13 +9114,26 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_stock_init_cond(self, args):
+    def Req_supp_stock_init_cond(self, args): #Done
         query = '''
             DELETE FROM 
                 T_STOCK_INITI_COND
             WHERE 
                 T_STOCK_INITI_COND.DATE_JOURNEE = {Param_date_journee}
         '''
+
+        try:
+            kwargs = {
+                'Param_date_journee': args[0]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+        
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            raise ValueError
+        
         return query.format(**kwargs)
 
     
