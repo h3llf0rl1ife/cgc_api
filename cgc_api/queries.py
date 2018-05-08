@@ -2056,7 +2056,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_dt_operation(self, args):
+    def Req_dt_operation(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.ID_MOUVEMENT AS ID_MOUVEMENT,	
@@ -2088,13 +2088,34 @@ class Queries(object):
                 T_OPERATEUR.CODE_OPERATEUR = T_MOUVEMENTS.COMPTE_ECART
                 AND		T_ARTICLES.CODE_ARTICLE = T_MOUVEMENTS.CODE_ARTICLE
                 AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
-                AND
-                (
-                    T_MOUVEMENTS.ORIGINE = {Param_origine}
-                    AND	T_MOUVEMENTS.TYPE_PRODUIT = {Paramtype_produit}
-                )
+                {CODE_BLOCK_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_origine': args[0],
+                'Paramtype_produit': args[1]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['CODE_BLOCK_1'] = '''AND
+                (
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                )'''
+        kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS.ORIGINE = {Param_origine}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_MOUVEMENTS.TYPE_PRODUIT = {Paramtype_produit}'
+
+        if kwargs['Param_origine'] in (None, 'NULL'):
+            kwargs['OPTIONAL_ARG_1'] = ''
+            kwargs['OPTIONAL_ARG_2'] = kwargs['OPTIONAL_ARG_2'][4:]
+        
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Paramtype_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        kwargs['CODE_BLOCK_1'] = '' if kwargs['OPTIONAL_ARG_1'] == '' and kwargs['OPTIONAL_ARG_2'] == '' else kwargs['CODE_BLOCK_1']
+
+        return query.format(**kwargs).format(**kwargs).format(**kwargs)
 
     
     def Req_dt_prelevement(self, args):
