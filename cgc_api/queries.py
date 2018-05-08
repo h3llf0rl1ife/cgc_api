@@ -2394,7 +2394,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_etat_journee(self, args):
+    def Req_etat_journee(self, args): #Done
         query = '''
             SELECT 
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -2407,8 +2407,21 @@ class Queries(object):
             FROM 
                 T_JOURNEE
             WHERE 
-                T_JOURNEE.DATE_JOURNEE = {Param_date_journee}
+                T_JOURNEE.DATE_JOURNEE = '{Param_date_journee}'
         '''
+
+        try:
+            kwargs = {
+                'Param_date_journee': args[0]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+        
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
