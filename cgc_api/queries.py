@@ -12462,47 +12462,57 @@ class Queries(object):
 
 
     def Req_conv_fen_inventaire_btn_supprimer_compte_ecart2(self, kwargs): #Done2
-            query = '''
-                SELECT
-                    T_MOUVEMENTS.COMPTE_ECART AS COMPTE_ECART
-                FROM
-                    T_MOUVEMENTS
-                WHERE
-                    T_MOUVEMENTS.ID_MOUVEMENT = {id_mouvement}
-            '''
+        query = '''
+            SELECT
+                T_MOUVEMENTS.COMPTE_ECART AS COMPTE_ECART
+            FROM
+                T_MOUVEMENTS
+            WHERE
+                T_MOUVEMENTS.ID_MOUVEMENT = {id_mouvement}
+        '''
 
-            try:
-                kwargs = {
-                    'id_mouvement': args[0]
-                }
-            except IndexError:
-                raise
-            
-            if kwargs['id_mouvement'] in (None, 'NULL'):
-                raise ValueError
-            
-            return query.format(**kwargs)
+        try:
+            kwargs = {
+                'id_mouvement': args[0]
+            }
+        except IndexError:
+            raise
+        
+        if kwargs['id_mouvement'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
 
 
     def Req_conv_fen_inventaire_btn_supprimer_code_operation(self, kwargs): #Done2
-            query = '''
-                SELECT
-                    T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION
-                FROM
-                    T_OPERATIONS
-                WHERE
-                    T_OPERATIONS.CODE_OPERATION = {code_operation}
-            '''
+        query = '''
+            SELECT
+                T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION
+            FROM
+                T_OPERATIONS
+            WHERE
+                T_OPERATIONS.CODE_OPERATION = {code_operation}
+        '''
 
-            try:
-                kwargs = {
-                    'code_operation': args[0]
-                }
-            except IndexError:
-                raise
-            
-            if kwargs['code_operation'] in (None, 'NULL'):
-                raise ValueError
-            
-            return query.format(**kwargs)
+        try:
+            kwargs = {
+                'code_operation': args[0]
+            }
+        except IndexError:
+            raise
+        
+        if kwargs['code_operation'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
 
+
+    def Req_conv_journee_btn_nouv_journee_date_journee(self, kwargs): #Done2
+        query = '''
+            SELECT DISTINCT
+                T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE
+            FROM
+                T_JOURNEE
+        '''
+        
+        return query
