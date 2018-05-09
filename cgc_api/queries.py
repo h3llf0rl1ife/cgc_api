@@ -5880,7 +5880,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_reconaissances(self, args):
+    def Req_ls_reconaissances(self, args): #Done
         query = '''
             SELECT 
                 T_RECONAISSANCES.CODE_CLIENT AS CODE_CLIENT,	
@@ -5902,9 +5902,9 @@ class Queries(object):
                 T_CLIENTS
             WHERE 
                 T_CLIENTS.CODE_CLIENT = T_RECONAISSANCES.CODE_CLIENT
-                AND		T_OPERATEUR.CODE_OPERATEUR = T_RECONAISSANCES.CODE_OPERATEUR
+                AND	T_OPERATEUR.CODE_OPERATEUR = T_RECONAISSANCES.CODE_OPERATEUR
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_reglement(self, args):
