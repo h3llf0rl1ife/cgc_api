@@ -8522,7 +8522,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_repartition(self, args):
+    def Req_repartition(self, args): #Done
         query = '''
             SELECT 
                 T_REPARTITION.DATE_REPARTITION AS DATE_REPARTITION,	
@@ -8535,9 +8535,20 @@ class Queries(object):
             FROM 
                 T_REPARTITION
             WHERE 
-                T_REPARTITION.DATE_REPARTITION = {Param_date_repartition}
+                T_REPARTITION.DATE_REPARTITION = '{Param_date_repartition}'
                 AND	T_REPARTITION.CODE_AGENCE = {Param_code_agence}
         '''
+
+        try:
+            kwargs = {
+                'Param_date_repartition': args[0],
+                'Param_code_agence': args[1]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_repartition'] = self.validateDate(kwargs['Param_date_repartition'])
+
         return query.format(**kwargs)
 
     
