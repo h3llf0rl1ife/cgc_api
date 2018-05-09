@@ -11348,7 +11348,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_prix(self, args):
+    def Req_update_prix(self, args): #Done
         query = '''
             UPDATE 
                 T_PRIX_AGENCE
@@ -11358,6 +11358,20 @@ class Queries(object):
                 T_PRIX_AGENCE.CODE_AGCE = {Param_code_agce}
                 AND	T_PRIX_AGENCE.CODE_ARTICLE = {Param_code_article}
         '''
+
+        try:
+            kwargs = {
+                'Param_prix': args[0],
+                'Param_code_agce': args[1],
+                'Param_code_article': args[2]
+            }
+        except IndexError:
+            raise
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+
         return query.format(**kwargs)
 
     
