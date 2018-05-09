@@ -7346,7 +7346,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_prix_debut_jour(self, args):
+    def Req_prix_debut_jour(self, args): #Done
         query = '''
             SELECT 
                 T_PRIX.Date_Debut AS Date_Debut,	
@@ -7356,9 +7356,23 @@ class Queries(object):
             FROM 
                 T_PRIX
             WHERE 
-                T_PRIX.Date_Debut = {Param_date_debut}
+                T_PRIX.Date_Debut = '{Param_date_debut}'
                 AND	T_PRIX.CODE_AGCE = {Param_code_agce}
         '''
+
+        try:
+            kwargs = {
+                'Param_date_debut': args[0],
+                'Param_code_agce': args[1]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_debut'] = self.validateDate(kwargs['Param_date_debut'])
+
+        if kwargs['Param_date_debut'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
