@@ -12570,3 +12570,29 @@ class Queries(object):
         '''
         
         return query
+
+
+    def Req_conv_journee_btn_nouv_journee_stock_initi_cond(self, kwargs): #Done2
+        query = '''
+            INSERT INTO 
+                T_STOCK_INITI_COND (DATE_JOURNEE, CODE_MAGASIN, CODE_CP, STOCK_INIT)
+            VALUES
+                ('{date_journee}', {code_magasin}, {code_cp}, {stock_init})
+        '''
+
+        try:
+            kwargs = {
+                'date_journee': args[0],
+                'code_magasin': args[1],
+                'code_cp': args[2],
+                'stock_init': args[3]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['date_journee'] = self.validateDate(kwargs['date_journee'])
+        
+        if kwargs['date_journee'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
