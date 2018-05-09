@@ -2440,19 +2440,22 @@ class Queries(object):
                 T_JOURNEE
             WHERE 
                 T_JOURNEE.DATE_JOURNEE = '{Param_date_journee}'
+                T_JOURNEE.CODE_AGCE = {code_agce}
         '''
 
         try:
             kwargs = {
-                'Param_date_journee': args[0]
+                'Param_date_journee': args[0],
+                'code_agce': args[1]
             }
         except IndexError:
             raise
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
-        if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
 
         return query.format(**kwargs)
 
