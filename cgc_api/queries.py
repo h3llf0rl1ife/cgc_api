@@ -12815,6 +12815,7 @@ class Queries(object):
     def Req_conv_journee_btn_cloturer_livraision_planning(self, args): #Done2
         query = '''
             SELECT
+                T_LIVRAISON_PLANNING.CODE_CLIENT AS CODE_CLIENT,
                 T_LIVRAISON_PLANNING.LUNDI AS LUNDI,
                 T_LIVRAISON_PLANNING.MARDI AS MARDI,
                 T_LIVRAISON_PLANNING.MERCREDI AS MERCREDI,
