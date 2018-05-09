@@ -12596,3 +12596,12 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_journee_btn_nouv_journee_preparation_chargements(self, kwargs): #Done2
+        query = '''
+            DELETE FROM
+                T_PREPARATION_CHARGEMENTS
+        '''
+        
+        return query
