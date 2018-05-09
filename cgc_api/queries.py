@@ -12141,15 +12141,26 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_verif_traitement(self, args):
+    def Req_verif_traitement(self, args): #Done
         query = '''
             SELECT 
                 T_HISTORIQUE_OPERATIONS.COMMENTAIRE AS COMMENTAIRE
             FROM 
                 T_HISTORIQUE_OPERATIONS
             WHERE 
-                T_HISTORIQUE_OPERATIONS.COMMENTAIRE = {Param_cmt}
+                T_HISTORIQUE_OPERATIONS.COMMENTAIRE = '{Param_cmt}'
         '''
+
+        try:
+            kwargs = {
+                'Param_cmt': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_cmt'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
