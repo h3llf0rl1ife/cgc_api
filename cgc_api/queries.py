@@ -12165,6 +12165,47 @@ class Queries(object):
                 cm.CODE_CHARGEMENT = 13000003
         '''
         return query.format(**kwargs)
+    
+
+    def journee_1_Requete(self, args): #Done
+        query = '''
+            SELECT TOP 10 
+                T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
+                T_JOURNEE.CODE_AGCE AS CODE_AGCE,	
+                T_JOURNEE.STOCK AS STOCK,	
+                T_JOURNEE.SOLDE_EMB AS SOLDE_EMB,	
+                T_JOURNEE.CLOTURE AS CLOTURE,	
+                T_JOURNEE.JOURNEE_TEMP AS JOURNEE_TEMP,	
+                T_JOURNEE.SOLDE_CAISSE AS SOLDE_CAISSE,	
+                T_JOURNEE.AS_C_STD AS AS_C_STD,	
+                T_JOURNEE.AS_P_AG AS AS_P_AG,	
+                T_JOURNEE.AS_P_UHT AS AS_P_UHT,	
+                T_JOURNEE.AS_C_AG AS AS_C_AG,	
+                T_JOURNEE.AS_C_PR AS AS_C_PR,	
+                T_JOURNEE.NS_C_STD AS NS_C_STD,	
+                T_JOURNEE.NS_P_AG AS NS_P_AG,	
+                T_JOURNEE.NS_P_UHT AS NS_P_UHT,	
+                T_JOURNEE.NS_C_AG AS NS_C_AG,	
+                T_JOURNEE.NS_C_PR AS NS_C_PR,	
+                T_JOURNEE.SOLDE_CAISSERIE AS SOLDE_CAISSERIE,	
+                T_JOURNEE.TEMP_MIN AS TEMP_MIN,	
+                T_JOURNEE.TEMP_MAX AS TEMP_MAX,	
+                T_JOURNEE.PLUV AS PLUV,	
+                T_JOURNEE.COMMENTAIRE AS COMMENTAIRE,	
+                T_JOURNEE.AS_P_EURO AS AS_P_EURO,	
+                T_JOURNEE.AS_CS_BLC AS AS_CS_BLC,	
+                T_JOURNEE.NS_PAL_EURO AS NS_PAL_EURO,	
+                T_JOURNEE.NS_CS_BLC AS NS_CS_BLC,	
+                T_JOURNEE.AS_CS1 AS AS_CS1,	
+                T_JOURNEE.AS_CS2 AS AS_CS2,	
+                T_JOURNEE.NV_CS1 AS NV_CS1,	
+                T_JOURNEE.NV_CS2 AS NV_CS2
+            FROM 
+                T_JOURNEE
+            ORDER BY 
+                DATE_JOURNEE DESC
+        '''
+        return query
 
 
 # --------------- Conversions ----------------------
