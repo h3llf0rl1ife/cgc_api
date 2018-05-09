@@ -5340,7 +5340,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_operation_caisse_valide(self, args):
+    def Req_ls_operation_caisse_valide(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -5348,8 +5348,21 @@ class Queries(object):
             FROM 
                 T_OPERATIONS_CAISSE
             WHERE 
-                T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+                T_OPERATIONS_CAISSE.DATE_VALIDATION = '{Param_date_validation}'
         '''
+
+        try:
+            kwargs = {
+                'Param_date_validation': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        if kwargs['Param_date_validation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
