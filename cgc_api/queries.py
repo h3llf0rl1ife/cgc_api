@@ -12392,7 +12392,7 @@ class Queries(object):
         return query.format(**kwargs)
     
 
-    def Req_conv_affiche_ls_inventaire_nom_magasin(self, kwargs): #Done2
+    def Req_conv_affiche_ls_inventaire_nom_magasin(self, args): #Done2
         query = '''
             SELECT
                 T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN
@@ -12415,7 +12415,7 @@ class Queries(object):
         return query.format(**kwargs)
     
 
-    def Req_conv_affiche_ls_inventaire_nom_operateur(self, kwargs): #Done2
+    def Req_conv_affiche_ls_inventaire_nom_operateur(self, args): #Done2
         query = '''
             SELECT
                 T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR
@@ -12438,7 +12438,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart(self, kwargs): #Done2
+    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart(self, args): #Done2
         query = '''
             SELECT
                 T_MOUVEMENTS_CAISSERIE.COMPTE_ECART AS COMPTE_ECART
@@ -12461,7 +12461,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart2(self, kwargs): #Done2
+    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart2(self, args): #Done2
         query = '''
             SELECT
                 T_MOUVEMENTS.COMPTE_ECART AS COMPTE_ECART
@@ -12484,7 +12484,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def Req_conv_fen_inventaire_btn_supprimer_code_operation(self, kwargs): #Done2
+    def Req_conv_fen_inventaire_btn_supprimer_code_operation(self, args): #Done2
         query = '''
             SELECT
                 T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION
@@ -12507,7 +12507,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def Req_conv_journee_btn_nouv_journee_date_journee(self, kwargs): #Done2
+    def Req_conv_journee_btn_nouv_journee_date_journee(self, args): #Done2
         query = '''
             SELECT DISTINCT
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE
@@ -12530,7 +12530,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def Req_conv_journee_btn_nouv_journee_articles_magasins(self, kwargs): #Done2
+    def Req_conv_journee_btn_nouv_journee_articles_magasins(self, args): #Done2
         query = '''
             SELECT
                 T_ARTICLES_MAGASINS.QTE_STOCK AS QTE_STOCK,
@@ -12544,7 +12544,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_journee_btn_nouv_journee_stock_init(self, kwargs): #Done2
+    def Req_conv_journee_btn_nouv_journee_stock_init(self, args): #Done2
         query = '''
             INSERT INTO 
                 T_STOCK_INIT (DATE_PS, CATEGORIE, CODE_ARTICLE, CODE_MAGASIN, QTE_INIT)
@@ -12571,7 +12571,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def Req_conv_journee_btn_nouv_journee_magasin_cond(self, kwargs): #Done2
+    def Req_conv_journee_btn_nouv_journee_magasin_cond(self, args): #Done2
         query = '''
             SELECT
                 T_MAGASIN_COND.CODE_MAGASIN AS CODE_MAGASIN,
@@ -12584,7 +12584,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_journee_btn_nouv_journee_stock_initi_cond(self, kwargs): #Done2
+    def Req_conv_journee_btn_nouv_journee_stock_initi_cond(self, args): #Done2
         query = '''
             INSERT INTO 
                 T_STOCK_INITI_COND (DATE_JOURNEE, CODE_MAGASIN, CODE_CP, STOCK_INIT)
@@ -12610,7 +12610,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def Req_conv_journee_btn_nouv_journee_preparation_chargements(self, kwargs): #Done2
+    def Req_conv_journee_btn_nouv_journee_preparation_chargements(self, args): #Done2
         query = '''
             DELETE FROM
                 T_PREPARATION_CHARGEMENTS
@@ -12619,7 +12619,7 @@ class Queries(object):
         return query
 
 
-    def Req_conv_journee_btn_nouv_journee_journee(self, kwargs): #Done2
+    def Req_conv_journee_btn_nouv_journee_journee(self, args): #Done2
         query = '''
             INSERT INTO 
                 T_JOURNEE
