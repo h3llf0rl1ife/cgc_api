@@ -12811,3 +12811,20 @@ class Queries(object):
         
         return query.format(**kwargs)
 
+
+    def Req_conv_journee_btn_cloturer_livraision_planning(self, args): #Done2
+        query = '''
+            SELECT
+                T_LIVRAISON_PLANNING.LUNDI AS LUNDI,
+                T_LIVRAISON_PLANNING.MARDI AS MARDI,
+                T_LIVRAISON_PLANNING.MERCREDI AS MERCREDI,
+                T_LIVRAISON_PLANNING.JEUDI AS JEUDI,
+                T_LIVRAISON_PLANNING.VENDREDI AS VENDREDI,
+                T_LIVRAISON_PLANNING.SAMEDI AS SAMEDI,
+                T_LIVRAISON_PLANNING.DIMANCHE AS DIMANCHE
+            FROM
+                T_LIVRAISON_PLANNING
+        '''
+        
+        return query
+
