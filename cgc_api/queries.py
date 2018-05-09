@@ -11297,15 +11297,30 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_cloture2(self, args):
+    def Req_update_cloture2(self, args): #Done
         query = '''
             UPDATE 
                 T_JOURNEE
             SET
                 CLOTURE = {Param_CLOTURE}
             WHERE 
-                T_JOURNEE.DATE_JOURNEE = {Param_DATE_JOURNEE}
+                T_JOURNEE.DATE_JOURNEE = '{Param_DATE_JOURNEE}'
         '''
+
+        try:
+            kwargs = {
+                'Param_CLOTURE': args[0],
+                'Param_DATE_JOURNEE': args[1]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_decompte'] = self.validateDate(kwargs['Param_date_decompte'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+
         return query.format(**kwargs)
 
     
