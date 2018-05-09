@@ -3592,7 +3592,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_autorisation_journee(self, args):
+    def Req_ls_autorisation_journee(self, args): #Done
         query = '''
             SELECT 
                 T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -3600,8 +3600,21 @@ class Queries(object):
             FROM 
                 T_AUTORISATIONS_SOLDE
             WHERE 
-                T_AUTORISATIONS_SOLDE.DATE_OPERATION = {Param_date_operation}
+                T_AUTORISATIONS_SOLDE.DATE_OPERATION = '{Param_date_operation}'
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_operation': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
+
+        if kwargs['Param_date_operation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
