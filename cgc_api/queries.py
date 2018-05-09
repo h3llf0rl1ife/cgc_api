@@ -12869,3 +12869,31 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_journee_btn_cloturer_creer_journal(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_HISTORIQUE_OPERATIONS 
+                (CODE_OPERATEUR, COMMENTAIRE, DATE_HEURE, POSTE, SESSION)
+            VALUES
+                ({code_operateur}, {commentaire}, '{date_heure}', {poste}, {session})
+        '''
+
+        try:
+            kwargs = {
+                'code_operateur': args[0],
+                'commentaire': args[1],
+                'date_heure': args[2],
+                'poste': args[3],
+                'session': args[4]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['date_heure'] = self.validateDate(kwargs['date_heure'])
+        
+        if kwargs['date_heure'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
