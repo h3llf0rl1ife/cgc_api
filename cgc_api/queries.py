@@ -12617,3 +12617,49 @@ class Queries(object):
         '''
         
         return query
+
+
+    def Req_conv_journee_btn_nouv_journee_journee(self, kwargs): #Done2
+        query = '''
+            INSERT INTO 
+                T_JOURNEE
+                (CODE_AGCE, DATE_JOURNEE, SOLDE_EMB, STOCK, SOLDE_CAISSERIE, JOURNEE_TEMP, CLOTURE, AS_C_STD, AS_C_PR,
+                AS_C_AG, AS_P_AG, AS_P_UHT, AS_P_EURO, AS_CS_BLC, AS_CS1, AS_CS2, TEMP_MAX, TEMP_MIN, PLUV, COMMENTAIRE)
+            VALUES
+                ('{code_agce}', {date_journee}, {solde_emb}, {stock}, {solde_caisserie}, {journee_temp}, {cloture}, {as_c_std}, {as_c_pr},
+                {as_c_ag}, {as_p_ag}, {as_p_uht}, {as_p_euro}, {as_cs_blc}, {as_cs1}, {as_cs2}, {temp_max}, {temp_min}, {pluv}, {commentaire})
+        '''
+
+        try:
+            kwargs = {
+                'CODE_AGCE': args[0],
+                'DATE_JOURNEE': args[1],
+                'SOLDE_EMB': args[2],
+                'STOCK': args[3],
+                'SOLDE_CAISSERIE': args[4],
+                'JOURNEE_TEMP': args[5],
+                'CLOTURE': args[6],
+                'AS_C_STD': args[7],
+                'AS_C_PR': args[8],
+                'AS_C_AG': args[9],
+                'AS_P_AG': args[10],
+                'AS_P_UHT': args[11],
+                'AS_P_EURO': args[12],
+                'AS_CS_BLC': args[13],
+                'AS_CS1': args[14],
+                'AS_CS2': args[15],
+                'TEMP_MAX': args[16],
+                'TEMP_MIN': args[17],
+                'PLUV': args[18],
+                'COMMENTAIRE': args[19]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['date_journee'] = self.validateDate(kwargs['date_journee'])
+        
+        if kwargs['date_journee'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
+
