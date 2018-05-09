@@ -12897,3 +12897,32 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_journee_btn_cloturer_creer_synchro(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_SYNCHRO 
+                (AGCE, DH_CREATION, ETAT, ID_OPERATION, SOUS_OPERATION, OPERATION)
+            VALUES
+                ({agce}, '{dh_creation}', {etat}, {id_operation}, {sous_operation}, {operation})
+        '''
+
+        try:
+            kwargs = {
+                'agce': args[0],
+                'dh_creation': args[1],
+                'etat': args[2],
+                'id_operation': args[3],
+                'sous_operation': args[4],
+                'operation': args[5]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['dh_creation'] = self.validateDate(kwargs['dh_creation'])
+        
+        if kwargs['dh_creation'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
