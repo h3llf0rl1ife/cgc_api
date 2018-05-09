@@ -12516,3 +12516,17 @@ class Queries(object):
         '''
         
         return query
+
+
+    def Req_conv_journee_btn_nouv_journee_articles_magasins(self, kwargs): #Done2
+        query = '''
+            SELECT
+                T_ARTICLES_MAGASINS.QTE_STOCK AS QTE_STOCK,
+                T_ARTICLES_MAGASINS.CATEGORIE AS CATEGORIE,
+                T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,
+                T_ARTICLES_MAGASINS.MAGASIN AS MAGASIN
+            FROM
+                T_ARTICLES_MAGASINS
+        '''
+        
+        return query
