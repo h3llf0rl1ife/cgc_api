@@ -12513,9 +12513,21 @@ class Queries(object):
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE
             FROM
                 T_JOURNEE
+            WHERE
+                T_JOURNEE.CODE_AGCE = {code_agce}
         '''
+
+        try:
+            kwargs = {
+                'code_agce': args[0]
+            }
+        except IndexError:
+            raise
         
-        return query
+        if kwargs['code_agce'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
 
 
     def Req_conv_journee_btn_nouv_journee_articles_magasins(self, kwargs): #Done2
