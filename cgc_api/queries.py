@@ -5031,7 +5031,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_liv(self, args):
+    def Req_ls_liv(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -5045,6 +5045,19 @@ class Queries(object):
                 T_LIVRAISON.STATUT <> 'A'
                 AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
         '''
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
