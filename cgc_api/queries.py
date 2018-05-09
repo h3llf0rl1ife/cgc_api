@@ -12558,3 +12558,15 @@ class Queries(object):
         
         return query.format(**kwargs)
 
+
+    def Req_conv_journee_btn_nouv_journee_magasin_cond(self, kwargs): #Done2
+        query = '''
+            SELECT
+                T_MAGASIN_COND.CODE_MAGASIN AS CODE_MAGASIN,
+                T_MAGASIN_COND.CODE_CP AS CODE_CP,
+                T_MAGASIN_COND.QTE_STOCK AS QTE_STOCK
+            FROM
+                T_MAGASIN_COND
+        '''
+        
+        return query
