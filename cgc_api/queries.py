@@ -12626,8 +12626,8 @@ class Queries(object):
                 (CODE_AGCE, DATE_JOURNEE, SOLDE_EMB, STOCK, SOLDE_CAISSERIE, JOURNEE_TEMP, CLOTURE, AS_C_STD, AS_C_PR,
                 AS_C_AG, AS_P_AG, AS_P_UHT, AS_P_EURO, AS_CS_BLC, AS_CS1, AS_CS2, TEMP_MAX, TEMP_MIN, PLUV, COMMENTAIRE)
             VALUES
-                ('{code_agce}', {date_journee}, {solde_emb}, {stock}, {solde_caisserie}, {journee_temp}, {cloture}, {as_c_std}, {as_c_pr},
-                {as_c_ag}, {as_p_ag}, {as_p_uht}, {as_p_euro}, {as_cs_blc}, {as_cs1}, {as_cs2}, {temp_max}, {temp_min}, {pluv}, {commentaire})
+                ({code_agce}, '{date_journee}', {solde_emb}, {stock}, {solde_caisserie}, {journee_temp}, {cloture}, {as_c_std}, {as_c_pr},
+                {as_c_ag}, {as_p_ag}, {as_p_uht}, {as_p_euro}, {as_cs_blc}, {as_cs1}, {as_cs2}, {temp_max}, {temp_min}, {pluv}, '{commentaire}')
         '''
 
         try:
