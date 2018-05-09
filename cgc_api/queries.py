@@ -2440,7 +2440,7 @@ class Queries(object):
                 T_JOURNEE
             WHERE 
                 T_JOURNEE.DATE_JOURNEE = '{Param_date_journee}'
-                T_JOURNEE.CODE_AGCE = {code_agce}
+                AND T_JOURNEE.CODE_AGCE = {code_agce}
         '''
 
         try:
