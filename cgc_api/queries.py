@@ -12530,3 +12530,31 @@ class Queries(object):
         '''
         
         return query
+
+
+    def Req_conv_journee_btn_nouv_journee_stock_init(self, kwargs): #Done2
+        query = '''
+            INSERT INTO 
+                T_STOCK_INIT (DATE_PS, CATEGORIE, CODE_ARTICLE, CODE_MAGASIN, QTE_INIT)
+            VALUES
+                ('{date_ps}', '{categorie}', {code_article}, {code_magasin}, {qte_init})
+        '''
+
+        try:
+            kwargs = {
+                'date_ps': args[0],
+                'categorie': args[1],
+                'code_article': args[2],
+                'code_magasin': args[3],
+                'qte_init': args[4]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['date_ps'] = self.validateDate(kwargs['date_ps'])
+        
+        if kwargs['date_ps'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
+
