@@ -5477,7 +5477,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_prelev_journee(self, args):
+    def Req_ls_prelev_journee(self, args): #Done
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.ID_PRELEV AS ID_PRELEV,	
@@ -5485,8 +5485,21 @@ class Queries(object):
             FROM 
                 T_PRELEVEMENT_SUSP_COND
             WHERE 
-                T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = {Param_dt}
+                T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = '{Param_dt}'
         '''
+
+        try:
+            kwargs = {
+                'Param_dt': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+
+        if kwargs['Param_dt'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
