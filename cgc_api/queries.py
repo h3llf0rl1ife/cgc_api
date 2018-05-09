@@ -12828,3 +12828,32 @@ class Queries(object):
         
         return query
 
+
+    def Req_conv_journee_btn_cloturer_synthese_livraision(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_SYNTHESE_LIVRAISON 
+                (DATE_JOURNEE, CODE_AGCE, CODE_CLIENT, COMMANDE, LIVRE, PROGRAMME, MOTIF_NON_COMMANDE)
+            VALUES
+                ('{date_journee}', {code_agce}, {code_client}, {commande}, {livre}, {programme}, {motif_non_commande})
+        '''
+
+        try:
+            kwargs = {
+                'date_journee': args[0],
+                'code_agce': args[1],
+                'code_client': args[2],
+                'commande': args[3],
+                'livre': args[4],
+                'programme': args[5],
+                'motif_non_commande': args[6]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['date_journee'] = self.validateDate(kwargs['date_journee'])
+        
+        if kwargs['date_journee'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
