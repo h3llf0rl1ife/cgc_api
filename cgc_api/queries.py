@@ -10001,7 +10001,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_decompte_espece(self, args):
+    def Req_total_decompte_espece(self, args): #Done
         query = '''
             SELECT 
                 T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -10017,7 +10017,7 @@ class Queries(object):
                 T_OPERATEUR.CODE_OPERATEUR = T_DECOMPTE.CODE_OPERATEUR
                 AND
                 (
-                    T_DECOMPTE.DATE_VALIDATION = {Param_date_validation}
+                    T_DECOMPTE.DATE_VALIDATION = '{Param_date_validation}'
                     AND	T_DECOMPTE.MODE_PAIEMENT = 'E'
                 )
             GROUP BY 
@@ -10027,6 +10027,19 @@ class Queries(object):
                 T_OPERATEUR.FONCTION,	
                 T_DECOMPTE.MODE_PAIEMENT
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_validation': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        if kwargs['Param_date_validation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
