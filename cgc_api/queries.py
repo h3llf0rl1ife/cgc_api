@@ -12968,3 +12968,32 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_journee_btn_cloturer_journee_temp(self, args): #Done2
+        query = '''
+            UPDATE 
+                T_JOURNEE
+            SET
+                T_JOURNEE.JOURNEE_TEMP = {journee_temp}
+            WHERE 
+                T_JOURNEE.DATE_JOURNEE = '{Param_date_journee}'
+                AND T_JOURNEE.CODE_AGCE = {code_agce}
+        '''
+
+        try:
+            kwargs = {
+                'journee_temp': args[0],
+                'Param_date_journee': args[1],
+                'code_agce': args[2]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+        
+        return query.format(**kwargs)
