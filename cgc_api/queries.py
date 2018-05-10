@@ -13336,3 +13336,25 @@ class Queries(object):
             raise ValueError
 
         return query.format(**kwargs)
+
+
+    def Req_conv_maj_position_articles_magasins(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_ARTICLES_MAGASINS 
+                (CODE_ARTICLE, CATEGORIE, MAGASIN, QTE_STOCK)
+            VALUES
+                ({code_article}, {categorie}, {magasin}, {qte_stock})
+        '''
+
+        try:
+            kwargs = {
+                'code_article': args[0],
+                'categorie': args[1],
+                'magasin': args[2],
+                'qte_stock': args[3]
+            }
+        except IndexError:
+            raise
+        
+        return query.format(**kwargs)
