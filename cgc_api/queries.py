@@ -7406,7 +7406,8 @@ class Queries(object):
     
     def Req_position_stock(self, args): #Done
         query = '''
-            SELECT 
+            SELECT
+                T_ARTICLES_MAGASINS.PK_T_ARTICLES_MAGASINS AS PK_T_ARTICLES_MAGASINS,
                 T_ARTICLES_MAGASINS.MAGASIN AS MAGASIN,	
                 T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
                 T_ARTICLES_MAGASINS.CATEGORIE AS CATEGORIE,	
