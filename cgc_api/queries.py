@@ -13043,7 +13043,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def Req_conv_journee_btn_nouv_journee_stock_initi_cond(self, args): #Done2
+    def Req_conv_journee_btn_cloturer_controle_cloture(self, args): #Done2
         query = '''
             select A.code_op,COUNT(A.code_op) as nb from (
             select DATE_CHARGEMENT,CODE_VENDEUR as CODE_OP from T_CHARGEMENT where CODE_VENDEUR<>0
