@@ -1448,14 +1448,14 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_codification_operation(self, args):
+    def Req_codification_operation(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_OPERATIONS.CODE_OPERATION) AS le_maximum_CODE_OPERATION
             FROM 
                 T_OPERATIONS
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_commande_gms_date(self, args):
