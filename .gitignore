@@ -1,1 +1,7 @@
 .vscode
+cgc_api/__pycache__
+cgc_api/test.txt
+api_test.py
+test.py
+test2.py
+cgc_api.egg-info
