@@ -7404,7 +7404,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_position_stock(self, args):
+    def Req_position_stock(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES_MAGASINS.MAGASIN AS MAGASIN,	
@@ -7418,6 +7418,20 @@ class Queries(object):
                 AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_magasin}
                 AND	T_ARTICLES_MAGASINS.CATEGORIE = {Param_type_produit}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_article': args[0],
+                'Param_code_magasin': args[1],
+                'Param_type_produit': args[2]
+            }
+        except IndexError:
+            raise
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+
         return query.format(**kwargs)
 
     
