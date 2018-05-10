@@ -12908,26 +12908,26 @@ class Queries(object):
 
         try:
             kwargs = {
-                'CODE_AGCE': args[0],
-                'DATE_JOURNEE': args[1],
-                'SOLDE_EMB': args[2],
-                'STOCK': args[3],
-                'SOLDE_CAISSERIE': args[4],
-                'JOURNEE_TEMP': args[5],
-                'CLOTURE': args[6],
-                'AS_C_STD': args[7],
-                'AS_C_PR': args[8],
-                'AS_C_AG': args[9],
-                'AS_P_AG': args[10],
-                'AS_P_UHT': args[11],
-                'AS_P_EURO': args[12],
-                'AS_CS_BLC': args[13],
-                'AS_CS1': args[14],
-                'AS_CS2': args[15],
-                'TEMP_MAX': args[16],
-                'TEMP_MIN': args[17],
-                'PLUV': args[18],
-                'COMMENTAIRE': args[19]
+                'code_agce': args[0],
+                'date_journee': args[1],
+                'solde_emb': args[2],
+                'stock': args[3],
+                'solde_caisserie': args[4],
+                'journee_temp': args[5],
+                'cloture': args[6],
+                'as_c_std': args[7],
+                'as_c_pr': args[8],
+                'as_c_ag': args[9],
+                'as_p_ag': args[10],
+                'as_p_uht': args[11],
+                'as_p_euro': args[12],
+                'as_cs_blc': args[13],
+                'as_cs1': args[14],
+                'as_cs2': args[15],
+                'temp_max': args[16],
+                'temp_min': args[17],
+                'pluv': args[18],
+                'commentaire': args[19]
             }
         except IndexError:
             raise
