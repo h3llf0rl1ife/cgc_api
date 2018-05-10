@@ -13245,3 +13245,40 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_fen_inventaire_btn_appliquer_mouvements_caisserie(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_MOUVEMENTS_CAISSERIE
+                (ID_MOUVEMENT, CODE_MAGASIN, CODE_CP, ORIGINE, QTE_THEORIQUE, QTE_REEL, QTE_ECART,
+                PRIX, MONTANT_ECART, CODE_OPERATEUR, COMPTE_ECART, TYPE_MOUVEMENT, QTE_MOUVEMENT)
+            VALUES
+                ({id_mouvement}, {code_magasin}, {code_cp}, {origine}, {qte_theorique}, {qte_reel}, {qte_ecart}, 
+                {prix}, {montant_ecart}, {code_operateur}, {compte_ecart}, '{type_mouvement}', {qte_mouvement})
+        '''
+
+        try:
+            kwargs = {
+                'id_mouvement': args[0],
+                'code_magasin': args[1],
+                'code_cp': args[2],
+                'origine': args[3],
+                'qte_theorique': args[4],
+                'qte_reel': args[5],
+                'qte_ecart': args[6],
+                'prix': args[7],
+                'montant_ecart': args[8],
+                'code_operateur': args[9],
+                'compte_ecart': args[10],
+                'type_mouvement': args[11],
+                'qte_mouvement': args[12]
+            }
+        except IndexError:
+            raise
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+
+        return query.format(**kwargs)
