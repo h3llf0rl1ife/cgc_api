@@ -10284,7 +10284,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_livraison_client(self, args):
+    def Req_total_livraison_client(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.Type_Livraison AS Type_Livraison,	
@@ -10299,7 +10299,7 @@ class Queries(object):
                 T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
                 AND
                 (
-                    T_LIVRAISON.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_LIVRAISON.DATE_VALIDATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
                     AND	T_LIVRAISON.STATUT <> 'A'
                 )
@@ -10311,6 +10311,22 @@ class Queries(object):
             ORDER BY 
                 TYPE_MVT ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+
         return query.format(**kwargs)
 
     
