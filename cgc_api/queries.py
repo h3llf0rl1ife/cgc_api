@@ -2819,7 +2819,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_info_operateur(self, args):
+    def Req_info_operateur(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -2836,6 +2836,17 @@ class Queries(object):
             WHERE 
                 T_OPERATEUR.CODE_OPERATEUR = {Param_code_operateur}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_operateur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_operateur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
