@@ -13098,3 +13098,32 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_journee_btn_import_moy_vente_article(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_MOY_VENTE_ARTICLE 
+                (CODE_PRODUIT, CODE_SECTEUR, DATE_VENTE, QTE_INVENDU, QTE_PERTE, QTE_VENTE)
+            VALUES
+                ({code_produit}, {code_secteur}, '{date_vente}', {qte_invendu}, {qte_perte}, {qte_vente})
+        '''
+
+        try:
+            kwargs = {
+                'code_produit': args[0],
+                'code_secteur': args[1],
+                'date_vente': args[2],
+                'qte_invendu': args[3],
+                'qte_perte': args[4],
+                'qte_vente': args[5]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['date_vente'] = self.validateDate(kwargs['date_vente'])
+        
+        if kwargs['date_vente'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
