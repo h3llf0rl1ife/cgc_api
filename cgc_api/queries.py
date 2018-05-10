@@ -13395,3 +13395,26 @@ class Queries(object):
                 raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_codification_mvt_cond_cod_long(self, args): #Done2
+        query = '''
+            SELECT
+                T_AGENCE.COD_LONG AS COD_LONG
+            FROM
+                T_AGENCE
+            WHERE
+                T_AGENCE.CODE_AGCE = {code_agce}
+        '''
+
+        try:
+            kwargs = {
+                'code_agce': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['code_agce'] in (None, 'NULL'):
+            raise ValueError
+
+        return query.format(**kwargs)
