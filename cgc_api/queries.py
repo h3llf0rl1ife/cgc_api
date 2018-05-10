@@ -13359,3 +13359,28 @@ class Queries(object):
             raise
         
         return query.format(**kwargs)
+
+
+    def Req_conv_maj_position_articles_magasins_qte_stock(self, args): #Done2
+        query = '''
+            UPDATE 
+                T_ARTICLES_MAGASINS
+            SET
+                T_ARTICLES_MAGASINS.QTE_STOCK = {qte_stock}
+            WHERE 
+                T_ARTICLES_MAGASINS.PK_T_ARTICLES_MAGASINS  = {pk_t_articles_magasins}
+        '''
+
+        try:
+            kwargs = {
+                'qte_stock': args[0],
+                'pk_t_articles_magasins': args[1]
+            }
+        except IndexError:
+            raise
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+        
+        return query.format(**kwargs)
