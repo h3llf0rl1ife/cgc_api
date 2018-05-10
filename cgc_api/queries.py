@@ -13014,3 +13014,30 @@ class Queries(object):
                 raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_journee_btn_cloturer_solde_initial_caisse(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_SOLDE_INITIAL_CAISSE 
+                (CODE_CAISSE, DATE_JOURNEE, SOLDE_INITIAL)
+            VALUES
+                ({code_caisse}, '{date_journee}', {solde_initial})
+        '''
+
+        try:
+            kwargs = {
+                'code_caisse': args[0],
+                'date_journee': args[1],
+                'solde_initial': args[2]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['date_journee'] = self.validateDate(kwargs['date_journee'])
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+        
+        return query.format(**kwargs)
