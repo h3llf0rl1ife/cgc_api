@@ -13041,3 +13041,31 @@ class Queries(object):
                 raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_journee_btn_nouv_journee_stock_initi_cond(self, args): #Done2
+        query = '''
+            select A.code_op,COUNT(A.code_op) as nb from (
+            select DATE_CHARGEMENT,CODE_VENDEUR as CODE_OP from T_CHARGEMENT where CODE_VENDEUR<>0
+            union all
+            select DATE_CHARGEMENT,CODE_CHAUFFEUR as CODE_OP from T_CHARGEMENT where CODE_CHAUFFEUR<>0
+            union all
+            select DATE_CHARGEMENT,AIDE_VENDEUR1 as CODE_OP from T_CHARGEMENT where AIDE_VENDEUR1<>0
+            union all
+            select DATE_CHARGEMENT,AIDE_VENDEUR2 as CODE_OP from T_CHARGEMENT where AIDE_VENDEUR2<>0
+            ) A where A.DATE_CHARGEMENT='{Param_dt}' group by a.CODE_OP having COUNT(A.code_op)>1
+        '''
+
+        try:
+            kwargs = {
+                'Param_dt': args[0]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+        
+        if kwargs['Param_dt'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
