@@ -13184,3 +13184,26 @@ class Queries(object):
             raise ValueError
         
         return query.format(**kwargs)
+
+
+    def Req_conv_codification_operation_cod_std(self, args): #Done2
+        query = '''
+            SELECT
+                T_AGENCE.CODE_CLIENT AS CODE_CLIENT
+            FROM
+                T_AGENCE
+            WHERE
+                T_AGENCE.CODE_AGCE = {code_agce}
+        '''
+
+        try:
+            kwargs = {
+                'code_agce': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['code_agce'] in (None, 'NULL'):
+            raise ValueError
+
+        return query.format(**kwargs)
