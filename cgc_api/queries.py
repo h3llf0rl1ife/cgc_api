@@ -13282,3 +13282,43 @@ class Queries(object):
                 raise ValueError
 
         return query.format(**kwargs)
+
+
+    def Req_conv_fen_inventaire_btn_appliquer_mouvements(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_MOUVEMENTS
+                (ID_MOUVEMENT, CODE_MAGASIN, DATE_MVT, TYPE_MOUVEMENT, ORIGINE, CODE_ARTICLE, QTE_THEORIQUE,
+                QTE_REEL, QTE_MOUVEMENT, QTE_ECART, PRIX, MONTANT, MONTANT_ECART, COMPTE_ECART, DATE_HEURE_MOUVEMENT, CODE_OPERATEUR)
+            VALUES
+                ({id_mouvement}, {code_magasin}, '{date_mvt}', '{type_mouvement}', {origine}, {code_article}, {qte_theorique}, 
+                {qte_reel}, {qte_mouvement}, {qte_ecart}, {prix}, {montant}, {montant_ecart}, {compte_ecart}, GETDATE(), {code_operateur})
+        '''
+
+        try:
+            kwargs = {
+                'id_mouvement': args[0],
+                'code_magasin': args[1],
+                'date_mvt': args[2],
+                'type_mouvement': args[3],
+                'origine': args[4],
+                'code_article': args[5],
+                'qte_theorique': args[6],
+                'qte_reel': args[7],
+                'qte_mouvement': args[8],
+                'qte_ecart': args[9],
+                'prix': args[10],
+                'montant': args[11],
+                'montant_ecart': args[12],
+                'compte_ecart': args[13],
+                'code_operateur': args[14]
+            }
+        except IndexError:
+            raise
+
+        kwargs['date_mvt'] = self.validateDate(kwargs['date_mvt'])
+
+        if kwargs['date_mvt'] in (None, 'NULL'):
+            raise ValueError
+
+        return query.format(**kwargs)
