@@ -13207,3 +13207,40 @@ class Queries(object):
             raise ValueError
 
         return query.format(**kwargs)
+
+
+    def Req_conv_fen_inventaire_btn_appliquer_operations(self, args): #Done2
+        query = '''
+            INSERT INTO 
+                T_OPERATIONS
+                (TYPE_OPERATION, DATE_OPERATION, DATE_HEURE, CODE_OPERATEUR, COMMENTAIRE, NUM_CONVOYAGE,
+                TYPE_PRODUIT, CODE_AGCE1, CODE_MAGASIN1, COMPTE_ECART, REF)
+            VALUES
+                ('{type_operation}', '{date_operation}', '{date_heure}', {code_operateur}, '{commentaire}',
+                {num_convoyage}, {type_produit}, {code_agce1}, {code_magasin1}, {compte_ecart}, '{ref}')
+        '''
+
+        try:
+            kwargs = {
+                'type_operation': args[0],
+                'date_operation': args[1],
+                'date_heure': args[2],
+                'code_operateur': args[3],
+                'commentaire': args[4],
+                'num_convoyage': args[5],
+                'type_produit': args[6],
+                'code_agce1': args[7],
+                'code_magasin1': args[8],
+                'compte_ecart': args[9],
+                'ref': args[10]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['date_operation'] = self.validateDate(kwargs['date_operation'])
+        kwargs['date_heure'] = self.validateDate(kwargs['date_heure'])
+        
+        if kwargs['date_operation'] in (None, 'NULL') or kwargs['date_heure'] in (None, 'NULL'):
+            raise ValueError
+        
+        return query.format(**kwargs)
