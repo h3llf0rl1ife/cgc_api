@@ -8703,7 +8703,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_solde_initial_caisse(self, args):
+    def Req_solde_initial_caisse(self, args): #Done
         query = '''
             SELECT 
                 T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -8712,10 +8712,27 @@ class Queries(object):
             FROM 
                 T_SOLDE_INITIAL_CAISSE
             WHERE 
-                T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = {Param_date_journee}
-                AND	T_SOLDE_INITIAL_CAISSE.CODE_CAISSE = {Param_code_caisse}
+                T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = '{Param_date_journee}'
+                {OPTIONAL_ARG_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_journee': args[0],
+                'Param_code_caisse': args[1]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            raise ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOLDE_INITIAL_CAISSE.CODE_CAISSE = {Param_code_caisse}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_caisse'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_solde_initial_client(self, args):
