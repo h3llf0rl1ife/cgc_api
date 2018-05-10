@@ -6823,14 +6823,14 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_max_mouv_cond(self, args):
+    def Req_max_mouv_cond(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_MOUVEMENTS_CAISSERIE.ID_MOUVEMENT) AS le_maximum_ID_MOUVEMENT
             FROM 
                 T_MOUVEMENTS_CAISSERIE
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_mouvement(self, args):
