@@ -948,7 +948,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ca_invendu_periode(self, args):
+    def Req_ca_invendu_periode(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
@@ -968,13 +968,29 @@ class Queries(object):
                 AND
                 (
                     T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN {Param_date1} AND {Param_date2}
-                    AND	T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur}
+                    {OPTIONAL_ARG_1}
                     AND	T_GAMME.CODE_GAMME <> 1
                 )
             GROUP BY 
                 T_PRODUITS_CHARGEE.code_secteur
         '''
-        return query.format(**kwargs)
+               
+        try:
+            kwargs = {
+                'Param_date1': args[0],
+                'Param_date2': args[1],
+                'Param_code_secteur': args[2]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date1'] = self.validateDate(kwargs['Param_date1'], 0)
+        kwargs['Param_date2'] = self.validateDate(kwargs['Param_date2'], 1)
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ca_lait_frais(self, args):
