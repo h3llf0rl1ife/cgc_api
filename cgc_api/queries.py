@@ -4677,8 +4677,8 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_comptes(self, args):
-        query = '''
+    def Req_ls_comptes(self, args): #Done
+        query = ''' 
             SELECT 
                 T_COMPTES.CODE_COMPTE AS CODE_COMPTE,	
                 T_COMPTES.NUM_COMPTE AS NUM_COMPTE,	
@@ -4693,7 +4693,7 @@ class Queries(object):
                     T_COMPTES.CODE_COMPTE <> 0
                 )
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_cond(self, args):
