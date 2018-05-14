@@ -7084,14 +7084,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_tournee(self, args):
+    def Req_max_tournee(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_TOURNEES.CODE_TOURNEE) AS le_maximum_CODE_TOURNEE
             FROM 
                 T_TOURNEES
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_min_rang_produit(self, args):
