@@ -7074,14 +7074,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_reglement(self, args):
+    def Req_max_reglement(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_REGELEMENT_COND.ID_REGLEMENT) AS le_maximum_ID_REGLEMENT
             FROM 
                 T_REGELEMENT_COND
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_tournee(self, args):
