@@ -6994,14 +6994,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_livraison(self, args):
+    def Req_max_livraison(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_LIVRAISON.NUM_LIVRAISON) AS le_maximum_NUM_LIVRAISON
             FROM 
                 T_LIVRAISON
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_mouv_cond(self, args): #Done
