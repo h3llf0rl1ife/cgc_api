@@ -6919,14 +6919,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_chargement(self, args):
+    def Req_max_chargement(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_CHARGEMENT.CODE_CHARGEMENT) AS le_maximum_CODE_CHARGEMENT
             FROM 
                 T_CHARGEMENT
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_commandes_usine(self, args):
