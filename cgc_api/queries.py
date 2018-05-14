@@ -7064,14 +7064,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_reconaissance(self, args):
+    def Req_max_reconaissance(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_RECONAISSANCES.ID_RECONAISSANCE) AS le_maximum_ID_RECONAISSANCE
             FROM 
                 T_RECONAISSANCES
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_reglement(self, args):
