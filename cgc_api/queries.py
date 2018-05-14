@@ -6856,7 +6856,7 @@ class Queries(object):
         return query
 
     
-    def Req_mappage_produit(self, args):
+    def Req_mappage_produit(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -6868,7 +6868,7 @@ class Queries(object):
                 T_MAPPAGE_PRODUIT
                 ON T_PRODUITS.CODE_PRODUIT = T_MAPPAGE_PRODUIT.CODE_PRODUIT
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_mappage_secteur(self, args):
