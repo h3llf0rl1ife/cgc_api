@@ -114,7 +114,7 @@ class Queries(object):
             DELETE FROM 
                 T_OBJECTIF_SECTEURS
             WHERE 
-                T_OBJECTIF_SECTEURS.DATE_OBJECTIF = {Param_date_journee}
+                T_OBJECTIF_SECTEURS.DATE_OBJECTIF = '{Param_date_journee}'
                 AND	T_OBJECTIF_SECTEURS.code_secteur = {Param_code_secteur}
         '''
 
