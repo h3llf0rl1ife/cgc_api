@@ -7034,14 +7034,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_operations_caisse(self, args):
+    def Req_max_operations_caisse(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_OPERATIONS_CAISSE.CODE_OPERATION) AS le_maximum_CODE_OPERATION
             FROM 
                 T_OPERATIONS_CAISSE
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_prelevement(self, args):
