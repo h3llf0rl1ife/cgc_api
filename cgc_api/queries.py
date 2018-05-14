@@ -3540,7 +3540,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def req_ls_articles_dispo(self, args):
+    def req_ls_articles_dispo(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3550,7 +3550,7 @@ class Queries(object):
             WHERE 
                 T_ARTICLES.DISPO = 0
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_articles_export(self, args): #Done
