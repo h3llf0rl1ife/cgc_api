@@ -6929,14 +6929,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_commandes_usine(self, args):
+    def Req_max_commandes_usine(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_COMMANDES.ID_COMMANDE) AS le_maximum_ID_COMMANDE
             FROM 
                 T_COMMANDES
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_cond_livrees(self, args):
