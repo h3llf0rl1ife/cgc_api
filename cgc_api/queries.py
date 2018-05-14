@@ -5245,7 +5245,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_gms_depo(self, args):
+    def Req_ls_gms_depo(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5259,7 +5259,7 @@ class Queries(object):
             ORDER BY 
                 NOM_CLIENT ASC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_groups(self, args):
