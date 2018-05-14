@@ -239,16 +239,31 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_annulation_gratuit_prevente(self, args):
+    def Req_annulation_gratuit_prevente(self, args): #Done
         query = '''
             UPDATE
                 T_LIGNE_COMMANDE
             SET 
                 T_LIGNE_COMMANDE.QTE_PROMO = 0
             WHERE 
-                ID_COMMANDE IN (SELECT ID_COMMANDE FROM T_COMMANDE_CLIENT WHERE DATE_COMMANDE={param_date} AND code_secteur={param_code_secteur})
+                ID_COMMANDE IN (SELECT ID_COMMANDE FROM T_COMMANDE_CLIENT WHERE DATE_COMMANDE='{param_date}' AND code_secteur={param_code_secteur})
                 AND T_LIGNE_COMMANDE.QTE_LIVREE = 0 AND T_LIGNE_COMMANDE.QTE_COMMANDE>0
         '''
+
+        try:
+            kwargs = {
+                'param_date': args[0],
+                'param_code_secteur': args[1]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['param_date'] = self.validateDate(kwargs['param_date'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+        
         return query.format(**kwargs)
 
     
