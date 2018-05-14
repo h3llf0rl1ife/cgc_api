@@ -3383,7 +3383,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_alimentation_non_valide(self, args):
+    def Req_ls_alimentation_non_valide(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -3395,10 +3395,10 @@ class Queries(object):
             FROM 
                 T_OPERATIONS_CAISSE
             WHERE 
-                T_OPERATIONS_CAISSE.DATE_VALIDATION = '19000101000000'
+                T_OPERATIONS_CAISSE.DATE_VALIDATION = '1900-01-01 00:00:00'
                 AND	T_OPERATIONS_CAISSE.TYPE_OPERATION = 'A'
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_alimentation_valide(self, args):
