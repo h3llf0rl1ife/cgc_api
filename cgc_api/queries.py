@@ -12532,14 +12532,14 @@ class Queries(object):
         return query
 
     
-    def Req_zero_stock(self, args):
+    def Req_zero_stock(self, args): #Done
         query = '''
             UPDATE 
                 T_ARTICLES_MAGASINS
             SET
                 QTE_STOCK = 0
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Requ_mvt_cond_gms(self, args):
