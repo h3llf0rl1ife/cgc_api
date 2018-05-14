@@ -3693,7 +3693,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_articles_stock(self, args):
+    def Req_ls_articles_stock(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3721,7 +3721,7 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_articles_tout(self, args):
