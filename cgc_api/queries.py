@@ -7014,14 +7014,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_mouvement(self, args):
+    def Req_max_mouvement(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_MOUVEMENTS.ID_MOUVEMENT) AS le_maximum_ID_MOUVEMENT
             FROM 
                 T_MOUVEMENTS
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_mvt_caisse(self, args):
