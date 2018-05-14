@@ -216,7 +216,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_annulation_facture(self, args):
+    def Req_annulation_facture(self, args): #Done
         query = '''
             UPDATE 
                 T_FACTURE
@@ -225,6 +225,17 @@ class Queries(object):
             WHERE 
                 T_FACTURE.NUM_FACTURE = {Param_num_facture}
         '''
+
+        try:
+            kwargs = {
+                'Param_num_facture': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_num_facture'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
