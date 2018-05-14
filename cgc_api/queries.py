@@ -6959,14 +6959,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_decompte(self, args):
+    def Req_max_decompte(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_DECOMPTE.NUM_DECOMPTE) AS le_maximum_NUM_DECOMPTE
             FROM 
                 T_DECOMPTE
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_envoi(self, args):
