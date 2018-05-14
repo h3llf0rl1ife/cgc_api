@@ -4249,7 +4249,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_clients_cac(self, args):
+    def Req_ls_clients_cac(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -4262,7 +4262,7 @@ class Queries(object):
                 T_CLIENTS.CLIENT_EN_COMPTE = 1
                 AND	T_CLIENTS.ACTIF = 1
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_clients_cac_dep(self, args):
