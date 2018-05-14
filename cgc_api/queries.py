@@ -3365,7 +3365,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_aides_vendeur(self, args):
+    def Req_ls_aides_vendeur(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -3380,7 +3380,7 @@ class Queries(object):
                 T_OPERATEUR.ACTIF = 1
                 AND	T_OPERATEUR.FONCTION = 3
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_alimentation_non_valide(self, args):
