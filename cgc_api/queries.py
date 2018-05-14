@@ -900,7 +900,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ca_invendu(self, args):
+    def Req_ca_invendu(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -920,15 +920,32 @@ class Queries(object):
                 AND	T_PRODUITS_CHARGEE.CODE_ARTICLE	=	T_ARTICLES.CODE_ARTICLE
                 AND
                 (
-                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
-                    AND	T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur}
-                    AND	T_GAMME.CODE_GAMME <> 1
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    T_GAMME.CODE_GAMME <> 1
                 )
             GROUP BY 
                 T_PRODUITS_CHARGEE.DATE_CHARGEMENT,	
                 T_PRODUITS_CHARGEE.code_secteur
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_chargement': args[0],
+                'Param_code_secteur': args[1]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+
+        kwargs['OPTIONAL_ARG_1'] = '''T_PRODUITS_CHARGEE.DATE_CHARGEMENT = '{Param_date_chargement}' AND'''
+        kwargs['OPTIONAL_ARG_2'] = 'T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur} AND'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_chargement'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ca_invendu_periode(self, args):
