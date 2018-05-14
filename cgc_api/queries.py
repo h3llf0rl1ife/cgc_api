@@ -10797,7 +10797,7 @@ class Queries(object):
         return query
 
     
-    def Req_total_prelev(self, args):
+    def Req_total_prelev(self, args): #Done
         query = '''
             SELECT 
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -10809,12 +10809,12 @@ class Queries(object):
                 T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
                 AND
                 (
-                    T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION <> '19000101000000000'
+                    T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION <> '1900-01-01 00:00:00'
                 )
             GROUP BY 
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_total_prelev_journalier(self, args):
