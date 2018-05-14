@@ -632,7 +632,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_articles_livrees(self, args):
+    def Req_articles_livrees(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
@@ -650,10 +650,21 @@ class Queries(object):
             FROM 
                 T_MOUVEMENTS
             WHERE 
-                T_MOUVEMENTS.ORIGINE = {Param_origine}
-                AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'L'
+                {OPTIONAL_ARG_1}
+                T_MOUVEMENTS.TYPE_MOUVEMENT = 'L'
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_origine': args[0]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS.ORIGINE = {Param_origine} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_origine'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def req_autorisation_caisserie(self, args): #Done
