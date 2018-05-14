@@ -767,7 +767,7 @@ class Queries(object):
         return query
 
     
-    def Req_bls_synch(self, args):
+    def Req_bls_synch(self, args): #Done
         query = '''
             SELECT 
                 T_SYNCHRO.ID_OPERATION AS ID_OPERATION
@@ -776,7 +776,7 @@ class Queries(object):
             WHERE 
                 T_SYNCHRO.OPERATION = 'BL '
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_bordereau(self, args):
