@@ -857,7 +857,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ca_client_objectif(self, args):
+    def Req_ca_client_objectif(self, args): #Done
         query = '''
             SELECT 
                 T_OBJECTIFS.CODE_CLIENT AS CODE_CLIENT,	
@@ -872,8 +872,8 @@ class Queries(object):
                 ON T_FACTURE.CODE_CLIENT = T_OBJECTIFS.CODE_CLIENT
             WHERE 
                 (
-                T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
-                AND	T_OBJECTIFS.CODE_CLIENT = {Param_code_client}
+                T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                {OPTIONAL_ARG_1}
             )
             GROUP BY 
                 T_OBJECTIFS.CODE_CLIENT,	
@@ -881,7 +881,23 @@ class Queries(object):
                 T_OBJECTIFS.REMISE_OBJECTIF,	
                 T_FACTURE.DATE_HEURE
         '''
-        return query.format(**kwargs)
+        
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_code_client': args[2]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_DECOMPTE.MODE_PAIEMENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ca_invendu(self, args):
