@@ -6359,7 +6359,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_resp_vente(self, args):
+    def Req_ls_resp_vente(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -6375,7 +6375,7 @@ class Queries(object):
             ORDER BY 
                 NOM_OPERATEUR ASC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_secteur(self, args):
