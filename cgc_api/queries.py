@@ -779,7 +779,7 @@ class Queries(object):
         return query
 
     
-    def Req_bordereau(self, args):
+    def Req_bordereau(self, args): #Done
         query = '''
             SELECT 
                 T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
@@ -801,11 +801,27 @@ class Queries(object):
                 AND
                 (
                     T_DT_DECOMPTE.TYPE <= 2
-                    AND	T_DECOMPTE.DATE_DECOMPTE BETWEEN {Param_dt1} AND {Param_dt2}
-                    AND	T_DECOMPTE.MODE_PAIEMENT = {Param_type}
+                    AND	T_DECOMPTE.DATE_DECOMPTE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    {OPTIONAL_ARG_1}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_type': args[2]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_DECOMPTE.MODE_PAIEMENT = {Param_type}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_type'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_budget_mensuel(self, args):
