@@ -11243,7 +11243,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_susp_operateur(self, args):
+    def Req_total_susp_operateur(self, args): #Done
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -11266,7 +11266,7 @@ class Queries(object):
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION,	
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_total_transfert_entree(self, args):
