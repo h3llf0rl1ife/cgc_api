@@ -6700,7 +6700,7 @@ class Queries(object):
                 T_OPERATEUR.ACTIF = 1
                 AND	T_OPERATEUR.FONCTION IN (1, 4, 5, 6, 11, 55, 56) 
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_versement_caisse(self, args):
