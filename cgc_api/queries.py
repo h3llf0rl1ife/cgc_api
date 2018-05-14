@@ -4790,7 +4790,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_controlleurs(self, args):
+    def Req_ls_controlleurs(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -4803,7 +4803,7 @@ class Queries(object):
             WHERE 
                 T_OPERATEUR.FONCTION = 7
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_courrier(self, args):
