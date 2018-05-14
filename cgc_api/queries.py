@@ -4806,7 +4806,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_courrier(self, args):
+    def Req_ls_courrier(self, args): #Done
         query = '''
             SELECT 
                 T_COURRIER_AGENCE.ID_ENVOI AS ID_ENVOI,	
@@ -4825,7 +4825,7 @@ class Queries(object):
             ORDER BY 
                 DATE_HEURE_SAISIE DESC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_decompte_cheque(self, args):
