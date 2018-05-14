@@ -1113,7 +1113,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_caisses_palettes(self, args):
+    def Req_caisses_palettes(self, args): #Done
         query = '''
             SELECT 
                 T_CAISSES_PALETTES.CODE_TYPE AS CODE_TYPE,	
@@ -1128,7 +1128,7 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_chargement(self, args):
