@@ -109,7 +109,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
     
     
-    def Param_supp_objectif_secteurs(self, args):
+    def Param_supp_objectif_secteurs(self, args): #Done
         query = '''
             DELETE FROM 
                 T_OBJECTIF_SECTEURS
@@ -117,6 +117,21 @@ class Queries(object):
                 T_OBJECTIF_SECTEURS.DATE_OBJECTIF = {Param_date_journee}
                 AND	T_OBJECTIF_SECTEURS.code_secteur = {Param_code_secteur}
         '''
+
+        try:
+            kwargs = {
+                'Param_date_journee': args[0],
+                'Param_code_secteur': args[1]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+        
         return query.format(**kwargs)
 
     
