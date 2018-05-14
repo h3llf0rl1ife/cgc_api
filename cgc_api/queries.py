@@ -6969,14 +6969,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_envoi(self, args):
+    def Req_max_envoi(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_COURRIER_AGENCE.ID_ENVOI) AS le_maximum_ID
             FROM 
                 T_COURRIER_AGENCE
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_journee(self, args): #Done
