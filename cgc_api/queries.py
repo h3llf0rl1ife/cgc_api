@@ -10784,7 +10784,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_position_cond(self, args):
+    def Req_total_position_cond(self, args): #Done
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_CP AS CODE_CP,	
@@ -10794,7 +10794,7 @@ class Queries(object):
             GROUP BY 
                 T_MAGASIN_COND.CODE_CP
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_total_prelev(self, args):
