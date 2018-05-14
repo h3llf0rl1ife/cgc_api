@@ -7722,7 +7722,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_produits_mappage(self, args):
+    def Req_produits_mappage(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -7736,7 +7736,7 @@ class Queries(object):
                 T_ARTICLES.ACTIF,	
                 T_ARTICLES.CODE_PRODUIT
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_promotions_dt(self, args):
