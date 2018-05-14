@@ -2838,7 +2838,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def REQ_GetEnseigne(self, args):
+    def REQ_GetEnseigne(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_GROUP_CLIENTS.ID_GP_CLIENT AS ID_GP_CLIENT,	
@@ -2849,7 +2849,7 @@ class Queries(object):
             WHERE 
                 T_CLIENTS.GROUP_CLIENT = T_GROUP_CLIENTS.ID_GP_CLIENT
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_info_bl_mission(self, args):
