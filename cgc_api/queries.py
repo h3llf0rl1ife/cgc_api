@@ -5262,7 +5262,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_groups(self, args):
+    def Req_ls_groups(self, args): #Done
         query = '''
             SELECT 
                 T_GROUP_CLIENTS.ID_GP_CLIENT AS ID_GP_CLIENT,	
@@ -5272,7 +5272,7 @@ class Queries(object):
             ORDER BY 
                 NOM_GROUP ASC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_liv(self, args): #Done
