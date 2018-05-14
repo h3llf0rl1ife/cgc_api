@@ -12632,7 +12632,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Requête12(self, args):
+    def Requête12(self, args): #Done
         query = '''
             SELECT 
                 art.CODE_ARTICLE, art.LIBELLE AS nom_article,
@@ -12647,7 +12647,7 @@ class Queries(object):
             WHERE 
                 cm.CODE_CHARGEMENT = 13000003
         '''
-        return query.format(**kwargs)
+        return query
     
 
     def journee_1_Requete(self, args): #Done
