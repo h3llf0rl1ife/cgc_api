@@ -6871,7 +6871,7 @@ class Queries(object):
         return query
 
     
-    def Req_mappage_secteur(self, args):
+    def Req_mappage_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -6886,7 +6886,7 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_autorisation(self, args):
