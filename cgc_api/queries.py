@@ -6805,7 +6805,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_maj_pass(self, args):
+    def Req_maj_pass(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.FONCTION AS FONCTION,	
@@ -6817,7 +6817,7 @@ class Queries(object):
                 T_OPERATEUR.FONCTION IN (7) 
                 AND	T_OPERATEUR.ACTIF = 1
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_maj_position_cond(self, args):
