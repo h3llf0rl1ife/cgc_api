@@ -267,7 +267,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_annule_synchro(self, args):
+    def Req_annule_synchro(self, args): #Done
         query = '''
             UPDATE 
                 T_SYNCHRO
@@ -278,6 +278,20 @@ class Queries(object):
                 AND	T_SYNCHRO.SOUS_OPERATION = {Param_sous_operation}
                 AND	T_SYNCHRO.ID_OPERATION = {Param_id_operation}
         '''
+
+        try:
+            kwargs = {
+                'Param_operation': args[0],
+                'Param_sous_operation': args[1],
+                'Param_id_operation': args[2]
+            }
+        except IndexError:
+            raise
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                raise ValueError
+        
         return query.format(**kwargs)
 
     
