@@ -2815,14 +2815,14 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def REQ_Get_MissionBL_By_Ordre(self, args):
+    def REQ_Get_MissionBL_By_Ordre(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_Mission_BL.Id_Det) AS MAX_Id_Det
             FROM 
                 T_Mission_BL
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_get_prevendeur_date(self, args):
