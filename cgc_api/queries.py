@@ -5839,7 +5839,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_preparation(self, args):
+    def Req_ls_preparation(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.RANG AS RANG,	
@@ -5861,7 +5861,7 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_prix_produit(self, args):
