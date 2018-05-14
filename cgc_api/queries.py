@@ -544,7 +544,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
 
-    def Req_articles_livraison_client(self, args):
+    def Req_articles_livraison_client(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -565,13 +565,33 @@ class Queries(object):
                 T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
                 AND
                 (
-                    T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
-                    AND	T_PRODUITS_LIVREES.TYPE_MVT = {Param_type_mvt}
-                    AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
-                    AND	T_LIVRAISON.STATUT <> 'A'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                    T_LIVRAISON.STATUT <> 'A'
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_type_mvt': args[1],
+                'Param_code_client': args[2]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+        
+        kwargs['OPTIONAL_ARG_1'] = '''T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}' AND'''
+        kwargs['OPTIONAL_ARG_2'] = 'T_PRODUITS_LIVREES.TYPE_MVT = {Param_type_mvt} AND'
+        kwargs['OPTIONAL_ARG_3'] = 'T_LIVRAISON.CODE_CLIENT = {Param_code_client} AND'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_livraison'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_type_mvt'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_articles_livraison_secteur(self, args):
