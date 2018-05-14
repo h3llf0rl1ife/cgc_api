@@ -7044,14 +7044,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_prelevement(self, args):
+    def Req_max_prelevement(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_PRELEVEMENT_SUSP_COND.ID_PRELEV) AS le_maximum_ID_PRELEV
             FROM 
                 T_PRELEVEMENT_SUSP_COND
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_reclamation(self, args):
