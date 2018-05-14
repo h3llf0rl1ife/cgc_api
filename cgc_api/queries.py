@@ -6909,14 +6909,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_borderau_valeurs(self, args):
+    def Req_max_borderau_valeurs(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_BORDEREAU_VALEURS.ID_BORDEREAU) AS le_maximum_CODE_OPERATION
             FROM 
                 T_BORDEREAU_VALEURS
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_chargement(self, args):
