@@ -594,7 +594,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_articles_livraison_secteur(self, args):
+    def Req_articles_livraison_secteur(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
@@ -608,11 +608,28 @@ class Queries(object):
                 AND
                 (
                     T_PRODUITS_LIVREES.STATUT <> 'A'
-                    AND	T_PRODUITS_LIVREES.code_secteur = {Param_code_secteur}
-                    AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_date_livraison': args[1]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_PRODUITS_LIVREES.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_2'] = '''AND T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}' '''
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_date_livraison'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_articles_livrees(self, args):
