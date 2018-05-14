@@ -12501,7 +12501,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_versement_non_envoyer(self, args):
+    def Req_versement_non_envoyer(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -12529,7 +12529,7 @@ class Queries(object):
             ORDER BY 
                 CODE_OPERATION DESC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_zero_stock(self, args):
