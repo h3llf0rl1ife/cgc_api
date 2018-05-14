@@ -6899,14 +6899,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_autorisation_caisserie(self, args):
+    def Req_max_autorisation_caisserie(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_AUTORISATION_SOLDE_CAISSERIE.ID_JUSTIFICATION) AS le_maximum_ID_JUSTIFICATION
             FROM 
                 T_AUTORISATION_SOLDE_CAISSERIE
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_borderau_valeurs(self, args):
