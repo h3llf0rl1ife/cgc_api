@@ -6949,14 +6949,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_convoyage(self, args):
+    def Req_max_convoyage(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_CONVOYAGE.NUM_CONVOYAGE) AS max_convoyage
             FROM 
                 T_CONVOYAGE
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_decompte(self, args):
