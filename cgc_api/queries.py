@@ -5773,7 +5773,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_prelevement(self, args):
+    def Req_ls_prelevement(self, args): #Done
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.ID_PRELEV AS ID_PRELEV,	
@@ -5784,7 +5784,7 @@ class Queries(object):
             ORDER BY 
                 ID_PRELEV DESC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_prelevements_periode(self, args):
