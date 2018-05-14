@@ -3954,7 +3954,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_borderau_valeurs(self, args):
+    def Req_ls_borderau_valeurs(self, args): #Done
         query = '''
             SELECT 
                 T_BORDEREAU_VALEURS.ID_BORDEREAU AS ID_BORDEREAU,	
@@ -3976,7 +3976,7 @@ class Queries(object):
             ORDER BY 
                 ID_BORDEREAU DESC
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_ls_chargement_cac(self, args):
