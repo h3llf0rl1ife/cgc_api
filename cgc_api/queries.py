@@ -1515,7 +1515,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs).format(**kwargs)
 
     
-    def Req_cheque_non_envoyer(self, args):
+    def Req_cheque_non_envoyer(self, args): #Done
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -1540,7 +1540,7 @@ class Queries(object):
                     T_DT_DECOMPTE.MOTIF_ENVOI <> 1
                 )
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_client_cac_journee(self, args):
