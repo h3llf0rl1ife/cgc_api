@@ -693,7 +693,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_bl_non_envoyer(self, args):
+    def Req_bl_non_envoyer(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -716,7 +716,7 @@ class Queries(object):
                     T_LIVRAISON.TYPE_MVT IN ('L', 'R', 'D') 
                     AND	T_LIVRAISON.STATUT <> 'A'
                     AND	T_LIVRAISON.MOTIF_ENVOI <> 1
-                    AND	T_LIVRAISON.DATE_VALIDATION <> '19000101000000000'
+                    AND	T_LIVRAISON.DATE_VALIDATION <> '1900-01-01 00:00:00'
                 )
             GROUP BY 
                 T_LIVRAISON.NUM_LIVRAISON,	
@@ -727,7 +727,7 @@ class Queries(object):
                 T_CLIENTS.NOM_CLIENT,	
                 T_LIVRAISON.BENEFICIAIRE
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_bl_non_envoyer_cond(self, args):
