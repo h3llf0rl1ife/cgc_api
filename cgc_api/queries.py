@@ -7054,14 +7054,14 @@ class Queries(object):
         return query
 
     
-    def Req_max_reclamation(self, args):
+    def Req_max_reclamation(self, args): #Done
         query = '''
             SELECT 
                 MAX(T_RECLAMATIONS_QUALITE.ID_RECLAMATION) AS le_maximum_ID_RECLAMATION
             FROM 
                 T_RECLAMATIONS_QUALITE
         '''
-        return query.format(**kwargs)
+        return query
 
     
     def Req_max_reconaissance(self, args):
