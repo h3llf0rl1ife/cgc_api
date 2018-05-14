@@ -1,6 +1,6 @@
 from quart import Quart, Blueprint, request, jsonify
 #from flask_restful import Api
-from cgc_api import resources as r
+#from cgc_api import resources as r
 from cgc_api.queries import Queries
 
 
@@ -26,16 +26,13 @@ async def test():
     queries = Queries("192.168.64.234", "gestcom", "miftah", "Eljadida")
 
     data = await request.get_json()
-    print('data', data)
     
     try:
         query = getattr(queries, data['Parameters']['query'])
         #print(query)
     except AttributeError:
-        print('first')
         return jsonify({'Status': 404, 'Message': 'Query not found.'})
     except (KeyError, TypeError):
-        print('second')
         return jsonify({'Status': 400, 'Message': 'Bad request.'})
 
     kwargs = data['Parameters']['kwargs']
@@ -61,4 +58,6 @@ async def hello():
 
 # Debugging
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(debug=True)
+
+#gunicorn -w 5 --worker-class quart.worker.GunicornWorker --threads 1 --worker-connections 1024 cgc_api.wsgi

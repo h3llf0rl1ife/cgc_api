@@ -1,9 +1,9 @@
 from flask import request
-from flask_restful import Resource
+#from flask_restful import Resource
 from cgc_api.queries import Queries
 
 
-class APIRequest(Resource):
+class APIRequest():#Resource):
     queries = Queries("192.168.64.234", "gestcom", "miftah", "Eljadida")
 
 
