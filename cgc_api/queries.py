@@ -1705,7 +1705,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_clients_n1(self, args):
+    def Req_clients_n1(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_MOY_VENTE_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -1721,9 +1721,22 @@ class Queries(object):
                 AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
                 AND
                 (
-                    T_MOY_VENTE_CLIENTS.DATE_VENTE = {Param_date}
+                    T_MOY_VENTE_CLIENTS.DATE_VENTE = '{Param_date}'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_date': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
+
+        if kwargs['Param_date'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
