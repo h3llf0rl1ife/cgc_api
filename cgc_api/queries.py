@@ -5572,7 +5572,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_enseigne_secteur(self, args):
+    def Req_ls_enseigne_secteur(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_GROUP_CLIENTS.ID_GP_CLIENT AS ID_GP_CLIENT,	
@@ -5590,6 +5590,17 @@ class Queries(object):
                     T_SOUS_SECTEUR.code_secteur = {Param_CODE_SECTEUR}
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_CODE_SECTEUR': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_CODE_SECTEUR'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
