@@ -5866,7 +5866,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_livraisons(self, args):
+    def Req_ls_livraisons(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -5887,10 +5887,23 @@ class Queries(object):
                 AND		T_OPERATEUR.CODE_OPERATEUR = T_LIVRAISON.code_vendeur
                 AND
                 (
-                    T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_LIVRAISON.Type_Livraison IN (1, 2) 
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
