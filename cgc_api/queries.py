@@ -6021,7 +6021,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_operateurs(self, args):
+    def Req_ls_operateurs(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -6054,6 +6054,17 @@ class Queries(object):
             ORDER BY 
                 NOM_OPERATEUR ASC
         '''
+        
+        try:
+            kwargs = {
+                'Param_actif': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_actif'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
