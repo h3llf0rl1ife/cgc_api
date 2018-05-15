@@ -993,7 +993,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ca_lait_frais(self, args):
+    def Req_ca_lait_frais(self, args): #Done
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -1008,9 +1008,9 @@ class Queries(object):
                 AND		T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
                 AND
                 (
-                    T_FACTURE.CODE_CLIENT = {Param_code_client}
-                    AND	T_FACTURE.DATE_HEURE >= {Param_dt1}
-                    AND	T_FACTURE.DATE_HEURE <= {Param_dt2}
+                    {OPTIONAL_ARG_1}
+                    T_FACTURE.DATE_HEURE >= '{Param_dt1}'
+                    AND	T_FACTURE.DATE_HEURE <= '{Param_dt2}'
                     AND	T_FACTURE.VALID = 1
                     AND	T_DT_FACTURE.CODE_ARTICLE IN (1, 2) 
                 )
@@ -1018,7 +1018,23 @@ class Queries(object):
                 T_FACTURE.CODE_CLIENT,	
                 T_ARTICLES.TVA
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_client': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
+        kwargs['OPTIONAL_ARG_1'] = 'T_FACTURE.CODE_CLIENT = {Param_code_client} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ca_pda(self, args):
