@@ -9958,7 +9958,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_stock_initial_magasins(self, args):
+    def Req_stock_initial_magasins(self, args): #Done
         query = '''
             SELECT 
                 T_STOCK_INIT.DATE_PS AS DATE_PS,	
@@ -9971,6 +9971,19 @@ class Queries(object):
             WHERE 
                 T_STOCK_INIT.DATE_PS = {Param_date}
         '''
+        
+        try:
+            kwargs = {
+                'Param_date': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
+
+        if kwargs['Param_date'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
