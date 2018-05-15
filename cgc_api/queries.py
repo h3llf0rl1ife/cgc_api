@@ -2323,7 +2323,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dt_courrier(self, args):
+    def Req_dt_courrier(self, args): #Done
         query = '''
             SELECT 
                 T_DT_COURRIER_AGENCE.ID_ENVOI AS ID_ENVOI,	
@@ -2336,6 +2336,17 @@ class Queries(object):
             WHERE 
                 T_DT_COURRIER_AGENCE.ID_ENVOI = {Param_id_envoi}
         '''
+
+        try:
+            kwargs = {
+                'Param_id_envoi': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_id_envoi'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
