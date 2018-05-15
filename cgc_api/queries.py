@@ -8464,7 +8464,7 @@ class Queries(object):
                 T_ARTICLES_MAGASINS.CODE_ARTICLE,	
                 T_ARTICLES_MAGASINS.CATEGORIE
         '''
-        
+
         try:
             kwargs = {
                 'Param_code_article': args[0]
@@ -8478,7 +8478,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_produits_famille(self, args):
+    def Req_produits_famille(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -8489,6 +8489,17 @@ class Queries(object):
             WHERE 
                 T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_famille': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_famille'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
