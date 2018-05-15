@@ -3111,7 +3111,7 @@ class Queries(object):
         return query
 
     
-    def Req_get_prevendeur_date(self, args):
+    def Req_get_prevendeur_date(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDE_CLIENT.DATE_COMMANDE AS DATE_COMMANDE,	
@@ -3121,6 +3121,19 @@ class Queries(object):
             WHERE 
                 T_COMMANDE_CLIENT.DATE_COMMANDE = {Param_DATE_COMMANDE}
         '''
+        
+        try:
+            kwargs = {
+                'Param_DATE_COMMANDE': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_DATE_COMMANDE'] = self.validateDate(kwargs['Param_DATE_COMMANDE'])
+
+        if kwargs['Param_DATE_COMMANDE'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
