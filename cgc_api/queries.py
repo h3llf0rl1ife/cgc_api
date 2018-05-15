@@ -1037,7 +1037,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ca_pda(self, args):
+    def Req_ca_pda(self, args): #Done
         query = '''
             SELECT 
                 SUM(T_FACTURE.MONTANT_FACTURE) AS la_somme_MONTANT_FACTURE,	
@@ -1052,11 +1052,27 @@ class Queries(object):
                 AND
                 (
                     T_FACTURE.VALID = 1
-                    AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
-                    AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+                    {OPTIONAL_ARG_1}
+                    AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ca_secteur(self, args):
