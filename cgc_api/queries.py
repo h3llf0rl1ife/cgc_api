@@ -3119,7 +3119,7 @@ class Queries(object):
             FROM 
                 T_COMMANDE_CLIENT
             WHERE 
-                T_COMMANDE_CLIENT.DATE_COMMANDE = {Param_DATE_COMMANDE}
+                T_COMMANDE_CLIENT.DATE_COMMANDE = '{Param_DATE_COMMANDE}'
         '''
         
         try:
