@@ -3121,7 +3121,7 @@ class Queries(object):
             WHERE 
                 T_COMMANDE_CLIENT.DATE_COMMANDE = '{Param_DATE_COMMANDE}'
         '''
-        
+
         try:
             kwargs = {
                 'Param_DATE_COMMANDE': args[0]
@@ -3151,7 +3151,7 @@ class Queries(object):
         return query
 
     
-    def Req_info_bl_mission(self, args):
+    def Req_info_bl_mission(self, args): #Done
         query = '''
             SELECT 
                 T_Mission_BL.Id_Det_Mission AS Id_Det_Mission,	
@@ -3164,6 +3164,17 @@ class Queries(object):
             WHERE 
                 T_Mission_BL.Num_BL = {Param_num_bl}
         '''
+
+        try:
+            kwargs = {
+                'Param_num_bl': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_num_bl'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
