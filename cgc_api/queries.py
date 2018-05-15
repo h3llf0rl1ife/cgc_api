@@ -3052,7 +3052,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_famille_gamme(self, args):
+    def Req_famille_gamme(self, args): #Done
         query = '''
             SELECT 
                 T_FAMILLE.CODE_FAMILLE AS CODE_FAMILLE,	
@@ -3063,6 +3063,17 @@ class Queries(object):
             WHERE 
                 T_FAMILLE.CODE_GAMME = {Param_code_gamme}
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_gamme': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_gamme'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
