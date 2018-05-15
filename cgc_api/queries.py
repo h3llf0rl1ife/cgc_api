@@ -9696,7 +9696,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_sit_caisserie(self, args):
+    def Req_sit_caisserie(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -9723,6 +9723,19 @@ class Queries(object):
                     AND	T_OPERATIONS.DATE_OPERATION = {Param_date_reception}
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_reception': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_reception'] = self.validateDate(kwargs['Param_date_reception'])
+
+        if kwargs['Param_date_reception'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
