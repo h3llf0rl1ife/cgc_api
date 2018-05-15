@@ -6929,7 +6929,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_secteur(self, args):
+    def Req_ls_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -6958,6 +6958,17 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_superviseur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_superviseur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
