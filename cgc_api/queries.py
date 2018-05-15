@@ -5798,7 +5798,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_livraison_client(self, args):
+    def Req_ls_livraison_client(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION,	
@@ -5821,6 +5821,17 @@ class Queries(object):
                     T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_secteur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
