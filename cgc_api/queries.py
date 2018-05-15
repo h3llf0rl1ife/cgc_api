@@ -5757,7 +5757,7 @@ class Queries(object):
                 T_LIVRAISON
             WHERE 
                 T_LIVRAISON.STATUT <> 'A'
-                AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
         '''
 
         try:
