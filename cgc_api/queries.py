@@ -10125,13 +10125,24 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_cond_livree(self, args):
+    def Req_supp_cond_livree(self, args): #Done
         query = '''
             DELETE FROM 
                 T_COND_LIVRAISON
             WHERE 
                 T_COND_LIVRAISON.NUM_LIVRAISON = {Param_nbl}
         '''
+
+        try:
+            kwargs = {
+                'Param_nbl': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_nbl'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
