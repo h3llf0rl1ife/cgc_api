@@ -7210,7 +7210,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ls_tournees(self, args):
+    def Req_ls_tournees(self, args): #Done
         query = '''
             SELECT 
                 T_TOURNEES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -7229,6 +7229,17 @@ class Queries(object):
                     T_TOURNEES.code_secteur = {Param_code_secteur}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_secteur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
