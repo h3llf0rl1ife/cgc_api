@@ -3178,7 +3178,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_info_caisse(self, args):
+    def Req_info_caisse(self, args): #Done
         query = '''
             SELECT 
                 T_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
@@ -3188,6 +3188,17 @@ class Queries(object):
             WHERE 
                 T_CAISSE.CODE_CAISSE = {Param_code_caisse}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_caisse': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_caisse'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
