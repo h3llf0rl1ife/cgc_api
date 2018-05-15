@@ -7856,7 +7856,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_montant_livraison_client(self, args):
+    def Req_montant_livraison_client(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_CLIENT AS CODE_CLIENT,	
@@ -7879,6 +7879,19 @@ class Queries(object):
                     AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_validation': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        if kwargs['Param_date_validation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
