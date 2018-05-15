@@ -1108,7 +1108,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ca_secteur_date(self, args):
+    def Req_ca_secteur_date(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1130,8 +1130,8 @@ class Queries(object):
                 AND		T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
                 AND
                 (
-                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
-                    AND	T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur}
+                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    {OPTIONAL_ARG_1}
                 )
             GROUP BY 
                 T_PRODUITS_CHARGEE.code_secteur,	
@@ -1141,7 +1141,23 @@ class Queries(object):
                 T_CHARGEMENT.HEURE_ENTREE,	
                 T_CHARGEMENT.KM_PARCOURUS
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_code_secteur': args[2]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ca_secteur_periode(self, args):
