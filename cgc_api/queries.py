@@ -9002,7 +9002,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_recherche_client_code_interne(self, args):
+    def Req_recherche_client_code_interne(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -9016,6 +9016,17 @@ class Queries(object):
                 T_CLIENTS.ACTIF = 1
                 AND	T_CLIENTS.SOLDE_C_STD = {Param_code_in}
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_in': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_in'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
