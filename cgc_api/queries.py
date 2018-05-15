@@ -4965,7 +4965,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_code_secteur_commandes(self, args):
+    def Req_ls_code_secteur_commandes(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_COMMANDES.code_secteur AS code_secteur
@@ -4975,6 +4975,19 @@ class Queries(object):
                 T_COMMANDES.TYPE_COMMANDE = 'S'
                 AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
