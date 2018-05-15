@@ -1160,7 +1160,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ca_secteur_periode(self, args):
+    def Req_ca_secteur_periode(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
@@ -1170,10 +1170,22 @@ class Queries(object):
             FROM 
                 T_PRODUITS_CHARGEE
             WHERE 
-                T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+                T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN '{Param_dt1}' AND '{Param_dt2}'
             GROUP BY 
                 T_PRODUITS_CHARGEE.code_secteur
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
         return query.format(**kwargs)
 
     
