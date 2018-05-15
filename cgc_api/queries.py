@@ -9720,7 +9720,7 @@ class Queries(object):
                 AND
                 (
                     T_OPERATIONS.TYPE_OPERATION IN ('R', 'T') 
-                    AND	T_OPERATIONS.DATE_OPERATION = {Param_date_reception}
+                    AND	T_OPERATIONS.DATE_OPERATION = '{Param_date_reception}'
                 )
         '''
         
