@@ -10090,13 +10090,26 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_budget(self, args):
+    def Req_supp_budget(self, args): #Done
         query = '''
             DELETE FROM 
                 T_BUDGET_MENSUEL
             WHERE 
-                T_BUDGET_MENSUEL.DATE_BUDGET = {Param_date_budget}
+                T_BUDGET_MENSUEL.DATE_BUDGET = '{Param_date_budget}'
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_budget': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_budget'] = self.validateDate(kwargs['Param_date_budget'])
+
+        if kwargs['Param_date_budget'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
