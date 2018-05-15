@@ -6703,7 +6703,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_reglements(self, args):
+    def Req_ls_reglements(self, args): #Done
         query = '''
             SELECT 
                 T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
@@ -6723,6 +6723,19 @@ class Queries(object):
                     AND	T_DECOMPTE.DATE_DECOMPTE = {Param_dt_reglement}
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_dt_reglement': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt_reglement'] = self.validateDate(kwargs['Param_dt_reglement'])
+
+        if kwargs['Param_dt_reglement'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
