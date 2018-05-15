@@ -2646,7 +2646,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dt_retour(self, args):
+    def Req_dt_retour(self, args): #Done
         query = '''
             SELECT 
                 T_LIGNE_RETOUR_CAISSERIE.ID_RETOUR AS ID_RETOUR,	
@@ -2669,6 +2669,17 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_id_retour': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_id_retour'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
