@@ -9919,7 +9919,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_stock_inital_cond_magasin(self, args):
+    def Req_stock_inital_cond_magasin(self, args): #Done
         query = '''
             SELECT 
                 T_STOCK_INITI_COND.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -9935,6 +9935,19 @@ class Queries(object):
                 T_STOCK_INITI_COND.CODE_CP,	
                 T_STOCK_INITI_COND.CODE_MAGASIN
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_journee': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
