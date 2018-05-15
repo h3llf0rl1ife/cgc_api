@@ -7045,7 +7045,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_secteur_sans_commande(self, args):
+    def Req_ls_secteur_sans_commande(self, args): #Done
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -7060,6 +7060,17 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_cds': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_cds'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
