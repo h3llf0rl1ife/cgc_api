@@ -3202,7 +3202,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_info_chargement(self, args):
+    def Req_info_chargement(self, args): #Done
         query = '''
             SELECT 
                 T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -3235,6 +3235,17 @@ class Queries(object):
                     T_CHARGEMENT.CODE_CHARGEMENT = {Param_code_chargement}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_chargement': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_chargement'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
