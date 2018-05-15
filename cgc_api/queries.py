@@ -7432,7 +7432,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_magasin_cond(self, args):
+    def Req_magasin_cond(self, args): #Done
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_MAGASIN AS CODE_MAGASIN,	
@@ -7449,6 +7449,17 @@ class Queries(object):
                     T_MAGASIN_COND.CODE_CP = {Param_code_cp}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_cp': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_cp'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
