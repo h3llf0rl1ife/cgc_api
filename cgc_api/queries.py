@@ -3336,7 +3336,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_info_mission(self, args):
+    def Req_info_mission(self, args): #Done
         query = '''
             SELECT 
                 T_Ordre_Mission_Agence.Id_Ordre_Mission AS Id_Ordre_Mission,	
@@ -3353,6 +3353,17 @@ class Queries(object):
             WHERE 
                 T_Ordre_Mission_Agence.Id_Ordre_Mission = {Param_id_mission}
         '''
+
+        try:
+            kwargs = {
+                'Param_id_mission': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_id_mission'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
