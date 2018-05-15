@@ -4740,7 +4740,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_clients_classe_secteur(self, args):
+    def Req_ls_clients_classe_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -4759,6 +4759,17 @@ class Queries(object):
                     AND	T_CLIENTS.CLASSE NOT IN (1, 3) 
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_secteur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
