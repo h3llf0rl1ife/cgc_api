@@ -7143,7 +7143,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_superviseurs_resp_vente(self, args):
+    def Req_ls_superviseurs_resp_vente(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -7164,6 +7164,17 @@ class Queries(object):
             ORDER BY 
                 NOM_OPERATEUR ASC
         '''
+
+        try:
+            kwargs = {
+                'param_resp_vente': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['param_resp_vente'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
