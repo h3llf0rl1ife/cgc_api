@@ -7875,7 +7875,7 @@ class Queries(object):
                 AND
                 (
                     T_LIVRAISON.STATUT <> 'A'
-                    AND	T_LIVRAISON.DATE_VALIDATION = {Param_date_validation}
+                    AND	T_LIVRAISON.DATE_VALIDATION = '{Param_date_validation}'
                     AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
                 )
         '''
@@ -7915,7 +7915,7 @@ class Queries(object):
                 AND		T_CHARGEMENT.CODE_CHARGEMENT = T_COND_CHARGEE.CODE_CHARGEMENT
                 AND
                 (
-                    T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+                    T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}'
                 )
             ORDER BY 
                 RANG ASC
@@ -8188,7 +8188,7 @@ class Queries(object):
             FROM 
                 T_OBJECTIF_AGENCE
             WHERE 
-                T_OBJECTIF_AGENCE.DATE_OBJECTIF = {Param_dt_objectif}
+                T_OBJECTIF_AGENCE.DATE_OBJECTIF = '{Param_dt_objectif}'
         '''
         
         try:
