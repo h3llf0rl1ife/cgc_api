@@ -9929,7 +9929,7 @@ class Queries(object):
             FROM 
                 T_STOCK_INITI_COND
             WHERE 
-                T_STOCK_INITI_COND.DATE_JOURNEE = {Param_date_journee}
+                T_STOCK_INITI_COND.DATE_JOURNEE = '{Param_date_journee}'
             GROUP BY 
                 T_STOCK_INITI_COND.DATE_JOURNEE,	
                 T_STOCK_INITI_COND.CODE_CP,	
@@ -9982,7 +9982,7 @@ class Queries(object):
             FROM 
                 T_STOCK_INIT
             WHERE 
-                T_STOCK_INIT.DATE_PS = {Param_date}
+                T_STOCK_INIT.DATE_PS = '{Param_date}'
         '''
         
         try:
