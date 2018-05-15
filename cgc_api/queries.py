@@ -9130,7 +9130,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_recherche_secteur(self, args):
+    def Req_recherche_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
@@ -9140,6 +9140,17 @@ class Queries(object):
             WHERE 
                 T_SECTEUR.NOM_SECTEUR = {Param_nom_secteur}
         '''
+        
+        try:
+            kwargs = {
+                'Param_nom_secteur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_nom_secteur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
