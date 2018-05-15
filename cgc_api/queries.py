@@ -1341,7 +1341,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_chargement_cond(self, args):
+    def Req_chargement_cond(self, args): #Done
         query = '''
             SELECT 
                 T_COND_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -1365,6 +1365,17 @@ class Queries(object):
                     T_COND_CHARGEE.CODE_CHARGEMENT = {Param_code_chargement}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_chargement': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_chargement'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
