@@ -2362,7 +2362,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dt_facture_client(self, args):
+    def Req_dt_facture_client(self, args): #Done
         query = '''
             SELECT 
                 T_DT_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -2388,6 +2388,17 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_num_facture': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_num_facture'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
