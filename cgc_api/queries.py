@@ -2934,7 +2934,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_etat_validation_remise(self, args):
+    def Req_etat_validation_remise(self, args): #Done
         query = '''
             SELECT 
                 T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
@@ -2942,8 +2942,21 @@ class Queries(object):
             FROM 
                 T_REMISE_CLIENT
             WHERE 
-                T_REMISE_CLIENT.Date_Debut = {Param_DATE_DEBUT}
+                T_REMISE_CLIENT.Date_Debut = '{Param_DATE_DEBUT}'
         '''
+        
+        try:
+            kwargs = {
+                'Param_DATE_DEBUT': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_DATE_DEBUT'] = self.validateDate(kwargs['Param_DATE_DEBUT'])
+
+        if kwargs['Param_DATE_DEBUT'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
