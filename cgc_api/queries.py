@@ -10044,7 +10044,7 @@ class Queries(object):
                 T_MOUVEMENTS.CODE_ARTICLE,	
                 T_MOUVEMENTS.TYPE_MOUVEMENT
         '''
-        
+
         try:
             kwargs = {
                 'Param_code_article': args[0]
@@ -10069,13 +10069,24 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_bl_mission(self, args):
+    def Req_supp_bl_mission(self, args): #Done
         query = '''
             DELETE FROM 
                 T_Mission_BL
             WHERE 
                 T_Mission_BL.Id_Det = {Param_id_det}
         '''
+
+        try:
+            kwargs = {
+                'Param_id_det': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_id_det'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
