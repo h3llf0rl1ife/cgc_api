@@ -7284,7 +7284,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_vehicule(self, args):
+    def Req_ls_vehicule(self, args): #Done
         query = '''
             SELECT 
                 T_VEHICULE.Matricule AS Matricule,	
@@ -7297,6 +7297,17 @@ class Queries(object):
                 T_VEHICULE.ACTIF = 1
                 AND	T_VEHICULE.Id_Type_Vehicule = {ParamId_Type_Vehicule}
         '''
+
+        try:
+            kwargs = {
+                'ParamId_Type_Vehicule': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['ParamId_Type_Vehicule'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
