@@ -5990,7 +5990,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_num_bl_client(self, args):
+    def Req_ls_num_bl_client(self, args): #Done
         query = '''
             SELECT TOP 10 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -6007,6 +6007,17 @@ class Queries(object):
             ORDER BY 
                 NUM_LIVRAISON DESC
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_client': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_client'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
