@@ -2506,7 +2506,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs).format(**kwargs)
 
     
-    def Req_dt_prelevement(self, args):
+    def Req_dt_prelevement(self, args): #Done
         query = '''
             SELECT 
                 T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT AS ID_PRELEVEMENT,	
@@ -2548,6 +2548,17 @@ class Queries(object):
                     T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT = {Param_id_prelevement}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_id_prelevement': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_id_prelevement'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
