@@ -2136,7 +2136,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dernier_chargement(self, args):
+    def Req_dernier_chargement(self, args): #Done
         query = '''
             SELECT TOP 5 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -2149,6 +2149,17 @@ class Queries(object):
             ORDER BY 
                 DATE_CHARGEMENT DESC
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_secteur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
