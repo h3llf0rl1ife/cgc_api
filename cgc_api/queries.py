@@ -7402,7 +7402,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_magasin_categorie(self, args):
+    def Req_magasin_categorie(self, args): #Done
         query = '''
             SELECT 
                 T_TYPE_PRODUIT_MAG.CODE_MAGASIN AS CODE_MAGASIN,	
@@ -7418,6 +7418,17 @@ class Queries(object):
                     T_TYPE_PRODUIT_MAG.PRODUIT = {Param_categorie}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_categorie': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_categorie'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
