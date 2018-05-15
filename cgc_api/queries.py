@@ -8177,7 +8177,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_objectif_agence(self, args):
+    def Req_objectif_agence(self, args): #Done
         query = '''
             SELECT 
                 T_OBJECTIF_AGENCE.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -8190,6 +8190,19 @@ class Queries(object):
             WHERE 
                 T_OBJECTIF_AGENCE.DATE_OBJECTIF = {Param_dt_objectif}
         '''
+        
+        try:
+            kwargs = {
+                'Param_dt_objectif': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt_objectif'] = self.validateDate(kwargs['Param_dt_objectif'])
+
+        if kwargs['Param_dt_objectif'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
