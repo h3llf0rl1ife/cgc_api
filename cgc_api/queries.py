@@ -9154,7 +9154,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_reconaissances_operateur(self, args):
+    def Req_reconaissances_operateur(self, args): #Done
         query = '''
             SELECT 
                 T_RECONAISSANCES.DATE_RECONAISS AS DATE_RECONAISS,	
@@ -9169,8 +9169,21 @@ class Queries(object):
             FROM 
                 T_RECONAISSANCES
             WHERE 
-                T_RECONAISSANCES.DATE_RECONAISS = {Param_date_reconaissance}
+                T_RECONAISSANCES.DATE_RECONAISS = '{Param_date_reconaissance}'
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_reconaissance': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_reconaissance'] = self.validateDate(kwargs['Param_date_reconaissance'])
+
+        if kwargs['Param_date_reconaissance'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
