@@ -10029,7 +10029,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_stock_recep_temp(self, args):
+    def Req_stock_recep_temp(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -10044,6 +10044,17 @@ class Queries(object):
                 T_MOUVEMENTS.CODE_ARTICLE,	
                 T_MOUVEMENTS.TYPE_MOUVEMENT
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_article': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_article'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
