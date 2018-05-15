@@ -3511,7 +3511,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_lignes_commande(self, args):
+    def Req_lignes_commande(self, args): #Done
         query = '''
             SELECT 
                 T_LIGNE_COMMANDE.ID_COMMANDE AS ID_COMMANDE,	
@@ -3542,6 +3542,17 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_id_commande': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_id_commande'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
