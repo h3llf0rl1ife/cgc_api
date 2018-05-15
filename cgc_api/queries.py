@@ -1207,7 +1207,7 @@ class Queries(object):
         return query
 
     
-    def Req_chargement(self, args):
+    def Req_chargement(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -1259,6 +1259,17 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_code_chargement': args[0]
+            }
+        except IndexError:
+            raise
+        
+        if kwargs['Param_code_chargement'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
