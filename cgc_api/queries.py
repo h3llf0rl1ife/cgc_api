@@ -7777,7 +7777,7 @@ class Queries(object):
         return query
 
     
-    def Req_min_rang_produit(self, args):
+    def Req_min_rang_produit(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -7789,6 +7789,17 @@ class Queries(object):
             GROUP BY 
                 T_ARTICLES.CODE_PRODUIT
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_produit': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_produit'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
