@@ -5194,7 +5194,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_cond_livraison(self, args):
+    def Req_ls_cond_livraison(self, args): #Done
         query = '''
             SELECT 
                 T_COND_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -5215,6 +5215,17 @@ class Queries(object):
                     T_COND_LIVRAISON.NUM_LIVRAISON = {Param_num_livraison}
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_num_livraison': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_num_livraison'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
