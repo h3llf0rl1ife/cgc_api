@@ -3458,7 +3458,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_itineraire(self, args):
+    def Req_itineraire(self, args): #Done
         query = '''
             SELECT 
                 T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -3470,6 +3470,17 @@ class Queries(object):
             WHERE 
                 T_ITINERAIRES.CODE_TOURNEE = {Param_code_tournee}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_tournee': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_tournee'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
