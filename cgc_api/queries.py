@@ -4846,7 +4846,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_clients_itinéraire(self, args):
+    def Req_ls_clients_itinéraire(self, args): #Done
         query = '''
             SELECT 
                 T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -4872,6 +4872,17 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_tournee': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_tournee'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
