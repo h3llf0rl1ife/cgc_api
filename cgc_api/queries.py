@@ -3813,7 +3813,7 @@ class Queries(object):
             FROM 
                 T_OPERATIONS_CAISSE
             WHERE 
-                T_OPERATIONS_CAISSE.DATE_VALIDATION <> {Param_date_validation}
+                T_OPERATIONS_CAISSE.DATE_VALIDATION <> '{Param_date_validation}'
                 AND	T_OPERATIONS_CAISSE.TYPE_OPERATION = 'A'
         '''
         
