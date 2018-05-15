@@ -6562,7 +6562,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_produits_livraison(self, args):
+    def Req_ls_produits_livraison(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -6604,6 +6604,17 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+        
+        try:
+            kwargs = {
+                'Param_num_livraison': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_num_livraison'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
