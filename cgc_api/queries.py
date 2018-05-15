@@ -2149,7 +2149,7 @@ class Queries(object):
             ORDER BY 
                 DATE_CHARGEMENT DESC
         '''
-        
+
         try:
             kwargs = {
                 'Param_code_secteur': args[0]
@@ -2163,7 +2163,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dernier_maj_stock(self, args):
+    def Req_dernier_maj_stock(self, args): #Done
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -2173,6 +2173,17 @@ class Queries(object):
             WHERE 
                 T_SECTEUR.code_secteur = {Param_cde_secteur}
         '''
+
+        try:
+            kwargs = {
+                'Param_cde_secteur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_cde_secteur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
