@@ -11027,7 +11027,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_avoir(self, args):
+    def Req_total_avoir(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -11043,7 +11043,7 @@ class Queries(object):
                 AND		T_PRODUITS_CHARGEE.CODE_CHARGEMENT = T_CHARGEMENT.CODE_CHARGEMENT
                 AND
                 (
-                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT = '{Param_date_chargement}'
                     AND	T_PRODUITS_CHARGEE.QTE_ECART <> 0
                 )
             GROUP BY 
@@ -11051,6 +11051,19 @@ class Queries(object):
                 T_PRODUITS_CHARGEE.COMPTE_ECART,	
                 T_OPERATEUR.FONCTION
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_chargement': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+
+        if kwargs['Param_date_chargement'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
