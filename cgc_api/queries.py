@@ -10278,13 +10278,24 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_justification_solde(self, args):
+    def Req_supp_justification_solde(self, args): #Done
         query = '''
             DELETE FROM 
                 T_AUTORISATIONS_SOLDE
             WHERE 
                 T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION = {Param_id_justification}
         '''
+
+        try:
+            kwargs = {
+                'Param_id_justification': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_id_justification'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
