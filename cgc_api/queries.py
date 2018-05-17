@@ -10373,7 +10373,7 @@ class Queries(object):
             WHERE 
                 T_MOYENNE_VENTE.DATE_VENTE = '{Param_date_mvente}'
         '''
-        
+
         try:
             kwargs = {
                 'Param_date_mvente': args[0]
@@ -10389,13 +10389,24 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_mvt_caisse(self, args):
+    def Req_supp_mvt_caisse(self, args): #Done
         query = '''
             DELETE FROM 
                 T_MOUVEMENTS_CAISSE
             WHERE 
                 T_MOUVEMENTS_CAISSE.ORIGINE = {Param_code_operation}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_operation': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_operation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
