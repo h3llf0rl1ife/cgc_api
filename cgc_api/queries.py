@@ -11067,7 +11067,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_avoir_mvt(self, args):
+    def Req_total_avoir_mvt(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -11081,13 +11081,26 @@ class Queries(object):
                 T_OPERATEUR.CODE_OPERATEUR = T_MOUVEMENTS.COMPTE_ECART
                 AND
                 (
-                    T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+                    T_MOUVEMENTS.DATE_MVT = '{Param_date_mvt}'
                 )
             GROUP BY 
                 T_MOUVEMENTS.DATE_MVT,	
                 T_MOUVEMENTS.COMPTE_ECART,	
                 T_OPERATEUR.FONCTION
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_mvt': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        if kwargs['Param_date_mvt'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
