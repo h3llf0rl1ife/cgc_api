@@ -10477,13 +10477,26 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_objectif(self, args):
+    def Req_supp_objectif(self, args): #Done
         query = '''
             DELETE FROM 
                 T_OBJECTIF_VENTE
             WHERE 
-                T_OBJECTIF_VENTE.DATE_OBJECTIF = {Param_date_objectif}
+                T_OBJECTIF_VENTE.DATE_OBJECTIF = '{Param_date_objectif}'
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_objectif': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_objectif'] = self.validateDate(kwargs['Param_date_objectif'])
+
+        if kwargs['Param_date_objectif'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
