@@ -10933,7 +10933,7 @@ class Queries(object):
                 T_CLIENTS.CODE_CLIENT = T_SYNTHESE_LIVRAISON.CODE_CLIENT
                 AND
                 (
-                    T_SYNTHESE_LIVRAISON.DATE_JOURNEE = {Param_DATE_JOURNEE}
+                    T_SYNTHESE_LIVRAISON.DATE_JOURNEE = '{Param_DATE_JOURNEE}'
                 )
         '''
 
@@ -10985,7 +10985,7 @@ class Queries(object):
             FROM 
                 T_OPERATIONS_CAISSE
             WHERE 
-                T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+                T_OPERATIONS_CAISSE.DATE_VALIDATION = '{Param_date_validation}'
                 AND	T_OPERATIONS_CAISSE.TYPE_OPERATION = 'A'
             GROUP BY 
                 T_OPERATIONS_CAISSE.TYPE_OPERATION,	
