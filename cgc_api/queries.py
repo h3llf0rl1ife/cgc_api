@@ -10505,7 +10505,7 @@ class Queries(object):
             DELETE FROM 
                 T_OBJECTIF_AGENCE
             WHERE 
-                T_OBJECTIF_AGENCE.DATE_OBJECTIF = {Param_date_objectif}
+                T_OBJECTIF_AGENCE.DATE_OBJECTIF = '{Param_date_objectif}'
         '''
 
         try:
@@ -10539,7 +10539,7 @@ class Queries(object):
             DELETE FROM 
                 T_OBJECTIF_RENDUS
             WHERE 
-                T_OBJECTIF_RENDUS.DATE_OBJECTIF = {Param_date_objectif}
+                T_OBJECTIF_RENDUS.DATE_OBJECTIF = '{Param_date_objectif}'
         '''
 
         try:
