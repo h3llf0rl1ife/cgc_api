@@ -10915,7 +10915,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_synthese_livraison_date(self, args):
+    def Req_synthese_livraison_date(self, args): #Done
         query = '''
             SELECT 
                 T_SYNTHESE_LIVRAISON.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -10936,6 +10936,19 @@ class Queries(object):
                     T_SYNTHESE_LIVRAISON.DATE_JOURNEE = {Param_DATE_JOURNEE}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_DATE_JOURNEE': args[0]
+            }
+        except IndexError:
+            raise
+        
+        kwargs['Param_DATE_JOURNEE'] = self.validateDate(kwargs['Param_DATE_JOURNEE'])
+        
+        if kwargs['Param_DATE_JOURNEE'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
