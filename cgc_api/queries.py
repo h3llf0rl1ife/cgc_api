@@ -10580,13 +10580,24 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_produit_comm(self, args):
+    def Req_supp_produit_comm(self, args): #Done
         query = '''
             DELETE FROM 
                 T_PRODUITS_COMMANDES
             WHERE 
                 T_PRODUITS_COMMANDES.ID_COMMANDE = {Param_id_commande}
         '''
+
+        try:
+            kwargs = {
+                'Param_id_commande': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_id_commande'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
