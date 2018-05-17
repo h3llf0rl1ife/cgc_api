@@ -10797,7 +10797,7 @@ class Queries(object):
             DELETE FROM 
                 T_STOCK_INITI_COND
             WHERE 
-                T_STOCK_INITI_COND.DATE_JOURNEE = {Param_date_journee}
+                T_STOCK_INITI_COND.DATE_JOURNEE = '{Param_date_journee}'
         '''
 
         try:
