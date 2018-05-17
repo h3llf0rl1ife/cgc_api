@@ -10220,7 +10220,7 @@ class Queries(object):
             WHERE 
                 T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = '{Param_date_journee}'
         '''
-        
+
         try:
             kwargs = {
                 'Param_date_journee': args[0]
@@ -10235,14 +10235,25 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    
-    def Req_supp_itinéraire(self, args):
+
+    def Req_supp_itinéraire(self, args): #Done
         query = '''
             DELETE FROM 
                 T_ITINERAIRES
             WHERE 
                 T_ITINERAIRES.CODE_TOURNEE = {Param_code_tournee}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_tournee': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_tournee'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
