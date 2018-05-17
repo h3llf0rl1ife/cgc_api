@@ -10299,13 +10299,24 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_mouvement_operation(self, args):
+    def Req_supp_mouvement_operation(self, args): #Done
         query = '''
             DELETE FROM 
                 T_MOUVEMENTS
             WHERE 
                 T_MOUVEMENTS.ORIGINE = {Param_code_operation}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_operation': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_operation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
