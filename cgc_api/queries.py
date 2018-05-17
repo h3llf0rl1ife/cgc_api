@@ -10366,13 +10366,26 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_mvente(self, args):
+    def Req_supp_mvente(self, args): #Done
         query = '''
             DELETE FROM 
                 T_MOYENNE_VENTE
             WHERE 
-                T_MOYENNE_VENTE.DATE_VENTE = {Param_date_mvente}
+                T_MOYENNE_VENTE.DATE_VENTE = '{Param_date_mvente}'
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_mvente': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_mvente'] = self.validateDate(kwargs['Param_date_mvente'])
+
+        if kwargs['Param_date_mvente'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
