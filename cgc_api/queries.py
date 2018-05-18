@@ -12166,7 +12166,7 @@ class Queries(object):
         return query
 
     
-    def Req_total_prelev_journalier(self, args):
+    def Req_total_prelev_journalier(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.FONCTION AS FONCTION,	
@@ -12202,12 +12202,25 @@ class Queries(object):
                 AND		T_OPERATEUR.CODE_OPERATEUR = T_DT_PRELEVEMENT_COND.CODE_OPERATEUR
                 AND
                 (
-                    T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = {Param_date_validation}
+                    T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = '{Param_date_validation}'
                 )
             GROUP BY 
                 T_OPERATEUR.FONCTION,	
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_validation': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        if kwargs['Param_date_validation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
