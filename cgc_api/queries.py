@@ -2049,7 +2049,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_contrubition_canal(self, args):
+    def Req_contrubition_canal(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -2062,12 +2062,24 @@ class Queries(object):
                 T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
                 AND
                 (
-                    T_STATISTIQUES.DATE_JOURNEE BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
             GROUP BY 
                 T_STATISTIQUES.CATEGORIE,	
                 T_ARTICLES.CODE_PRODUIT
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
         return query.format(**kwargs)
 
     
