@@ -12935,7 +12935,7 @@ class Queries(object):
                 AND
                 (
                     T_SECTEUR.ACTIF = 1
-                    AND	T_TOURNEES.code_secteur = '{Param_code_secteur}'
+                    AND	T_TOURNEES.code_secteur = {Param_code_secteur}
                 )
         '''
         
