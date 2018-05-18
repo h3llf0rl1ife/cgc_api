@@ -12563,7 +12563,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_sortie_rendus(self, args):
+    def Req_total_sortie_rendus(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -12581,7 +12581,7 @@ class Queries(object):
                 (
                     T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
                     AND	T_OPERATIONS.SOUS_TYPE_OPERATION = 'V'
-                    AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+                    AND	T_MOUVEMENTS.DATE_MVT = '{Param_date_mvt}'
                     AND	T_MOUVEMENTS.QTE_MOUVEMENT < 0
                     AND	T_MOUVEMENTS.TYPE_PRODUIT <> 'PRODUIT'
                 )
@@ -12592,6 +12592,19 @@ class Queries(object):
                 T_MOUVEMENTS.QTE_MOUVEMENT,	
                 T_MOUVEMENTS.TYPE_PRODUIT
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_mvt': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        if kwargs['Param_date_mvt'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
