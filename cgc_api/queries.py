@@ -13998,7 +13998,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_verif_prelevement(self, args):
+    def Req_verif_prelevement(self, args): #Done
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.DATE_PRELEV AS DATE_PRELEV,	
@@ -14010,11 +14010,24 @@ class Queries(object):
                 T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
                 AND
                 (
-                    T_PRELEVEMENT_SUSP_COND.DATE_PRELEV = {Param_date_prelev}
+                    T_PRELEVEMENT_SUSP_COND.DATE_PRELEV = '{Param_date_prelev}'
                 )
             GROUP BY 
                 T_PRELEVEMENT_SUSP_COND.DATE_PRELEV
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_prelev': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_prelev'] = self.validateDate(kwargs['Param_date_prelev'])
+
+        if kwargs['Param_date_prelev'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
