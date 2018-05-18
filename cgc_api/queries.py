@@ -12524,7 +12524,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_solde_initial(self, args):
+    def Req_total_solde_initial(self, args): #Done
         query = '''
             SELECT 
                 T_SOLDE_INITIAL.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -12541,12 +12541,25 @@ class Queries(object):
                 T_OPERATEUR.CODE_OPERATEUR = T_SOLDE_INITIAL.CODE_OPERATEUR
                 AND
                 (
-                    T_SOLDE_INITIAL.DATE_JOURNEE = {Param_date_journee}
+                    T_SOLDE_INITIAL.DATE_JOURNEE = '{Param_date_journee}'
                 )
             GROUP BY 
                 T_SOLDE_INITIAL.DATE_JOURNEE,	
                 T_OPERATEUR.FONCTION
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_journee': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
