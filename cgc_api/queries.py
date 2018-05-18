@@ -12415,7 +12415,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_remise_ca(self, args):
+    def Req_total_remise_ca(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -12423,10 +12423,23 @@ class Queries(object):
             FROM 
                 T_PRODUITS_CHARGEE
             WHERE 
-                T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_DATE_CHARGEMENT}
+                T_PRODUITS_CHARGEE.DATE_CHARGEMENT = '{Param_DATE_CHARGEMENT}'
             GROUP BY 
                 T_PRODUITS_CHARGEE.DATE_CHARGEMENT
         '''
+        
+        try:
+            kwargs = {
+                'Param_DATE_CHARGEMENT': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_DATE_CHARGEMENT'] = self.validateDate(kwargs['Param_DATE_CHARGEMENT'])
+
+        if kwargs['Param_DATE_CHARGEMENT'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
