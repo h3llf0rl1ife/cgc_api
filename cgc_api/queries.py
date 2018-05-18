@@ -11608,7 +11608,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_don(self, args):
+    def Req_total_don(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -11624,7 +11624,7 @@ class Queries(object):
                 T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
                 AND
                 (
-                    T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_LIVRAISON.TYPE_MVT = 'D'
                     AND	T_LIVRAISON.LIVRAISON_TOURNEE <> 1
                 )
@@ -11635,6 +11635,19 @@ class Queries(object):
                 T_LIVRAISON.LIVRAISON_TOURNEE,	
                 T_LIVRAISON.Type_Livraison
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
