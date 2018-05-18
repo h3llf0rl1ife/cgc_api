@@ -12224,7 +12224,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_prelevement(self, args):
+    def Req_total_prelevement(self, args): #Done
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -12260,12 +12260,25 @@ class Queries(object):
                 T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
                 AND
                 (
-                    T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = {Param_date_validation}
+                    T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION = '{Param_date_validation}'
                 )
             GROUP BY 
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR,	
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_validation': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        if kwargs['Param_date_validation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
