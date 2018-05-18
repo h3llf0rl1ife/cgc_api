@@ -11847,7 +11847,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_livraison_sec_gms(self, args):
+    def Req_total_livraison_sec_gms(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -11864,7 +11864,7 @@ class Queries(object):
                 AND		T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
                 AND
                 (
-                    T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_LIVRAISON.STATUT <> 'A'
                     AND	T_SECTEUR.CAT_SECTEUR = 2
                 )
@@ -11873,6 +11873,19 @@ class Queries(object):
                 T_PRODUITS_LIVREES.CODE_ARTICLE,	
                 T_SECTEUR.CAT_SECTEUR
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
