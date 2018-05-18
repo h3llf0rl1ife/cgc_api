@@ -12822,7 +12822,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_transfert_sortie(self, args):
+    def Req_total_transfert_sortie(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -12839,7 +12839,7 @@ class Queries(object):
                 T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS.ORIGINE
                 AND
                 (
-                    T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+                    T_MOUVEMENTS.DATE_MVT = '{Param_date_mvt}'
                     AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
                     AND	T_MOUVEMENTS.TYPE_PRODUIT = 'PRODUIT'
                     AND	T_OPERATIONS.CODE_MAGASIN2 = 0
@@ -12853,6 +12853,19 @@ class Queries(object):
                 T_MOUVEMENTS.TYPE_PRODUIT,	
                 T_OPERATIONS.CODE_MAGASIN2
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_mvt': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        if kwargs['Param_date_mvt'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
