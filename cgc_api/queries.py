@@ -12921,7 +12921,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_tournee_secteur(self, args):
+    def Req_tournee_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_TOURNEES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -12935,9 +12935,20 @@ class Queries(object):
                 AND
                 (
                     T_SECTEUR.ACTIF = 1
-                    AND	T_TOURNEES.code_secteur = {Param_code_secteur}
+                    AND	T_TOURNEES.code_secteur = '{Param_code_secteur}'
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_code_secteur'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
