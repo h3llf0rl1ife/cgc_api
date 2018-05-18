@@ -13358,7 +13358,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_val_livraison(self, args):
+    def Req_val_livraison(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -13369,6 +13369,17 @@ class Queries(object):
             WHERE 
                 T_LIVRAISON.NUM_LIVRAISON = {Param_num_livraison}
         '''
+        
+        try:
+            kwargs = {
+                'Param_num_livraison': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_num_livraison'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
