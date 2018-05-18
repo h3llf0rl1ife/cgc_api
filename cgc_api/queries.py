@@ -13916,7 +13916,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_verif_nbl(self, args):
+    def Req_verif_nbl(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS.TYPE_OPERATION AS TYPE_OPERATION,	
@@ -13927,6 +13927,17 @@ class Queries(object):
                 T_OPERATIONS.REF = {Param_num_bl}
                 AND	T_OPERATIONS.TYPE_OPERATION = 'R'
         '''
+        
+        try:
+            kwargs = {
+                'Param_num_bl': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_num_bl'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
