@@ -11357,7 +11357,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_conseig_decons(self, args):
+    def Req_total_conseig_decons(self, args): #Done
         query = '''
             SELECT 
                 T_REGELEMENT_COND.CODE_OPERTAEUR AS CODE_OPERTAEUR,	
@@ -11379,9 +11379,22 @@ class Queries(object):
                 T_OPERATEUR.CODE_OPERATEUR = T_REGELEMENT_COND.CODE_OPERTAEUR
                 AND
                 (
-                    T_REGELEMENT_COND.DATE_VALIDATION = {Param_date_validation}
+                    T_REGELEMENT_COND.DATE_VALIDATION = '{Param_date_validation}'
                 )
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_validation': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        if kwargs['Param_date_validation'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
