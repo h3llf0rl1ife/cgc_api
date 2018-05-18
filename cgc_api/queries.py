@@ -12952,7 +12952,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_transfert_rendus_par_categorie(self, args):
+    def Req_transfert_rendus_par_categorie(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -12965,7 +12965,7 @@ class Queries(object):
                 T_MOUVEMENTS
             WHERE 
                 T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
-                AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+                AND	T_MOUVEMENTS.DATE_MVT = '{Param_date_mvt}'
                 AND	T_MOUVEMENTS.QTE_MOUVEMENT > 0
                 AND	T_MOUVEMENTS.TYPE_PRODUIT <> 'PRODUIT'
             GROUP BY 
@@ -12975,6 +12975,19 @@ class Queries(object):
                 T_MOUVEMENTS.CODE_ARTICLE,	
                 T_MOUVEMENTS.QTE_MOUVEMENT
         '''
+        
+        try:
+            kwargs = {
+                'Param_date_mvt': args[0]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        if kwargs['Param_date_mvt'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
