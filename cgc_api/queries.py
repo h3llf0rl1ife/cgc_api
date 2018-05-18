@@ -13927,7 +13927,7 @@ class Queries(object):
                 T_OPERATIONS.REF = {Param_num_bl}
                 AND	T_OPERATIONS.TYPE_OPERATION = 'R'
         '''
-        
+
         try:
             kwargs = {
                 'Param_num_bl': args[0]
@@ -13941,7 +13941,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_verif_num_commande(self, args):
+    def Req_verif_num_commande(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -13951,6 +13951,17 @@ class Queries(object):
             WHERE 
                 T_COMMANDES.NUM_COMMANDE = {Param_num_commande}
         '''
+
+        try:
+            kwargs = {
+                'Param_num_commande': args[0]
+            }
+        except IndexError:
+            raise
+
+        if kwargs['Param_num_commande'] in (None, 'NULL'):
+            raise ValueError
+
         return query.format(**kwargs)
 
     
