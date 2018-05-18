@@ -12700,7 +12700,7 @@ class Queries(object):
                 T_PRELEVEMENT_SUSP_COND.ID_PRELEV = T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT
                 AND
                 (
-                    T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION <> '19000101000000'
+                    T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION <> '1900-01-01 00:00:00'
                 )
             GROUP BY 
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION,	
