@@ -11354,7 +11354,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_total_commandes_periode(self, args):
+    def Req_total_commandes_periode(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -11367,12 +11367,24 @@ class Queries(object):
                 T_COMMANDES.ID_COMMANDE = T_PRODUITS_COMMANDES.ID_COMMANDE
                 AND
                 (
-                    T_COMMANDES.DATE_LIVRAISON BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_COMMANDES.DATE_LIVRAISON BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_COMMANDES.TYPE_COMMANDE <> 'U'
                 )
             GROUP BY 
                 T_PRODUITS_COMMANDES.CODE_ARTICLE
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
         return query.format(**kwargs)
 
     
