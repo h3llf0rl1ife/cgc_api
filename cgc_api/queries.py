@@ -4756,7 +4756,7 @@ class Queries(object):
                 AND
                 (
                     T_LIVRAISON.STATUT <> 'A'
-                    AND	T_LIVRAISON.DATE_LIVRAISON BETWEEN {Param_dt1} AND {Param_dt2}
+                    AND	T_LIVRAISON.DATE_LIVRAISON BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_CLIENTS.CLIENT_EN_COMPTE = 1
                     AND	T_CLIENTS.CLASSE IN (2, 6, 7, 8, 9, 10) 
                 )
