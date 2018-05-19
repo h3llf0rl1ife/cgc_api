@@ -5579,7 +5579,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_ecarts_rendus(self, args):
+    def Req_ls_ecarts_rendus(self, args): #Done
         query = '''
             SELECT 
                 T_ECARTS_RENDUS.ID_ECART AS ID_ECART,	
@@ -5602,9 +5602,21 @@ class Queries(object):
                 T_OPERATEUR.CODE_OPERATEUR = T_ECARTS_RENDUS.CODE_OPERATEUR
                 AND
                 (
-                    T_ECARTS_RENDUS.DATE_HEURE_SAISIE BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_ECARTS_RENDUS.DATE_HEURE_SAISIE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1]
+            }
+        except IndexError:
+            raise
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
+
         return query.format(**kwargs)
 
     
