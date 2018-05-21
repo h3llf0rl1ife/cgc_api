@@ -63,8 +63,8 @@ class Queries(object):
                 'pcodeOp': args[0],
                 'pCodeTache': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['OPTIONAL_ARG_1'] = 'T_OPERTEURS_TACHES.CODE_OPERATEUR = {pcodeOp}'
         kwargs['OPTIONAL_ARG_2'] = 'AND	T_OPERTEURS_TACHES.ID_TACHE = {pCodeTache}'
@@ -100,8 +100,8 @@ class Queries(object):
                 'Param_gp': args[0],
                 'Param_not_in': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_CLIENTS.GROUP_CLIENT = {Param_gp}'
         kwargs['OPTIONAL_ARG_2'] = 'AND	T_CLIENTS.CODE_CLIENT NOT IN ({Param_not_in})'
@@ -126,14 +126,14 @@ class Queries(object):
                 'Param_date_journee': args[0],
                 'Param_code_secteur': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
         
         return query.format(**kwargs)
 
@@ -162,8 +162,8 @@ class Queries(object):
                 'Param_date_chargement': args[0],
                 'Param_code_secteur': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'], 0)
 
@@ -209,8 +209,8 @@ class Queries(object):
                 'Param_code_caisse': args[0],
                 'Param_date_journee': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'], 0)
 
@@ -233,11 +233,11 @@ class Queries(object):
             kwargs = {
                 'Param_num_facture': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_num_facture'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -258,14 +258,14 @@ class Queries(object):
                 'param_date': args[0],
                 'param_code_secteur': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['param_date'] = self.validateDate(kwargs['param_date'])
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
         
         return query.format(**kwargs)
 
@@ -288,12 +288,12 @@ class Queries(object):
                 'Param_sous_operation': args[1],
                 'Param_id_operation': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
         
         return query.format(**kwargs)
 
@@ -320,8 +320,8 @@ class Queries(object):
                 'Param_origine': args[0],
                 'Param_code_article': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS.ORIGINE = {Param_origine}'
         kwargs['OPTIONAL_ARG_2'] = 'AND	T_MOUVEMENTS.CODE_ARTICLE = {Param_code_article}'
@@ -365,8 +365,8 @@ class Queries(object):
                 'Param_code_client': args[0],
                 'Param_date_livraison': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
@@ -396,8 +396,8 @@ class Queries(object):
             kwargs = {
                 'Param_code_article': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_ARTICLES_MAGASINS.CODE_ARTICLE = {Param_code_article}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_article'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
@@ -439,8 +439,8 @@ class Queries(object):
                 'Param_code_secteur': args[1],
                 'Param_date_chargement': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
@@ -491,8 +491,8 @@ class Queries(object):
                 'Param_code_agce': args[1],
                 'param_dt': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['param_dt'] = self.validateDate(kwargs['param_dt'])
 
@@ -537,8 +537,8 @@ class Queries(object):
             kwargs = {
                 'Param_ID_ENSEIGNE': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['CODE_BLOCK_1'] = '''WHERE 
                 T_ARTICLES_ENSEIGNE.ID_ENSEIGNE = {Param_ID_ENSEIGNE}'''
@@ -581,8 +581,8 @@ class Queries(object):
                 'Param_type_mvt': args[1],
                 'Param_code_client': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
         
@@ -621,8 +621,8 @@ class Queries(object):
                 'Param_code_secteur': args[0],
                 'Param_date_livraison': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
@@ -661,8 +661,8 @@ class Queries(object):
             kwargs = {
                 'Param_origine': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS.ORIGINE = {Param_origine} AND'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_origine'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
@@ -685,13 +685,13 @@ class Queries(object):
             kwargs = {
                 'Param_dt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
 
         if kwargs['Param_dt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -815,8 +815,8 @@ class Queries(object):
                 'Param_dt2': args[1],
                 'Param_type': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -846,8 +846,8 @@ class Queries(object):
             kwargs = {
                 'Param_date_budget': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_budget'] = self.validateDate(kwargs['Param_date_budget'])
 
@@ -891,8 +891,8 @@ class Queries(object):
                 'Param_dt2': args[1],
                 'Param_code_client': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -937,8 +937,8 @@ class Queries(object):
                 'Param_date_chargement': args[0],
                 'Param_code_secteur': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
@@ -984,8 +984,8 @@ class Queries(object):
                 'Param_date2': args[1],
                 'Param_code_secteur': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date1'] = self.validateDate(kwargs['Param_date1'], 0)
         kwargs['Param_date2'] = self.validateDate(kwargs['Param_date2'], 1)
@@ -1028,8 +1028,8 @@ class Queries(object):
                 'Param_dt1': args[1],
                 'Param_dt2': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -1066,8 +1066,8 @@ class Queries(object):
                 'Param_dt1': args[1],
                 'Param_dt2': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -1099,8 +1099,8 @@ class Queries(object):
                 'Param_dt2': args[1],
                 'Param_code_secteur': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -1151,8 +1151,8 @@ class Queries(object):
                 'Param_dt2': args[1],
                 'Param_code_secteur': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -1183,8 +1183,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -1267,11 +1267,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         if kwargs['Param_code_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -1332,14 +1332,14 @@ class Queries(object):
                 'Param_code_secteur': args[0],
                 'Param_date_chargement': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -1373,11 +1373,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -1409,8 +1409,8 @@ class Queries(object):
             kwargs = {
                 'Param_date_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
         kwargs['OPTIONAL_ARG_1'] = '''T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}' AND'''
@@ -1608,8 +1608,8 @@ class Queries(object):
                 'Param_date_chargement': args[0],
                 'Param_code_secteur': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
@@ -1732,13 +1732,13 @@ class Queries(object):
             kwargs = {
                 'Param_date': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
 
         if kwargs['Param_date'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -1923,13 +1923,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
         if kwargs['Param_date_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2077,8 +2077,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -2101,8 +2101,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -2181,11 +2181,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2205,11 +2205,11 @@ class Queries(object):
             kwargs = {
                 'Param_cde_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_cde_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2259,11 +2259,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_bordereau': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_bordereau'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2368,11 +2368,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_envoi': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_envoi'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2420,11 +2420,11 @@ class Queries(object):
             kwargs = {
                 'Param_num_facture': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_num_facture'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2459,8 +2459,8 @@ class Queries(object):
             kwargs = {
                 'Param_origine': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['OPTIONAL_ARG_1'] = '''AND
                 (
@@ -2511,8 +2511,8 @@ class Queries(object):
                 'Param_origine': args[0],
                 'Paramtype_produit': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['CODE_BLOCK_1'] = '''AND
                 (
@@ -2580,11 +2580,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_prelevement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_prelevement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2628,11 +2628,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_reclamation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_reclamation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2664,11 +2664,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_retour': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_retour'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2701,11 +2701,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_retour': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_retour'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2839,13 +2839,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
 
         if kwargs['Param_date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2879,11 +2879,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_bordereau': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_bordereau'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2931,14 +2931,14 @@ class Queries(object):
                 'Param_date_journee': args[0],
                 'code_agce': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -2976,13 +2976,13 @@ class Queries(object):
             kwargs = {
                 'Param_DATE_DEBUT': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_DATE_DEBUT'] = self.validateDate(kwargs['Param_DATE_DEBUT'])
 
         if kwargs['Param_DATE_DEBUT'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3021,8 +3021,8 @@ class Queries(object):
             kwargs = {
                 'Param_date': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
         kwargs['OPTIONAL_ARG_1'] = '''AND T_PRODUITS_CHARGEE.DATE_CHARGEMENT = '{Param_date}' '''
@@ -3095,11 +3095,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_gamme': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_gamme'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3153,13 +3153,13 @@ class Queries(object):
             kwargs = {
                 'Param_DATE_COMMANDE': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_DATE_COMMANDE'] = self.validateDate(kwargs['Param_DATE_COMMANDE'])
 
         if kwargs['Param_DATE_COMMANDE'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3196,11 +3196,11 @@ class Queries(object):
             kwargs = {
                 'Param_num_bl': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_num_bl'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3220,11 +3220,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_caisse': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_caisse'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3267,11 +3267,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3304,11 +3304,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_client': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_client'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3352,13 +3352,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3385,11 +3385,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_mission': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_mission'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3416,11 +3416,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_operateur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_operateur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3451,11 +3451,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3502,11 +3502,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_tournee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_tournee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3529,8 +3529,8 @@ class Queries(object):
             kwargs = {
                 'Param_code_agence': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_JOURNEE.CODE_AGCE = {Param_code_agence}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_agence'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
@@ -3574,11 +3574,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_commande': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_commande'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3713,8 +3713,8 @@ class Queries(object):
                 'Param_date_validation': args[1],
                 'Param_code_client': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
@@ -3848,13 +3848,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3876,13 +3876,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -3969,8 +3969,8 @@ class Queries(object):
             kwargs = {
                 'Param_dt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
         kwargs['OPTIONAL_ARG_1'] = '''AND T_PRIX.Date_Debut <= '{Param_dt}'
@@ -4046,8 +4046,8 @@ class Queries(object):
                 'Param_code_agce': args[1],
                 'Param_aff_commande': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['param_dt'] = self.validateDate(kwargs['param_dt'])
         
@@ -4265,13 +4265,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_operation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
 
         if kwargs['Param_date_operation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -4475,13 +4475,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         if kwargs['Param_date_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
     
         return query.format(**kwargs)
 
@@ -4559,8 +4559,8 @@ class Queries(object):
                 'Param2': args[1],
                 'Param_gp_client': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param1'] = self.validateDate(kwargs['Param1'], 0)
         kwargs['Param2'] = self.validateDate(kwargs['Param2'], 1)
@@ -4770,8 +4770,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -4803,11 +4803,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -4916,11 +4916,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_tournee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_tournee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -5019,13 +5019,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
         if kwargs['Param_date_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -5259,11 +5259,11 @@ class Queries(object):
             kwargs = {
                 'Param_num_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_num_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -5398,13 +5398,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_decompte': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_decompte'] = self.validateDate(kwargs['Param_date_decompte'])
 
         if kwargs['Param_date_decompte'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -5614,8 +5614,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -5646,11 +5646,11 @@ class Queries(object):
             kwargs = {
                 'Param_CODE_SECTEUR': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_CODE_SECTEUR'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -5815,13 +5815,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
         if kwargs['Param_date_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -5877,11 +5877,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -5947,13 +5947,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
         if kwargs['Param_date_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -6063,11 +6063,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_client': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_client'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -6110,11 +6110,11 @@ class Queries(object):
             kwargs = {
                 'Param_actif': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_actif'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -6153,11 +6153,11 @@ class Queries(object):
             kwargs = {
                 'Param_fonction': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_fonction'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -6177,13 +6177,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -6231,8 +6231,8 @@ class Queries(object):
                 'Param_type_operation': args[1],
                 'Param_date_operation': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
         kwargs['CODE_BLOCK_1'] = '''AND
@@ -6340,13 +6340,13 @@ class Queries(object):
             kwargs = {
                 'Param_dt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
 
         if kwargs['Param_dt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -6660,11 +6660,11 @@ class Queries(object):
             kwargs = {
                 'Param_num_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_num_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -6779,13 +6779,13 @@ class Queries(object):
             kwargs = {
                 'Param_dt_reglement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt_reglement'] = self.validateDate(kwargs['Param_dt_reglement'])
 
         if kwargs['Param_dt_reglement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7014,11 +7014,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_superviseur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_superviseur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7087,11 +7087,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_superviseur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_superviseur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7116,11 +7116,11 @@ class Queries(object):
             kwargs = {
                 'Param_cds': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_cds'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7142,11 +7142,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7167,11 +7167,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7220,11 +7220,11 @@ class Queries(object):
             kwargs = {
                 'param_resp_vente': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['param_resp_vente'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7248,8 +7248,8 @@ class Queries(object):
             kwargs = {
                 'Param_code_operateur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['OPTIONAL_ARG_1'] = '''AND
                 (
@@ -7285,11 +7285,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7326,11 +7326,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_superviseur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_superviseur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7353,11 +7353,11 @@ class Queries(object):
             kwargs = {
                 'ParamId_Type_Vehicule': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['ParamId_Type_Vehicule'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7474,11 +7474,11 @@ class Queries(object):
             kwargs = {
                 'Param_categorie': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_categorie'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7505,11 +7505,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_cp': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_cp'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7530,11 +7530,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_agce': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_agce'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7845,11 +7845,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_produit': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_produit'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7870,11 +7870,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_modele': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         if kwargs['Param_id_modele'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7935,13 +7935,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -7976,13 +7976,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         if kwargs['Param_date_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -8038,8 +8038,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -8152,8 +8152,8 @@ class Queries(object):
                 'Param_date_decompte': args[0],
                 'Param_code_operateur': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_decompte'] = self.validateDate(kwargs['Param_date_decompte'])
 
@@ -8258,13 +8258,13 @@ class Queries(object):
             kwargs = {
                 'Param_dt_objectif': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt_objectif'] = self.validateDate(kwargs['Param_dt_objectif'])
 
         if kwargs['Param_dt_objectif'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -8324,13 +8324,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_objectif': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_objectif'] = self.validateDate(kwargs['Param_date_objectif'])
 
         if kwargs['Param_date_objectif'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -8427,12 +8427,12 @@ class Queries(object):
                 'Param_code_magasin': args[1],
                 'Param_type_produit': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -8454,13 +8454,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_debut': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_debut'] = self.validateDate(kwargs['Param_date_debut'])
 
         if kwargs['Param_date_debut'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -8501,13 +8501,13 @@ class Queries(object):
                 'Param_date_debut': args[0],
                 'Param_code_agce': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_debut'] = self.validateDate(kwargs['Param_date_debut'])
 
         if kwargs['Param_date_debut'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -8532,11 +8532,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_article': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_article'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -8557,11 +8557,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_famille': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_famille'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -8689,8 +8689,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -9096,11 +9096,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_in': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_in'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -9133,8 +9133,8 @@ class Queries(object):
                 'Param_code_fonction': args[0],
                 'Param_nom_operateur': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['OPTIONAL_ARG_1'] = '''AND T_OPERATEUR.NOM_OPERATEUR LIKE '%{Param_nom_operateur}%' '''
         kwargs['OPTIONAL_ARG_2'] = 'AND	T_OPERATEUR.FONCTION = {Param_code_fonction}'
@@ -9220,11 +9220,11 @@ class Queries(object):
             kwargs = {
                 'Param_nom_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_nom_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -9251,13 +9251,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_reconaissance': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_reconaissance'] = self.validateDate(kwargs['Param_date_reconaissance'])
 
         if kwargs['Param_date_reconaissance'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -9646,13 +9646,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -9763,8 +9763,8 @@ class Queries(object):
                 'Param_date_repartition': args[0],
                 'Param_code_agence': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_repartition'] = self.validateDate(kwargs['Param_date_repartition'])
 
@@ -9803,13 +9803,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_reception': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_reception'] = self.validateDate(kwargs['Param_date_reception'])
 
         if kwargs['Param_date_reception'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -9832,13 +9832,13 @@ class Queries(object):
                 'Param_date_journee': args[0],
                 'Param_code_caisse': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOLDE_INITIAL_CAISSE.CODE_CAISSE = {Param_code_caisse}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_caisse'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
@@ -10015,13 +10015,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10064,13 +10064,13 @@ class Queries(object):
             kwargs = {
                 'Param_date': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
 
         if kwargs['Param_date'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10095,8 +10095,8 @@ class Queries(object):
             kwargs = {
                 'Paramcode_magasin': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_ARTICLES_MAGASINS.MAGASIN = {Paramcode_magasin}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Paramcode_magasin'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
@@ -10124,11 +10124,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_article': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_article'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10156,11 +10156,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_det': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_det'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10177,13 +10177,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_budget': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_budget'] = self.validateDate(kwargs['Param_date_budget'])
 
         if kwargs['Param_date_budget'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10212,11 +10212,11 @@ class Queries(object):
             kwargs = {
                 'Param_nbl': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_nbl'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10233,11 +10233,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_reclamation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_reclamation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10254,13 +10254,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10277,13 +10277,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10300,13 +10300,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10323,11 +10323,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_tournee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_tournee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10344,11 +10344,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_justification': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_justification'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10365,11 +10365,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_justification': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_justification'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10386,11 +10386,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_operation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_operation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10407,13 +10407,13 @@ class Queries(object):
             kwargs = {
                 'Param_date': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
 
         if kwargs['Param_date'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10430,13 +10430,13 @@ class Queries(object):
             kwargs = {
                 'Param_date': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
 
         if kwargs['Param_date'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10453,13 +10453,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvente': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvente'] = self.validateDate(kwargs['Param_date_mvente'])
 
         if kwargs['Param_date_mvente'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10476,11 +10476,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_operation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_operation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10497,11 +10497,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_operation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_operation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10518,13 +10518,13 @@ class Queries(object):
             kwargs = {
                 'Param_date': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
 
         if kwargs['Param_date'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10541,13 +10541,13 @@ class Queries(object):
             kwargs = {
                 'Param_date': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
 
         if kwargs['Param_date'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10564,13 +10564,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_objectif': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_objectif'] = self.validateDate(kwargs['Param_date_objectif'])
 
         if kwargs['Param_date_objectif'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10587,13 +10587,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_objectif': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_objectif'] = self.validateDate(kwargs['Param_date_objectif'])
 
         if kwargs['Param_date_objectif'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10621,13 +10621,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_objectif': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_objectif'] = self.validateDate(kwargs['Param_date_objectif'])
 
         if kwargs['Param_date_objectif'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10644,13 +10644,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_debut': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_debut'] = self.validateDate(kwargs['Param_date_debut'])
 
         if kwargs['Param_date_debut'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10667,11 +10667,11 @@ class Queries(object):
             kwargs = {
                 'Param_id_commande': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_id_commande'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10699,11 +10699,11 @@ class Queries(object):
             kwargs = {
                 'Param_nbl': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_nbl'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10731,13 +10731,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10754,13 +10754,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10788,13 +10788,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10833,13 +10833,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10856,13 +10856,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10879,13 +10879,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -10902,13 +10902,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -10979,13 +10979,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11016,13 +11016,13 @@ class Queries(object):
             kwargs = {
                 'Param_DATE_JOURNEE': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_DATE_JOURNEE'] = self.validateDate(kwargs['Param_DATE_JOURNEE'])
         
         if kwargs['Param_DATE_JOURNEE'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11042,11 +11042,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_operateur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_operateur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11071,13 +11071,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11131,13 +11131,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         if kwargs['Param_date_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11168,13 +11168,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
 
         if kwargs['Param_date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11202,15 +11202,15 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -11281,8 +11281,8 @@ class Queries(object):
                 'Param_date_livraison': args[0],
                 'param_lst_famille': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
         kwargs['OPTIONAL_ARG_1'] = '''T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}' AND'''
@@ -11347,8 +11347,8 @@ class Queries(object):
             kwargs = {
                 'Param_date_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
         kwargs['OPTIONAL_ARG_1'] = '''T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}' AND'''
@@ -11382,8 +11382,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -11474,13 +11474,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11614,13 +11614,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11656,13 +11656,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11727,13 +11727,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
         if kwargs['Param_date_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11840,13 +11840,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
 
         if kwargs['Param_date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11877,13 +11877,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
         if kwargs['Param_date_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11921,15 +11921,15 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -11965,13 +11965,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
         if kwargs['Param_date_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -11996,13 +11996,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12037,15 +12037,15 @@ class Queries(object):
                 'Param_date_operation': args[0],
                 'Param_date_validation': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -12095,13 +12095,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         if kwargs['Param_date_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12300,13 +12300,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12358,13 +12358,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_validation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
 
         if kwargs['Param_date_validation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12399,13 +12399,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         if kwargs['Param_date_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12519,13 +12519,13 @@ class Queries(object):
             kwargs = {
                 'Param_DATE_CHARGEMENT': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_DATE_CHARGEMENT'] = self.validateDate(kwargs['Param_DATE_CHARGEMENT'])
 
         if kwargs['Param_DATE_CHARGEMENT'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12600,13 +12600,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12639,13 +12639,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_journee': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
         if kwargs['Param_date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12684,13 +12684,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
 
         if kwargs['Param_date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12859,13 +12859,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
 
         if kwargs['Param_date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12898,13 +12898,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
 
         if kwargs['Param_date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -12945,13 +12945,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
 
         if kwargs['Param_date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -13030,11 +13030,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_secteur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_secteur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -13067,13 +13067,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_mvt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
 
         if kwargs['Param_date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -13093,11 +13093,11 @@ class Queries(object):
             kwargs = {
                 'Param_code_magasin': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_code_magasin'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -13237,14 +13237,14 @@ class Queries(object):
                 'Param_CLOTURE': args[0],
                 'Param_DATE_JOURNEE': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_decompte'] = self.validateDate(kwargs['Param_date_decompte'])
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -13399,12 +13399,12 @@ class Queries(object):
                 'Param_code_agce': args[1],
                 'Param_code_article': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -13461,11 +13461,11 @@ class Queries(object):
             kwargs = {
                 'Param_num_livraison': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_num_livraison'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -13585,13 +13585,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         if kwargs['Param_date_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -13751,13 +13751,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_chargement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         if kwargs['Param_date_chargement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -13816,8 +13816,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -13887,8 +13887,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -13919,8 +13919,8 @@ class Queries(object):
                 'Param_nom_secteur': args[0],
                 'Param_date_chargement': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
         
@@ -13961,8 +13961,8 @@ class Queries(object):
             kwargs = {
                 'Param_date_operation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
         kwargs['OPTIONAL_ARG_1'] = '''T_OPERATIONS.DATE_OPERATION = '{Param_date_operation}' AND'''
@@ -14043,11 +14043,11 @@ class Queries(object):
             kwargs = {
                 'Param_num_bl': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_num_bl'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -14067,11 +14067,11 @@ class Queries(object):
             kwargs = {
                 'Param_num_commande': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_num_commande'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -14098,13 +14098,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_prelev': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_prelev'] = self.validateDate(kwargs['Param_date_prelev'])
 
         if kwargs['Param_date_prelev'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -14131,13 +14131,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_prelev': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_prelev'] = self.validateDate(kwargs['Param_date_prelev'])
 
         if kwargs['Param_date_prelev'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -14189,11 +14189,11 @@ class Queries(object):
             kwargs = {
                 'Param_cmt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['Param_cmt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -14213,13 +14213,13 @@ class Queries(object):
             kwargs = {
                 'Param_date_debut': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_date_debut'] = self.validateDate(kwargs['Param_date_debut'])
 
         if kwargs['Param_date_debut'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -14358,8 +14358,8 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
@@ -14442,8 +14442,8 @@ class Queries(object):
             kwargs = {
                 'code_op': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['OPTIONAL_ARG_1'] = '''WHERE
                 T_OPERATEUR.CODE_OPERATEUR = {code_op}'''
@@ -14466,8 +14466,8 @@ class Queries(object):
             kwargs = {
                 'id_ligne': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['OPTIONAL_ARG_1'] = '''WHERE
                 T_PARAMETRES.ID_LIGNE = {id_ligne}'''
@@ -14508,8 +14508,8 @@ class Queries(object):
             kwargs = {
                 'param_code_agce': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['OPTIONAL_ARG_1'] = '''CODE_AGCE='{param_code_agce}' AND'''
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['param_code_agce'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
@@ -14598,14 +14598,14 @@ class Queries(object):
                 'param_dt1': args[1],
                 'param_dt2': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['param_dt1'] = self.validateDate(kwargs['param_dt1'], 0)
         kwargs['param_dt2'] = self.validateDate(kwargs['param_dt2'], 1)
 
         if kwargs['param_nbj'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
     
@@ -14624,11 +14624,11 @@ class Queries(object):
             kwargs = {
                 'code_magasin': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         if kwargs['code_magasin'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
     
@@ -14647,11 +14647,11 @@ class Queries(object):
             kwargs = {
                 'code_operateur': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         if kwargs['code_operateur'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14670,11 +14670,11 @@ class Queries(object):
             kwargs = {
                 'id_mouvement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         if kwargs['id_mouvement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14693,11 +14693,11 @@ class Queries(object):
             kwargs = {
                 'id_mouvement': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         if kwargs['id_mouvement'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14716,11 +14716,11 @@ class Queries(object):
             kwargs = {
                 'code_operation': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         if kwargs['code_operation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14739,11 +14739,11 @@ class Queries(object):
             kwargs = {
                 'code_agce': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         if kwargs['code_agce'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14778,13 +14778,13 @@ class Queries(object):
                 'code_magasin': args[3],
                 'qte_init': args[4]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_ps'] = self.validateDate(kwargs['date_ps'])
         
         if kwargs['date_ps'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14817,13 +14817,13 @@ class Queries(object):
                 'code_cp': args[2],
                 'stock_init': args[3]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_journee'] = self.validateDate(kwargs['date_journee'])
         
         if kwargs['date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14871,13 +14871,13 @@ class Queries(object):
                 'pluv': args[18],
                 'commentaire': args[19]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_journee'] = self.validateDate(kwargs['date_journee'])
         
         if kwargs['date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14919,13 +14919,13 @@ class Queries(object):
                 'programme': args[5],
                 'motif_non_commande': args[6]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_journee'] = self.validateDate(kwargs['date_journee'])
         
         if kwargs['date_journee'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14947,13 +14947,13 @@ class Queries(object):
                 'poste': args[3],
                 'session': args[4]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_heure'] = self.validateDate(kwargs['date_heure'])
         
         if kwargs['date_heure'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -14976,13 +14976,13 @@ class Queries(object):
                 'sous_operation': args[4],
                 'operation': args[5]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['dh_creation'] = self.validateDate(kwargs['dh_creation'])
         
         if kwargs['dh_creation'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -15004,14 +15004,14 @@ class Queries(object):
                 'Param_date_journee': args[1],
                 'code_agce': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
         
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
         
         return query.format(**kwargs)
 
@@ -15031,14 +15031,14 @@ class Queries(object):
                 'date_journee': args[1],
                 'solde_initial': args[2]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_journee'] = self.validateDate(kwargs['date_journee'])
         
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
         
         return query.format(**kwargs)
 
@@ -15060,13 +15060,13 @@ class Queries(object):
             kwargs = {
                 'Param_dt': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
         
         if kwargs['Param_dt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -15089,13 +15089,13 @@ class Queries(object):
                 'qte_perte': args[4],
                 'qte_vente': args[5]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_vente'] = self.validateDate(kwargs['date_vente'])
         
         if kwargs['date_vente'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -15117,13 +15117,13 @@ class Queries(object):
                 'qte_vente': args[3],
                 'qte_perte': args[4]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_vente'] = self.validateDate(kwargs['date_vente'])
         
         if kwargs['date_vente'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -15142,11 +15142,11 @@ class Queries(object):
             kwargs = {
                 'code_agce': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['code_agce'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -15177,14 +15177,14 @@ class Queries(object):
                 'compte_ecart': args[10],
                 'ref': args[11]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         kwargs['date_operation'] = self.validateDate(kwargs['date_operation'])
         kwargs['date_heure'] = self.validateDate(kwargs['date_heure'])
         
         if kwargs['date_operation'] in (None, 'NULL') or kwargs['date_heure'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
         
         return query.format(**kwargs)
 
@@ -15216,12 +15216,12 @@ class Queries(object):
                 'type_mouvement': args[11],
                 'qte_mouvement': args[12]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
 
         return query.format(**kwargs)
 
@@ -15255,13 +15255,13 @@ class Queries(object):
                 'compte_ecart': args[13],
                 'code_operateur': args[14]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         kwargs['date_mvt'] = self.validateDate(kwargs['date_mvt'])
 
         if kwargs['date_mvt'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -15282,8 +15282,8 @@ class Queries(object):
                 'magasin': args[2],
                 'qte_stock': args[3]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         return query.format(**kwargs)
 
@@ -15303,12 +15303,12 @@ class Queries(object):
                 'qte_stock': args[0],
                 'pk_t_articles_magasins': args[1]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
         
         for key in kwargs:
             if kwargs[key] in (None, 'NULL'):
-                raise ValueError
+                return ValueError
         
         return query.format(**kwargs)
 
@@ -15327,10 +15327,10 @@ class Queries(object):
             kwargs = {
                 'code_agce': args[0]
             }
-        except IndexError:
-            raise
+        except IndexError as e:
+            return e
 
         if kwargs['code_agce'] in (None, 'NULL'):
-            raise ValueError
+            return ValueError
 
         return query.format(**kwargs)
