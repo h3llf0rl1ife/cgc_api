@@ -18,33 +18,29 @@ class APIRequest(Resource):
         }
         auth = request.authorization
 
-        if auth != None:
-            if auth.username != keys['username'] or auth.password != keys['password']:
+        if auth is not None:
+            if (auth.username, auth.password) != (keys['username'], keys['password']):
                 return {'Status': 401, 'Message': 'Unauthorized access.'}
         else:
             return {'Status': 401, 'Message': 'Unauthorized access.'}
-
 
         data = request.get_json()
         print('data', data)
         
         try:
             query = getattr(self.queries, data['Parameters']['query'])
-            #print(query)
         except AttributeError:
-            return {'Status': 404, 'Message': 'Query not found.'}
+            return {'Status': 404, 'Message': 'Query not found.', 'Client data': data}
         except (KeyError, TypeError):
-            return {'Status': 400, 'Message': 'Bad request.'}
+            return {'Status': 400, 'Message': 'Bad request.', 'Client data': data}
 
         kwargs = data['Parameters']['kwargs']
-
-        #print('kwargs', kwargs)
-        print('querykwargs', query(kwargs))
+        print('query', query(kwargs))
 
         try:
             return self.queries.executeQuery(query(kwargs))
         except IndexError:
-            return {'Status': 400, 'Message': 'One or more arguments missing.'}
+            return {'Status': 400, 'Message': 'One or more arguments missing.', 'Client data': data}
         except ValueError:
             raise
         
