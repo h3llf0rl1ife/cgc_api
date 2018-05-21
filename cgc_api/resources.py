@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource
 from cgc_api.queries import Queries
+import pymssql
 
 
 class APIRequest(Resource):
@@ -43,6 +44,8 @@ class APIRequest(Resource):
             return {'Status': 400, 'Message': 'One or more arguments missing.', 'Client data': data}
         except ValueError:
             raise
+        except pymssql.ProgrammingError:
+            return {'Status': 400, 'Message': 'Invalid query argument.', 'Query': query(kwargs).replace('\t', '').replace('\n', '').replace('            ', '').strip()}
         
         return {'Status': 400, 'Message': 'Bad request.'}
  

@@ -21,7 +21,11 @@ class Queries(object):
         
         with pymssql.connect(self.server, self.user, self.password, self.database) as conn:
             with conn.cursor(as_dict=True) as cursor:
-                cursor.execute(query)
+                try:
+                    cursor.execute(query)
+                except pymssql.ProgrammingError:
+                    raise
+
                 for row in cursor:
                     for entry in row:
                         if type(row[entry]) is datetime.datetime:
