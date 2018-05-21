@@ -15,6 +15,9 @@ class Queries(object):
     
     def executeQuery(self, query):
         result = []
+
+        if type(query) != str:
+            raise query
         
         with pymssql.connect(self.server, self.user, self.password, self.database) as conn:
             with conn.cursor(as_dict=True) as cursor:
@@ -26,7 +29,7 @@ class Queries(object):
                         elif type(row[entry]) is decimal.Decimal:
                             row[entry] = float(row[entry])
                     result.append(row)
-        print('result', result)
+
         return result
     
 
