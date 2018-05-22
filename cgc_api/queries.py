@@ -3372,7 +3372,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_etat_synchro(self, args):
+    def Req_etat_synchro(self, args): #Done
         query = '''
             SELECT 
                 T_SYNCHRO.ID_JOB AS ID_JOB,	
@@ -3387,6 +3387,20 @@ class Queries(object):
                 AND	T_SYNCHRO.SOUS_OPERATION = {Param_SOUS_OPERATION}
                 AND	T_SYNCHRO.ID_OPERATION = {Param_ID_OPERATION}
         '''
+
+        try:
+            kwargs = {
+                'Param_OPERATION': args[0],
+                'Param_SOUS_OPERATION': args[1],
+                'Param_ID_OPERATION': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
