@@ -3086,7 +3086,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ecarts(self, args):
+    def Req_ecarts(self, args): #Done
         query = '''
             SELECT 
                 T_RETOURS_USINE.ID_RETOUR AS ID_RETOUR,	
@@ -3121,9 +3121,9 @@ class Queries(object):
                 ON CONT.CODE_OPERATEUR = T_OPERATIONS.COMPTE_ECART
             WHERE 
                 (
-                T_RETOURS_USINE.VALID = {Param_valid}
-                AND	T_RETOURS_USINE.CATEGORIE = {Param_egal_categorie}
-                AND	T_RETOURS_USINE.CATEGORIE <> {Param_diff_categorie}
+                {OPTIONAL_ARG_1}
+                {OPTIONAL_ARG_2}
+                T_RETOURS_USINE.CATEGORIE <> {Param_diff_categorie}
             )
             GROUP BY 
                 T_RETOURS_USINE.ID_RETOUR,	
@@ -3141,7 +3141,26 @@ class Queries(object):
             ORDER BY 
                 DATE_RETOUR DESC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_valid': args[0],
+                'Param_egal_categorie': args[1],
+                'Param_diff_categorie': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_diff_categorie'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_RETOURS_USINE.VALID = {Param_valid} AND'
+        kwargs['OPTIONAL_ARG_2'] = 'T_RETOURS_USINE.CATEGORIE = {Param_egal_categorie} AND'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_valid'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_egal_categorie'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ecarts_caisserie(self, args):
