@@ -2657,7 +2657,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dt_caisserie_secteur(self, args):
+    def Req_dt_caisserie_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -2676,10 +2676,27 @@ class Queries(object):
                 AND		T_CHARGEMENT.CODE_CHARGEMENT = T_COND_CHARGEE.CODE_CHARGEMENT
                 AND
                 (
-                    T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_CHARGEMENT.DATE_CHARGEMENT BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_COND_CHARGEE.CODE_OPERATEUR = {Param_code_operateur}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_code_operateur': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
