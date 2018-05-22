@@ -2371,7 +2371,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_date_distribution_remise(self, args):
+    def Req_date_distribution_remise(self, args): #Done
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -2395,16 +2395,43 @@ class Queries(object):
                 AND
                 (
                     T_FACTURE.VALID = 1
-                    AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+                    AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_DT_FACTURE.QTE_REMISE > 0
-                    AND	T_SECTEUR.code_secteur = {Param_code_secteur}
-                    AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
-                    AND	T_ZONE.RESP_VENTE = {Param_resp_vente}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
                 )
             GROUP BY 
                 T_FACTURE.CODE_CLIENT
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_code_secteur': args[2],
+                'Param_code_superviseur': args[3],
+                'Param_resp_vente': args[4]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in ('Param_dt1', 'Param_dt2'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SECTEUR.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}'
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_ZONE.RESP_VENTE = {Param_resp_vente}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_superviseur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_resp_vente'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_decompte_operateur_journee(self, args):
