@@ -2434,7 +2434,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_decompte_operateur_journee(self, args):
+    def Req_decompte_operateur_journee(self, args): #Done
         query = '''
             SELECT 
                 T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -2445,9 +2445,24 @@ class Queries(object):
                 T_DECOMPTE
             WHERE 
                 T_DECOMPTE.CODE_OPERATEUR = {Param_code_operateur}
-                AND	T_DECOMPTE.DATE_DECOMPTE = {Param_date_decompte}
+                AND	T_DECOMPTE.DATE_DECOMPTE = '{Param_date_decompte}'
                 AND	T_DECOMPTE.MODE_PAIEMENT = 'E'
         '''
+
+        try:
+            kwargs = {
+                'Param_code_operateur': args[0],
+                'Param_date_decompte': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_decompte'] = self.validateDate(kwargs['Param_date_decompte'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
