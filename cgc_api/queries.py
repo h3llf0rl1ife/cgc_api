@@ -1722,7 +1722,7 @@ class Queries(object):
         return query
 
     
-    def Req_client_cac_journee(self, args):
+    def Req_client_cac_journee(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -1738,12 +1738,30 @@ class Queries(object):
                 AND		T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
                 AND
                 (
-                    T_LIVRAISON.DATE_VALIDATION = {Param_dt}
-                    AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
-                    AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    {OPTIONAL_ARG_1}
+                    T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
+                    AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt': args[0],
+                'Param_date_livraison': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            return ValueError
+
+        kwargs['OPTIONAL_ARG_1'] = '''T_LIVRAISON.DATE_VALIDATION = '{Param_dt}' AND'''
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_dt'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_client_not_int(self, args):
