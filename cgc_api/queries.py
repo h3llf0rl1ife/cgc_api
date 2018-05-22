@@ -2152,7 +2152,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_cond_chargee(self, args):
+    def Req_cond_chargee(self, args): #Done
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -2173,12 +2173,33 @@ class Queries(object):
                 T_CHARGEMENT.CODE_CHARGEMENT = T_COND_CHARGEE.CODE_CHARGEMENT
                 AND
                 (
-                    T_COND_CHARGEE.code_secteur = {Param_code_secteur}
-                    AND	T_COND_CHARGEE.CODE_COND = {Paramcode_cp}
-                    AND	T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}'
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Paramcode_cp': args[1],
+                'Param_date_chargement': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+
+        if kwargs['Param_date_mvt'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_COND_CHARGEE.code_secteur = {Param_code_secteur} AND'
+        kwargs['OPTIONAL_ARG_2'] = 'T_COND_CHARGEE.CODE_COND = {Paramcode_cp} AND'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Paramcode_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_cond_livraison(self, args):
