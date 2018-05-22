@@ -1764,7 +1764,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_client_not_int(self, args):
+    def Req_client_not_int(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -1786,6 +1786,19 @@ class Queries(object):
                     AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_clt': args[0],
+                'Param_code_secteur': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
