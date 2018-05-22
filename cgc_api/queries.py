@@ -1591,7 +1591,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_chargement_periode(self, args):
+    def Req_chargement_periode(self, args): #Done
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1609,12 +1609,29 @@ class Queries(object):
                 AND		T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
                 AND
                 (
-                    T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_date1} AND {Param_date2}
+                    T_CHARGEMENT.DATE_CHARGEMENT BETWEEN '{Param_date1}' AND '{Param_date2}'
                     AND	T_CHARGEMENT.code_vendeur = {Param_code_vendeur}
                 )
             ORDER BY 
                 DATE_CHARGEMENT ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_date1': args[0],
+                'Param_date2': args[1],
+                'Param_code_vendeur': args[2]
+            }
+        except IndexError as e:
+            return e
+
+        kwargs['Param_date1'] = self.validateDate(kwargs['Param_date1'])
+        kwargs['Param_date2'] = self.validateDate(kwargs['Param_date2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
