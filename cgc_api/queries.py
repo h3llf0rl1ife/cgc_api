@@ -15133,6 +15133,7 @@ class Queries(object):
 
 
     def Req_conv_codification_operation_cod_std(self, args): #Done2
+        #HLitRecherche(T_AGENCE,CODE_AGCE,var_code_agce)
         query = '''
             SELECT
                 T_AGENCE.CODE_CLIENT AS CODE_CLIENT
