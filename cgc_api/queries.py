@@ -2021,7 +2021,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_commande_secteur_produit(self, args):
+    def Req_commande_secteur_produit(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -2038,7 +2038,7 @@ class Queries(object):
                 AND		T_COMMANDES.ID_COMMANDE = T_PRODUITS_COMMANDES.ID_COMMANDE
                 AND
                 (
-                    T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+                    T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_COMMANDES.code_secteur = {Param_code_secteur}
                     AND	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}
                 )
@@ -2047,6 +2047,22 @@ class Queries(object):
                 T_COMMANDES.code_secteur,	
                 T_ARTICLES.CODE_PRODUIT
         '''
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_code_secteur': args[1],
+                'Param_code_produit': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
