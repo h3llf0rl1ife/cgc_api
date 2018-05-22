@@ -1877,7 +1877,7 @@ class Queries(object):
         return query
 
     
-    def Req_commande_gms_date(self, args):
+    def Req_commande_gms_date(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.CODE_CLIENT AS CODE_CLIENT,	
@@ -1897,9 +1897,9 @@ class Queries(object):
                 AND		T_ARTICLES.CODE_ARTICLE = T_PRODUITS_COMMANDES.CODE_ARTICLE
                 AND
                 (
-                    T_COMMANDES.CODE_CLIENT = {Param_code_client}
-                    AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
-                    AND	T_COMMANDES.code_secteur = {Param_code_secteur}
+                    {OPTIONAL_ARG_1}
+                    T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}'
+                    {OPTIONAL_ARG_2}
                     AND	T_COMMANDES.TYPE_COMMANDE = 'C'
                 )
             GROUP BY 
@@ -1910,7 +1910,28 @@ class Queries(object):
                 T_COMMANDES.code_secteur,	
                 T_COMMANDES.TYPE_COMMANDE
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_client': args[0],
+                'Param_date_livraison': args[1],
+                'Param_code_secteur': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+        
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            return ValueError
+
+        kwargs['OPTIONAL_ARG_1'] = 'T_COMMANDES.CODE_CLIENT = {Param_code_client} AND'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_COMMANDES.code_secteur = {Param_code_secteur}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_commande_secteur(self, args):
