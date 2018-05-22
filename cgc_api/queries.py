@@ -1503,7 +1503,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_chargement_par_produit(self, args):
+    def Req_chargement_par_produit(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -1549,9 +1549,9 @@ class Queries(object):
                 AND		T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
                 AND
                 (
-                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chragement}
-                    AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}
-                    AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}
+                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT = '{Param_date_chragement}'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
             GROUP BY 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT,	
@@ -1567,7 +1567,28 @@ class Queries(object):
             ORDER BY 
                 le_maximum_RANG ASC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_chragement': args[0],
+                'Param_code_secteur': args[1],
+                'Param_code_produit': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_chragement'] = self.validateDate(kwargs['Param_date_chragement'])
+        
+        if kwargs['Param_date_chragement'] in (None, 'NULL'):
+            return ValueError
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_chargement_periode(self, args):
