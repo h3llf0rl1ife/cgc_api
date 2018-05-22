@@ -2939,7 +2939,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dt_promo_tranche_article(self, args):
+    def Req_dt_promo_tranche_article(self, args): #Done
         query = '''
             SELECT 
                 T_DT_PROMO_TRANCHE.ID_PROMO AS ID_PROMO,	
@@ -2955,6 +2955,19 @@ class Queries(object):
             ORDER BY 
                 TRANCHE DESC
         '''
+
+        try:
+            kwargs = {
+                'Param_ID_PROMO': args[0],
+                'Param_CODE_ARTICLE': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
