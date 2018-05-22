@@ -2727,7 +2727,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dt_decompte(self, args):
+    def Req_dt_decompte(self, args): #Done
         query = '''
             UPDATE 
                 T_DT_DECOMPTE
@@ -2736,6 +2736,19 @@ class Queries(object):
             WHERE 
                 T_DT_DECOMPTE.NUM_DECOMPTE = {Param_num_decompte}
         '''
+
+        try:
+            kwargs = {
+                'Param_motif': args[0],
+                'Param_num_decompte': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
