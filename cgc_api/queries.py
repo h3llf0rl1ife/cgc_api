@@ -2271,7 +2271,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def req_conseigne_deconseige(self, args):
+    def req_conseigne_deconseige(self, args): #Done
         query = '''
             SELECT 
                 T_REGELEMENT_COND.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -2288,11 +2288,28 @@ class Queries(object):
                 T_REGELEMENT_COND
             WHERE 
                 T_REGELEMENT_COND.CODE_OPERTAEUR = {Param_code_operateur}
-                AND	T_REGELEMENT_COND.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+                AND	T_REGELEMENT_COND.DATE_VALIDATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
             GROUP BY 
                 T_REGELEMENT_COND.CODE_OPERTAEUR,	
                 T_REGELEMENT_COND.DATE_VALIDATION
         '''
+
+        try:
+            kwargs = {
+                'Param_code_operateur': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
