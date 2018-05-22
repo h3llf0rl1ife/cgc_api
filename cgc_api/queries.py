@@ -2202,7 +2202,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_cond_livraison(self, args):
+    def Req_cond_livraison(self, args): #Done
         query = '''
             UPDATE 
                 T_COND_LIVRAISON
@@ -2213,6 +2213,20 @@ class Queries(object):
                 T_COND_LIVRAISON.NUM_LIVRAISON = {Param_num_livraison}
                 AND	T_COND_LIVRAISON.CODE_CP = {Param_code_cp}
         '''
+
+        try:
+            kwargs = {
+                'Param_qte_chargee': args[0],
+                'Param_num_livraison': args[1],
+                'Param_code_cp': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
