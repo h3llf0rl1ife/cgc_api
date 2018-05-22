@@ -15136,7 +15136,7 @@ class Queries(object):
         #HLitRecherche(T_AGENCE,CODE_AGCE,var_code_agce)
         query = '''
             SELECT
-                T_AGENCE.CODE_CLIENT AS CODE_CLIENT
+                T_AGENCE.COD_STD AS COD_STD
             FROM
                 T_AGENCE
             WHERE
