@@ -2517,7 +2517,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dernier_rib(self, args):
+    def Req_dernier_rib(self, args): #Done
         query = '''
             SELECT DISTINCT TOP 5 
                 T_DECOMPTE.CODE_CLIENT AS CODE_CLIENT,	
@@ -2530,10 +2530,25 @@ class Queries(object):
                 T_DECOMPTE.NUM_DECOMPTE = T_DT_DECOMPTE.NUM_DECOMPTE
                 AND
                 (
-                    T_DECOMPTE.CODE_CLIENT = {Param_code_client}
-                    AND	T_DT_DECOMPTE.GP_CLIENT = {Param_gp_client}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_client': args[0],
+                'Param_gp_client': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_DECOMPTE.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_DT_DECOMPTE.GP_CLIENT = {Param_gp_client}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_gp_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
         return query.format(**kwargs)
 
     
