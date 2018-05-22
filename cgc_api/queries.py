@@ -2111,7 +2111,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_cond_charge_operateur(self, args):
+    def Req_cond_charge_operateur(self, args): #Done
         query = '''
             SELECT 
                 T_COND_CHARGEE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -2125,14 +2125,31 @@ class Queries(object):
             FROM 
                 T_COND_CHARGEE
             WHERE 
-                T_COND_CHARGEE.CODE_COND = {Param_code_cond}
-                AND	T_COND_CHARGEE.DATE_CHARGEMENT = {Param_date_mvt}
+                {OPTIONAL_ARG_1}
+                T_COND_CHARGEE.DATE_CHARGEMENT = '{Param_date_mvt}'
             GROUP BY 
                 T_COND_CHARGEE.CODE_OPERATEUR,	
                 T_COND_CHARGEE.CODE_COND,	
                 T_COND_CHARGEE.DATE_CHARGEMENT
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_cond': args[0],
+                'Param_date_mvt': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        if kwargs['Param_date_mvt'] in (None, 'NULL'):
+            return ValueError
+
+        kwargs['OPTIONAL_ARG_1'] = 'T_COND_CHARGEE.CODE_COND = {Param_code_cond} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cond'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_cond_chargee(self, args):
