@@ -2586,7 +2586,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_dt_articles(self, args):
+    def Req_dt_articles(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -2633,12 +2633,27 @@ class Queries(object):
                 (
                     T_PRIX.CODE_AGCE = {Param_code_agence}
                     AND	T_ARTICLES.ACTIF_GLOBALE = 1
-                    AND	T_PRIX.Date_Debut <= {param_dt}
-                    AND	T_PRIX.Date_Fin >= {param_dt}
+                    AND	T_PRIX.Date_Debut <= '{param_dt}'
+                    AND	T_PRIX.Date_Fin >= '{param_dt}'
                 )
             ORDER BY 
                 RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_code_agence': args[0],
+                'param_dt': args[1]
+            }
+        except IndexError as e:
+            return e
+
+        kwargs['param_dt'] = self.validateDate(kwargs['param_dt'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
