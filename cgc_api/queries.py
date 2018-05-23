@@ -4974,7 +4974,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ls_avoirs_secteurs(self, args):
+    def Req_ls_avoirs_secteurs(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -4994,7 +4994,7 @@ class Queries(object):
                 AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
                 AND
                 (
-                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_PRODUITS_CHARGEE.COMPTE_ECART = {Param_combo_controleur}
                 )
             GROUP BY 
@@ -5003,6 +5003,23 @@ class Queries(object):
                 T_SECTEUR.NOM_SECTEUR,	
                 T_PRODUITS.NOM_PRODUIT
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_combo_controleur': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
