@@ -5495,7 +5495,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_clients_cac_dep(self, args):
+    def Req_ls_clients_cac_dep(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5522,11 +5522,26 @@ class Queries(object):
                         T_CLIENTS.CLIENT_EN_COMPTE = 1
                         OR	T_CLIENTS.CAT_CLIENT IN (1, 2, 15) 
                     )
-                    AND	T_SECTEUR.code_secteur = {Param_code_secteur}
-                    AND	T_CLIENTS.GROUP_CLIENT = {Param_GP_CLIENT}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_GP_CLIENT': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SECTEUR.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_CLIENTS.GROUP_CLIENT = {Param_GP_CLIENT}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_GP_CLIENT'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_clients_cac_remise(self, args): #Done
