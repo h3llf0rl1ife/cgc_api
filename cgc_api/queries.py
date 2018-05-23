@@ -4318,7 +4318,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_livraisons_unique(self, args):
+    def Req_livraisons_unique(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_LIVRAISON.code_secteur AS code_secteur,	
@@ -4340,14 +4340,33 @@ class Queries(object):
                 (
                     T_LIVRAISON.code_secteur = {Param_code_secteur}
                     AND	T_LIVRAISON.STATUT <> 'A'
-                    AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_LIVRAISON.TYPE_MVT = 'L'
-                    AND	T_CLIENTS.CAT_CLIENT IN ({Param_cat_client}) 
+                    {OPTIONAL_ARG_1}
                     AND	T_LIVRAISON.LIVRAISON_TOURNEE = 0
                     AND	T_LIVRAISON.SUR_COMMANDE = 1
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_date_livraison': args[1],
+                'Param_cat_client': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in ('Param_code_secteur', 'Param_date_livraison'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_CLIENTS.CAT_CLIENT IN ({Param_cat_client})'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_cat_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_aides_vendeur(self, args): #Done
