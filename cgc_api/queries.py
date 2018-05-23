@@ -5746,7 +5746,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_clients_sans_facture(self, args):
+    def Req_ls_clients_sans_facture(self, args): #Done
         query = '''
             SELECT 
                 T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -5773,6 +5773,19 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_code_tournee': args[0],
+                'Param_clts': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
