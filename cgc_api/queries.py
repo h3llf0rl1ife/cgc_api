@@ -3474,7 +3474,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_facture_periode(self, args):
+    def Req_facture_periode(self, args): #Done
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -3506,7 +3506,7 @@ class Queries(object):
                 (
                     T_FACTURE.VALID = 1
                     AND	T_FACTURE.CODE_CLIENT IN ({Param_code_client}) 
-                    AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+                    AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
             GROUP BY 
                 T_FACTURE.CODE_CLIENT,	
@@ -3519,6 +3519,23 @@ class Queries(object):
                 CODE_CLIENT ASC,	
                 le_minimum_RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_code_client': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
