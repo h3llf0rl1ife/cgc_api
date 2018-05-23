@@ -5848,7 +5848,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_commande(self, args):
+    def Req_ls_commande(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -5877,11 +5877,25 @@ class Queries(object):
                 AND		T_COMMANDES.CODE_OPERATEUR = T_OPERATEUR.CODE_OPERATEUR
                 AND
                 (
-                    T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
+                    T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_COMMANDES.CODE_AGENCE = {Param_code_agence}
                     AND	T_COMMANDES.TYPE_COMMANDE IN ({Param_type_commande}) 
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_code_agence': args[1],
+                'Param_type_commande': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
