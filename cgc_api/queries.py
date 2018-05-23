@@ -5398,7 +5398,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_clients(self, args):
+    def Req_ls_clients(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5443,15 +5443,40 @@ class Queries(object):
                 AND
                 (
                     T_CLIENTS.CODE_CLIENT <> 0
-                    AND	T_SOUS_SECTEUR.code_secteur = {Param_param_code_secteur}
-                    AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}
-                    AND	T_CLIENTS.CLASSE NOT IN ({param_not_classe}) 
-                    AND	T_CLIENTS.AUT_CHEQUE = {Param_auth_cheque}
-                    AND	T_CLIENTS.TYPE_PRESENTOIRE = {Param_type_pres}
-                    AND	T_CLIENTS.ACTIF = {Param_actif}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                    {OPTIONAL_ARG_4}
+                    {OPTIONAL_ARG_5}
+                    {OPTIONAL_ARG_6}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_param_code_secteur': args[0],
+                'Param_cac': args[1],
+                'param_not_classe': args[2],
+                'Param_auth_cheque': args[3],
+                'Param_type_pres': args[4],
+                'Param_actif': args[5]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOUS_SECTEUR.code_secteur = {Param_param_code_secteur}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}'
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_CLIENTS.CLASSE NOT IN ({param_not_classe})'
+        kwargs['OPTIONAL_ARG_4'] = 'AND	T_CLIENTS.AUT_CHEQUE = {Param_auth_cheque}'
+        kwargs['OPTIONAL_ARG_5'] = 'AND	T_CLIENTS.TYPE_PRESENTOIRE = {Param_type_pres}'
+        kwargs['OPTIONAL_ARG_6'] = 'AND	T_CLIENTS.ACTIF = {Param_actif}'
+        
+        keys = ('Param_param_code_secteur', 'Param_cac', 'param_not_classe', 'Param_auth_cheque', 'Param_type_pres', 'Param_actif')
+        for arg, key in zip(range(1, 7), keys):
+            if kwargs[key] in (None, 'NULL'):
+                kwargs['OPTIONAL_ARG_{}'.format(arg)] = ''
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_clients_cac(self, args): #Done
