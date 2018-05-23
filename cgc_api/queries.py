@@ -4769,7 +4769,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_articles_tout(self, args):
+    def Req_ls_articles_tout(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4806,16 +4806,37 @@ class Queries(object):
                 AND		T_FAMILLE.CODE_FAMILLE = T_PRODUITS.CODE_FAMILLE
                 AND
                 (
-                    T_PRIX.CODE_AGCE = {Param_code_agce}
-                    AND	T_ARTICLES.ACTIF_GLOBALE = 1
-                    AND	T_ARTICLES.AFF_COMMANDE = {Param_cat}
-                    AND	T_PRIX.Date_Fin >= {Param_dt}
-                    AND	T_PRIX.Date_Debut <= {Param_dt}
+                    {OPTIONAL_ARG_1}
+                    T_ARTICLES.ACTIF_GLOBALE = 1
+                    {OPTIONAL_ARG_2}
+                    AND	T_PRIX.Date_Fin >= '{Param_dt}'
+                    AND	T_PRIX.Date_Debut <= '{Param_dt}'
                 )
             ORDER BY 
                 RANG ASC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_agce': args[0],
+                'Param_cat': args[1],
+                'Param_dt': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+
+        if kwargs['Param_dt'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_PRIX.CODE_AGCE = {Param_code_agce} AND'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_ARTICLES.AFF_COMMANDE = {Param_cat}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_agce'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_cat'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_autorisation_caisserie(self, args):
