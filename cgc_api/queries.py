@@ -5265,7 +5265,7 @@ class Queries(object):
         kwargs['OPTIONAL_ARG_1'] = '''T_OPERATIONS_CAISSE.DATE_OPERATION = '{Param_date_operation}' AND'''
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_operation'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
 
-        return query.format(**kwargs)
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_cheques_cac(self, args):
