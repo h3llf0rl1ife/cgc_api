@@ -3972,7 +3972,7 @@ class Queries(object):
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_Hist_Trajet.Lieu_Arrivee = {Param_arrivee}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_arrivee'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
 
-        return query.format(**kwargs)
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_itineraire(self, args): #Done
@@ -4123,7 +4123,7 @@ class Queries(object):
         kwargs['OPTIONAL_ARG_1'] = 'T_PRODUITS_LIVREES.CODE_ARTICLE = {Param_code_article} AND'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_article'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
         
-        return query.format(**kwargs)
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_livraison_cond(self, args): #Done
@@ -4155,7 +4155,7 @@ class Queries(object):
         kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS_CAISSERIE.CODE_CP = {Param_code_cp} AND'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
 
-        return query.format(**kwargs)
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_livraison_conditionnement(self, args): #Done
@@ -4201,7 +4201,7 @@ class Queries(object):
         kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS_CAISSERIE.CODE_CP = {Param_code_cp} AND'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
 
-        return query.format(**kwargs)
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_livraison_global_client(self, args): #Done
