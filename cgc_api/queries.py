@@ -3933,7 +3933,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_info_trajet(self, args):
+    def Req_info_trajet(self, args): #Done
         query = '''
             SELECT 
                 T_Hist_Trajet.Id_Ordre_Mission AS Id_Ordre_Mission,	
@@ -3952,9 +3952,26 @@ class Queries(object):
                 T_Hist_Trajet
             WHERE 
                 T_Hist_Trajet.Id_Ordre_Mission = {Param_id_mission}
-                AND	T_Hist_Trajet.Lieu_Arrivee = {Param_arrivee}
+                {OPTIONAL_ARG_1}
                 AND	T_Hist_Trajet.Lieu_Depart = {Param_depart}
         '''
+
+        try:
+            kwargs = {
+                'Param_id_mission': args[0],
+                'Param_arrivee': args[1],
+                'Param_depart': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in ('Param_id_mission', 'Param_depart'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_Hist_Trajet.Lieu_Arrivee = {Param_arrivee}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_arrivee'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
         return query.format(**kwargs)
 
     
