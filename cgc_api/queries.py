@@ -4126,7 +4126,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_livraison_cond(self, args):
+    def Req_livraison_cond(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
@@ -4137,9 +4137,24 @@ class Queries(object):
             FROM 
                 T_MOUVEMENTS_CAISSERIE
             WHERE 
-                T_MOUVEMENTS_CAISSERIE.CODE_CP = {Param_code_cp}
-                AND	T_MOUVEMENTS_CAISSERIE.ORIGINE = {Param_origine}
+                {OPTIONAL_ARG_1}
+                T_MOUVEMENTS_CAISSERIE.ORIGINE = {Param_origine}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_cp': args[0],
+                'Param_origine': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_origine'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS_CAISSERIE.CODE_CP = {Param_code_cp} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
         return query.format(**kwargs)
 
     
