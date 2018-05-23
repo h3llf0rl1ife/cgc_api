@@ -5232,7 +5232,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_cheques(self, args):
+    def Req_ls_cheques(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
@@ -5243,10 +5243,28 @@ class Queries(object):
             FROM 
                 T_OPERATIONS_CAISSE
             WHERE 
-                T_OPERATIONS_CAISSE.DATE_OPERATION = {Param_date_operation}
-                AND	T_OPERATIONS_CAISSE.TYPE_OPERATION = 'T'
-                AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+                {OPTIONAL_ARG_1}
+                T_OPERATIONS_CAISSE.TYPE_OPERATION = 'T'
+                AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = '{Param_date_validation}'
         '''
+
+        try:
+            kwargs = {
+                'Param_date_operation': args[0],
+                'Param_date_validation': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        if kwargs['Param_date_validation'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = '''T_OPERATIONS_CAISSE.DATE_OPERATION = '{Param_date_operation}' AND'''
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_operation'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
         return query.format(**kwargs)
 
     
