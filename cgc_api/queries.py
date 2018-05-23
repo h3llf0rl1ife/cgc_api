@@ -4639,7 +4639,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def req_ls_articles_livrees_newrest(self, args):
+    def req_ls_articles_livrees_newrest(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4655,9 +4655,24 @@ class Queries(object):
                 AND
                 (
                     T_CLIENTS.GROUP_CLIENT = {Param_gp_client}
-                    AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_gp_client': args[0],
+                'Param_date_livraison': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
