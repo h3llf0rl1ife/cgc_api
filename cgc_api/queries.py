@@ -5358,7 +5358,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_client_servi_date(self, args):
+    def Req_ls_client_servi_date(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_SOUS_SECTEUR.code_secteur AS code_secteur,	
@@ -5374,10 +5374,27 @@ class Queries(object):
                 AND
                 (
                     T_FACTURE.VALID = 1
-                    AND	T_FACTURE.DATE_HEURE BETWEEN {Param_DATE_HEURE1} AND {Param_DATE_HEURE2}
+                    AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_DATE_HEURE1}' AND '{Param_DATE_HEURE2}'
                     AND	T_SOUS_SECTEUR.code_secteur = {Param_CODE_SECTEUR}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_DATE_HEURE1': args[0],
+                'Param_DATE_HEURE2': args[1],
+                'Param_CODE_SECTEUR': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_DATE_HEURE1'] = self.validateDate(kwargs['Param_DATE_HEURE1'])
+        kwargs['Param_DATE_HEURE2'] = self.validateDate(kwargs['Param_DATE_HEURE2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
