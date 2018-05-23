@@ -5899,7 +5899,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_commande_client(self, args):
+    def Req_ls_commande_client(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -5919,11 +5919,28 @@ class Queries(object):
                 AND
                 (
                     T_COMMANDES.TYPE_COMMANDE = 'C'
-                    AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
-                    AND	T_COMMANDES.code_secteur = {Param_code_secteur}
+                    AND	T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}'
+                    {OPTIONAL_ARG_1}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_code_secteur': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_COMMANDES.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_commande_usine(self, args):
