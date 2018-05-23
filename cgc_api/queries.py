@@ -4676,7 +4676,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_articles_stat(self, args):
+    def Req_ls_articles_stat(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4716,12 +4716,25 @@ class Queries(object):
                 AND
                 (
                     T_ARTICLES.ACTIF_GLOBALE = 1
-                    AND	T_PRIX.Date_Debut <= {Param_dt}
-                    AND	T_PRIX.Date_Fin >= {Param_dt}
+                    AND	T_PRIX.Date_Debut <= '{Param_dt}'
+                    AND	T_PRIX.Date_Fin >= '{Param_dt}'
                 )
             ORDER BY 
                 RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'Param_dt': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+
+        if kwargs['Param_dt'] in (None, 'NULL'):
+            return ValueError
+
         return query.format(**kwargs)
 
     
