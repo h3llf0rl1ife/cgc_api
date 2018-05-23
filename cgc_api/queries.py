@@ -3564,7 +3564,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_get_id_det_mission(self, args):
+    def Req_get_id_det_mission(self, args): #Done
         query = '''
             SELECT 
                 T_Det_Mission.Id_Det_Mission AS Id_Det_Mission,	
@@ -3585,6 +3585,19 @@ class Queries(object):
                     AND	T_Det_Mission.Id_Ordre_Mission = {Param_id_ordre_mission}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_id_dest': args[0],
+                'Param_id_ordre_mission': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
