@@ -4073,7 +4073,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_livraison_articles(self, args):
+    def Req_livraison_articles(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4097,13 +4097,32 @@ class Queries(object):
                 T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
                 AND
                 (
-                    T_PRODUITS_LIVREES.CODE_ARTICLE = {Param_code_article}
-                    AND	T_PRODUITS_LIVREES.CODE_CLIENT = {Param_code_client}
-                    AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    {OPTIONAL_ARG_1}
+                    T_PRODUITS_LIVREES.CODE_CLIENT = {Param_code_client}
+                    AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_PRODUITS_LIVREES.TYPE_MVT = 'L'
                     AND	T_LIVRAISON.STATUT <> 'A'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_article': args[0],
+                'Param_code_client': args[1],
+                'Param_date_livraison': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+        
+        for key in ('Param_code_client', 'Param_date_livraison'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_PRODUITS_LIVREES.CODE_ARTICLE = {Param_code_article} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_article'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
         return query.format(**kwargs)
 
     
