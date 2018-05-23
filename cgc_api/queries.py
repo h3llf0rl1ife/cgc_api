@@ -4273,7 +4273,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_livraison_non_valider(self, args):
+    def Req_livraison_non_valider(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -4294,12 +4294,27 @@ class Queries(object):
                 (
                     T_LIVRAISON.TYPE_MVT = 'L'
                     AND	T_LIVRAISON.code_secteur = {Param_CODE_SECTEUR}
-                    AND	T_LIVRAISON.DATE_LIVRAISON = {Param_DATE_LIVRAISON}
-                    AND	T_LIVRAISON.DATE_VALIDATION = '19000101000000'
+                    AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_DATE_LIVRAISON}'
+                    AND	T_LIVRAISON.DATE_VALIDATION = '1900-01-01 00:00:00'
                     AND	T_CLIENTS.CLIENT_EN_COMPTE = 1
                     AND	T_CLIENTS.CAT_CLIENT <> 2
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_CODE_SECTEUR': args[0],
+                'Param_DATE_LIVRAISON': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_DATE_LIVRAISON'] = self.validateDate(kwargs['Param_DATE_LIVRAISON'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
