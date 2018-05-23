@@ -4158,7 +4158,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_livraison_conditionnement(self, args):
+    def Req_livraison_conditionnement(self, args): #Done
         query = '''
             SELECT 
                 T_COND_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -4176,12 +4176,31 @@ class Queries(object):
                 T_LIVRAISON.NUM_LIVRAISON = T_COND_LIVRAISON.NUM_LIVRAISON
                 AND
                 (
-                    T_COND_LIVRAISON.CODE_CP = {Param_code_cp}
-                    AND	T_COND_LIVRAISON.CODE_CLIENT = {Param_code_client}
-                    AND	T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    {OPTIONAL_ARG_1}
+                    T_COND_LIVRAISON.CODE_CLIENT = {Param_code_client}
+                    AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_COND_LIVRAISON.TYPE_MVT = 'L'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_cp': args[0],
+                'Param_code_client': args[1],
+                'Param_date_livraison': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in ('Param_code_client', 'Param_date_livraison'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS_CAISSERIE.CODE_CP = {Param_code_cp} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
         return query.format(**kwargs)
 
     
