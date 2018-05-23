@@ -5069,7 +5069,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_bl_client(self, args):
+    def Req_ls_bl_client(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -5086,11 +5086,26 @@ class Queries(object):
                 T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
                 AND
                 (
-                    T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
                     AND	T_LIVRAISON.STATUT <> 'A'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_code_client': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
