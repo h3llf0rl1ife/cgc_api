@@ -14,8 +14,6 @@ class Queries(object):
     
     
     def executeQuery(self, query):
-        result = []
-
         if type(query) != str:
             raise query
         
@@ -26,16 +24,15 @@ class Queries(object):
                 except pymssql.ProgrammingError:
                     raise
 
-                for row in cursor:
-                    for entry in row:
-                        if type(row[entry]) is datetime.datetime:
-                            row[entry] = row[entry].strftime('%Y-%m-%d %H:%M:%S')
-                        elif type(row[entry]) is decimal.Decimal:
-                            row[entry] = float(row[entry])
-                    result.append(row)
+                entries = cursor.fetchall()
+                for entry in entries:
+                    for cell in entry:
+                        if type(entry[cell]) is datetime.datetime:
+                            entry[cell] = str(entry[cell])
+                        elif type(entry[cell]) is decimal.Decimal:
+                            entry[cell] = float(entry[cell])
 
-        return result
-    
+        return entries    
 
     @staticmethod
     def validateDate(kwarg, default=None):
