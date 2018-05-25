@@ -6134,7 +6134,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ls_cond_chargees(self, args):
+    def Req_ls_cond_chargees(self, args): #Done
         query = '''
             SELECT 
                 T_COND_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -6154,9 +6154,24 @@ class Queries(object):
                 T_COND_CHARGEE
             WHERE 
                 T_COND_CHARGEE.CODE_CHARGEMENT = {Param_code_chargement}
-                AND	T_COND_CHARGEE.CODE_COND = {Param_code_cond}
+                {OPTIONAL_ARG_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_chargement': args[0],
+                'Param_code_cond': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_code_chargement'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_COND_CHARGEE.CODE_COND = {Param_code_cond}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cond'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_cond_livraison(self, args): #Done
