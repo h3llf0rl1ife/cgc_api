@@ -7584,7 +7584,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_prix_produit(self, args):
+    def Req_ls_prix_produit(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -7598,10 +7598,23 @@ class Queries(object):
                 AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
                 AND
                 (
-                    T_PRIX.Date_Debut <= {param_dt}
-                    AND	T_PRIX.Date_Fin >= {param_dt}
+                    T_PRIX.Date_Debut <= '{param_dt}'
+                    AND	T_PRIX.Date_Fin >= '{param_dt}'
                 )
         '''
+
+        try:
+            kwargs = {
+                'param_dt': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['param_dt'] = self.validateDate(kwargs['param_dt'])
+
+        if kwargs['param_dt'] in (None, 'NULL'):
+            return ValueError
+
         return query.format(**kwargs)
 
     
