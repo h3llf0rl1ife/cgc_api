@@ -7755,7 +7755,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_produits_chargees(self, args):
+    def Req_ls_produits_chargees(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -7789,9 +7789,24 @@ class Queries(object):
                 T_PRODUITS_CHARGEE
             WHERE 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT = {Param_code_chagement}
-                AND	T_PRODUITS_CHARGEE.CODE_ARTICLE = {Param_code_article}
+                {OPTIONAL_ARG_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_chagement': args[0],
+                'Param_code_article': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_code_chagement'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_PRODUITS_CHARGEE.CODE_ARTICLE = {Param_code_article}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_article'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_produits_livraison(self, args): #Done
