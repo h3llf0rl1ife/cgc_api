@@ -6680,7 +6680,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_facture_date(self, args):
+    def Req_ls_facture_date(self, args): #Done
         query = '''
             SELECT 
                 T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -6698,10 +6698,27 @@ class Queries(object):
                 AND
                 (
                     T_FACTURE.VALID = 1
-                    AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+                    AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_SOUS_SECTEUR.code_secteur = {Param_CODE_SECTEUR}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_CODE_SECTEUR': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+    
         return query.format(**kwargs)
 
     
