@@ -7019,7 +7019,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_livraisons_journee(self, args):
+    def Req_ls_livraisons_journee(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -7052,11 +7052,26 @@ class Queries(object):
                 AND		T_LIVRAISON.code_secteur = T_SECTEUR.code_secteur
                 AND
                 (
-                    T_LIVRAISON.DATE_LIVRAISON = {Param_date_chargement}
+                    T_LIVRAISON.DATE_LIVRAISON = '{Param_date_chargement}'
                     AND	T_LIVRAISON.STATUT <> 'A'
                     AND	T_LIVRAISON.TYPE_MVT = {Param_type_mvt}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_date_chargement': args[0],
+                'Param_type_mvt': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
