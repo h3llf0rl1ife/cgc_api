@@ -7513,7 +7513,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_prelevements_periode_caisserie(self, args):
+    def Req_ls_prelevements_periode_caisserie(self, args): #Done
         query = '''
             SELECT 
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -7533,12 +7533,29 @@ class Queries(object):
                 AND
                 (
                     T_DT_PRELEVEMENT_COND.CODE_OPERATEUR = {Param_code_operateur}
-                    AND	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+                    AND	T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
             GROUP BY 
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR,	
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION
         '''
+
+        try:
+            kwargs = {
+                'Param_code_operateur': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
