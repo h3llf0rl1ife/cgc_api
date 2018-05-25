@@ -6509,7 +6509,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def req_ls_ecarts_controleur_caisserie(self, args):
+    def req_ls_ecarts_controleur_caisserie(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -6528,7 +6528,7 @@ class Queries(object):
                 AND		T_MAGASINS.CODE_MAGASIN = T_MOUVEMENTS_CAISSERIE.CODE_MAGASIN
                 AND
                 (
-                    T_OPERATIONS.DATE_OPERATION BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_OPERATIONS.DATE_OPERATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART = {Param_compte_ecart}
                 )
             GROUP BY 
@@ -6539,6 +6539,23 @@ class Queries(object):
                 T_MOUVEMENTS_CAISSERIE.TYPE_MOUVEMENT,	
                 T_MAGASINS.NOM_MAGASIN
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_compte_ecart': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
