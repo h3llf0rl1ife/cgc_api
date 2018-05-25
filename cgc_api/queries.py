@@ -5813,7 +5813,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_clients_secteur(self, args):
+    def Req_ls_clients_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5836,14 +5836,35 @@ class Queries(object):
                 AND		T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
                 AND
                 (
-                    T_SECTEUR.code_secteur = {Param_code_secteur}
-                    AND	T_CLIENTS.ACTIF = 1
-                    AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}
-                    AND	T_CLIENTS.CLASSE IN ({Param_classe}) 
-                    AND	T_CLIENTS.CAT_CLIENT = {Param_categorie}
+                    T_CLIENTS.ACTIF = 1
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                    {OPTIONAL_ARG_4}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_cac': args[1],
+                'Param_classe': args[2],
+                'Param_categorie': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SECTEUR.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}'
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_CLIENTS.CLASSE IN ({Param_classe})'
+        kwargs['OPTIONAL_ARG_4'] = 'AND	T_CLIENTS.CAT_CLIENT = {Param_categorie}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_cac'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_classe'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+        kwargs['OPTIONAL_ARG_4'] = '' if kwargs['Param_categorie'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_4']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_code_secteur_commandes(self, args): #Done
