@@ -6090,7 +6090,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_cond(self, args):
+    def Req_ls_cond(self, args): #Done
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_CP AS CODE_CP,	
@@ -6106,13 +6106,32 @@ class Queries(object):
                 T_CAISSES_PALETTES.CODE_TYPE = T_MAGASIN_COND.CODE_CP
                 AND
                 (
-                    T_MAGASIN_COND.CODE_MAGASIN = {Param_code_magasin}
-                    AND	T_MAGASIN_COND.CODE_CP = {Param_code_cp}
-                    AND	T_CAISSES_PALETTES.CATEGORIE = {Param_type_cond}
-                    AND	T_MAGASIN_COND.CODE_CP <> 99
+                    T_MAGASIN_COND.CODE_CP <> 99
+                    AND	T_MAGASIN_COND.CODE_MAGASIN = {Param_code_magasin}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_magasin': args[0],
+                'Param_code_cp': args[1],
+                'Param_type_cond': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_code_magasin'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_MAGASIN_COND.CODE_CP = {Param_code_cp}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_CAISSES_PALETTES.CATEGORIE = {Param_type_cond}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_type_cond'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_cond_chargees(self, args):
