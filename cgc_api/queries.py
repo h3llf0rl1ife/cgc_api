@@ -6458,7 +6458,7 @@ class Queries(object):
         return query
 
     
-    def req_ls_ecarts_controleur(self, args):
+    def req_ls_ecarts_controleur(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.COMPTE_ECART AS COMPTE_ECART,	
@@ -6480,7 +6480,7 @@ class Queries(object):
                 AND
                 (
                     T_MOUVEMENTS.COMPTE_ECART = {Param_compte_ecart}
-                    AND	T_MOUVEMENTS.DATE_MVT BETWEEN {Param_dt1} AND {Param_dt2}
+                    AND	T_MOUVEMENTS.DATE_MVT BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
             GROUP BY 
                 T_MOUVEMENTS.DATE_MVT,	
@@ -6489,6 +6489,23 @@ class Queries(object):
                 T_MOUVEMENTS.COMPTE_ECART,	
                 T_PRODUITS.NOM_PRODUIT
         '''
+
+        try:
+            kwargs = {
+                'Param_compte_ecart': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
