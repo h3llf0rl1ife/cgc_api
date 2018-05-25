@@ -7091,7 +7091,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def req_ls_mvt(self, args):
+    def req_ls_mvt(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -7110,11 +7110,28 @@ class Queries(object):
                 AND		T_MAGASINS.CODE_MAGASIN = T_MOUVEMENTS.CODE_MAGASIN
                 AND
                 (
-                    T_MOUVEMENTS.CODE_ARTICLE = {Param_code_produit}
-                    AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+                    {OPTIONAL_ARG_1}
+                    T_MOUVEMENTS.DATE_MVT = '{Param_date_mvt}'
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_produit': args[0],
+                'Param_date_mvt': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        if kwargs['Param_date_mvt'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_MOUVEMENTS.CODE_ARTICLE = {Param_code_produit} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_num_bl_client(self, args): #Done
