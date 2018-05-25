@@ -6399,7 +6399,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_depenses(self, args):
+    def Req_ls_depenses(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.LIBELLE AS LIBELLE,	
@@ -6417,9 +6417,24 @@ class Queries(object):
                 (
                     T_OPERATIONS_CAISSE.TYPE_OPERATION IN ('D', 'V') 
                     AND	T_MOUVEMENTS_CAISSE.CODE_CAISSE = {Param_code_caisse}
-                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_operation}
+                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = '{Param_date_operation}'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_caisse': args[0],
+                'Param_date_operation': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
