@@ -7700,7 +7700,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_produits_actif(self, args):
+    def Req_ls_produits_actif(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -7725,8 +7725,8 @@ class Queries(object):
                 AND		T_GAMME.CODE_GAMME = T_FAMILLE.CODE_GAMME
                 AND
                 (
-                    T_PRIX.Date_Debut <= {param_dt}
-                    AND	T_PRIX.Date_Fin >= {param_dt}
+                    T_PRIX.Date_Debut <= '{param_dt}'
+                    AND	T_PRIX.Date_Fin >= '{param_dt}'
                     AND	T_ARTICLES.ACTIF = 1
                 )
             GROUP BY 
@@ -7739,6 +7739,19 @@ class Queries(object):
             ORDER BY 
                 le_maximum_RANG ASC
         '''
+
+        try:
+            kwargs = {
+                'param_dt': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['param_dt'] = self.validateDate(kwargs['param_dt'])
+
+        if kwargs['param_dt'] in (None, 'NULL'):
+            return ValueError
+        
         return query.format(**kwargs)
 
     
