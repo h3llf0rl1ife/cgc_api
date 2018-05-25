@@ -5631,7 +5631,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_clients_conseigne(self, args):
+    def Req_ls_clients_conseigne(self, args): #Done
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5675,16 +5675,43 @@ class Queries(object):
                 AND
                 (
                     T_CLIENTS.CODE_CLIENT <> 0
-                    AND	T_SOUS_SECTEUR.code_secteur = {Param_param_code_secteur}
-                    AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}
-                    AND	T_CLIENTS.CLASSE NOT IN ({param_not_classe}) 
-                    AND	T_CLIENTS.AUT_CHEQUE = {Param_auth_cheque}
-                    AND	T_CLIENTS.TYPE_PRESENTOIRE = {Param_type_pres}
-                    AND	T_CLIENTS.ACTIF = {Param_actif}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                    {OPTIONAL_ARG_4}
+                    {OPTIONAL_ARG_5}
+                    {OPTIONAL_ARG_6}
                     AND	T_CLIENTS.SOLDE_C_PR = 1
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_param_code_secteur': args[0],
+                'Param_cac': args[1],
+                'param_not_classe': args[2],
+                'Param_auth_cheque': args[3],
+                'Param_type_pres': args[4],
+                'Param_actif': args[5]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOUS_SECTEUR.code_secteur = {Param_param_code_secteur}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}'
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_CLIENTS.CLASSE NOT IN ({param_not_classe})'
+        kwargs['OPTIONAL_ARG_4'] = 'AND	T_CLIENTS.AUT_CHEQUE = {Param_auth_cheque}'
+        kwargs['OPTIONAL_ARG_5'] = 'AND	T_CLIENTS.TYPE_PRESENTOIRE = {Param_type_pres}'
+        kwargs['OPTIONAL_ARG_6'] = 'AND	T_CLIENTS.ACTIF = {Param_actif}'
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_cac'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['param_not_classe'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+        kwargs['OPTIONAL_ARG_4'] = '' if kwargs['Param_auth_cheque'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_4']
+        kwargs['OPTIONAL_ARG_5'] = '' if kwargs['Param_type_pres'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_5']
+        kwargs['OPTIONAL_ARG_6'] = '' if kwargs['Param_actif'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_6']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_clients_itinéraire(self, args): #Done
