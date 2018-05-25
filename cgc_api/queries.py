@@ -6928,7 +6928,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_livraison_tournee_journee(self, args):
+    def Req_ls_livraison_tournee_journee(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -6947,16 +6947,35 @@ class Queries(object):
                 T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
                 AND
                 (
-                    T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                    T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                     AND	T_LIVRAISON.code_secteur = {Param_code_secteur}
-                    AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
+                    {OPTIONAL_ARG_1}
                     AND	T_LIVRAISON.STATUT <> 'A'
                     AND	T_LIVRAISON.SUR_COMMANDE = 1
                 )
             ORDER BY 
                 RANG ASC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_code_secteur': args[1],
+                'Param_code_client': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in ('Param_date_livraison', 'Param_code_secteur'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_livraisons(self, args): #Done
