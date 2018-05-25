@@ -6350,7 +6350,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_depense_caisse(self, args):
+    def Req_ls_depense_caisse(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -6373,14 +6373,29 @@ class Queries(object):
                 AND
                 (
                     T_MOUVEMENTS_CAISSE.CODE_CAISSE = {Param_code_caisse}
-                    AND	T_OPERATIONS_CAISSE.DATE_OPERATION <= {Param_dt}
+                    AND	T_OPERATIONS_CAISSE.DATE_OPERATION <= '{Param_dt}'
                     AND	
                     (
-                        T_OPERATIONS_CAISSE.DATE_VALIDATION >= {Param_dt}
-                        OR	T_OPERATIONS_CAISSE.DATE_VALIDATION = '19000101000000'
+                        T_OPERATIONS_CAISSE.DATE_VALIDATION >= '{Param_dt}'
+                        OR	T_OPERATIONS_CAISSE.DATE_VALIDATION = '1900-01-01 00:00:00'
                     )
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_caisse': args[0],
+                'Param_dt': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
