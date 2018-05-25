@@ -6559,7 +6559,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def req_ls_ecarts_journee(self, args):
+    def req_ls_ecarts_journee(self, args): #Done
         query = '''
             SELECT 
                 T_ECARTS_RENDUS.ID_ECART AS ID_ECART,	
@@ -6580,11 +6580,31 @@ class Queries(object):
             FROM 
                 T_ECARTS_RENDUS
             WHERE 
-                T_ECARTS_RENDUS.DATE_SITUATION = {Param_date_situation}
-                AND	T_ECARTS_RENDUS.VALID = 1
-                AND	T_ECARTS_RENDUS.DATE_HEURE_SAISIE BETWEEN {Param_dt1} AND {Param_dt2}
+                T_ECARTS_RENDUS.VALID = 1
+                {OPTIONAL_ARG_1}
+                AND	T_ECARTS_RENDUS.DATE_HEURE_SAISIE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_situation': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            kwargs[key] = self.validateDate(kwargs[key])
+        
+        for key in ('Param_dt1', 'Param_dt2'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = '''AND T_ECARTS_RENDUS.DATE_SITUATION = '{Param_date_situation}' '''
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_situation'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_ecarts_rendus(self, args): #Done
