@@ -5988,7 +5988,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ls_commande_usine(self, args):
+    def Req_ls_commande_usine(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -6013,6 +6013,19 @@ class Queries(object):
             ORDER BY 
                 DATE_LIVRAISON DESC
         '''
+
+        try:
+            kwargs = {
+                'Param_code_agence': args[0],
+                'Param_type_commande': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
