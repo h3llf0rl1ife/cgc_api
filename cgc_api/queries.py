@@ -8683,7 +8683,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_versement_caisse(self, args):
+    def Req_ls_versement_caisse(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -8705,12 +8705,27 @@ class Queries(object):
                 AND		T_COMPTES.CODE_COMPTE = T_OPERATIONS_CAISSE.COMPTE_VERSEMENT
                 AND
                 (
-                    T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_versement}
+                    T_OPERATIONS_CAISSE.DATE_VALIDATION = '{Param_date_versement}'
                     AND	T_OPERATIONS_CAISSE.TYPE_OPERATION = {Param_type_operation}
                 )
             ORDER BY 
                 CODE_OPERATION DESC
         '''
+
+        try:
+            kwargs = {
+                'Param_date_versement': args[0],
+                'Param_type_operation': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_versement'] = self.validateDate(kwargs['Param_date_versement'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
