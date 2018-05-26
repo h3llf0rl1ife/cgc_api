@@ -9331,7 +9331,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_moy_vente_gms(self, args):
+    def Req_moy_vente_gms(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_CLIENT AS CODE_CLIENT,	
@@ -9349,7 +9349,7 @@ class Queries(object):
                 AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
                 AND
                 (
-                    T_PRODUITS_LIVREES.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_PRODUITS_LIVREES.DATE_VALIDATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_PRODUITS_LIVREES.TYPE_CLIENT = 1
                     AND	T_PRODUITS_LIVREES.CODE_CLIENT = {Param_code_client}
                     AND	T_LIVRAISON.STATUT <> 'A'
@@ -9360,6 +9360,23 @@ class Queries(object):
                 T_PRODUITS_LIVREES.TYPE_MVT,	
                 T_PRODUITS_LIVREES.CODE_CLIENT
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_code_client': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
