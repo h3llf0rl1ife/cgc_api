@@ -8036,7 +8036,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_reglements_cond(self, args):
+    def Req_ls_reglements_cond(self, args): #Done
         query = '''
             SELECT 
                 T_REGELEMENT_COND.ID_REGLEMENT AS ID_REGLEMENT,	
@@ -8061,13 +8061,30 @@ class Queries(object):
                 T_OPERATEUR.CODE_OPERATEUR = T_REGELEMENT_COND.CODE_OPERTAEUR
                 AND
                 (
-                    T_REGELEMENT_COND.CODE_OPERTAEUR = {Param_code_operateur}
-                    AND	T_REGELEMENT_COND.DATE_VALIDATION = {Param_date_validation}
+                    {OPTIONAL_ARG_1}
+                    T_REGELEMENT_COND.DATE_VALIDATION = '{Param_date_validation}'
                 )
             ORDER BY 
                 ID_REGLEMENT DESC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_operateur': args[0],
+                'Param_date_validation': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        if kwargs['Param_date_validation'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_REGELEMENT_COND.CODE_OPERTAEUR = {Param_code_operateur} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_operateur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_remise_clients(self, args):
