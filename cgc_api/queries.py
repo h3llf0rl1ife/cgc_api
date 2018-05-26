@@ -7895,7 +7895,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_reclamations(self, args):
+    def Req_ls_reclamations(self, args): #Done
         query = '''
             SELECT 
                 T_RECLAMATIONS_QUALITE.ID_RECLAMATION AS ID_RECLAMATION,	
@@ -7919,10 +7919,30 @@ class Queries(object):
                 AND		T_ARTICLES.CODE_ARTICLE = T_RECLAMATIONS_QUALITE.CODE_ARTICLE
                 AND
                 (
-                    T_RECLAMATIONS_QUALITE.DATE_RECLAMATION BETWEEN {Param_date1} AND {Param_date2}
-                    AND	T_RECLAMATIONS_QUALITE.DATE_HEURE BETWEEN {Param_dts1} AND {Param_dts2}
+                    T_RECLAMATIONS_QUALITE.DATE_RECLAMATION BETWEEN '{Param_date1}' AND '{Param_date2}'
+                    AND	T_RECLAMATIONS_QUALITE.DATE_HEURE BETWEEN '{Param_dts1}' AND '{Param_dts2}'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_date1': args[0],
+                'Param_date2': args[1],
+                'Param_dts1': args[2],
+                'Param_dts2': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date1'] = self.validateDate(kwargs['Param_date1'])
+        kwargs['Param_date2'] = self.validateDate(kwargs['Param_date2'])
+        kwargs['Param_dts1'] = self.validateDate(kwargs['Param_dts1'])
+        kwargs['Param_dts2'] = self.validateDate(kwargs['Param_dts2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
