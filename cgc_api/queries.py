@@ -9562,7 +9562,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_mvente(self, args):
+    def Req_mvente(self, args): #Done
         query = '''
             SELECT 
                 T_MOYENNE_VENTE.DATE_VENTE AS DATE_VENTE,	
@@ -9571,10 +9571,27 @@ class Queries(object):
             FROM 
                 T_MOYENNE_VENTE
             WHERE 
-                T_MOYENNE_VENTE.DATE_VENTE = {Param_date_vente}
-                AND	T_MOYENNE_VENTE.code_secteur = {Param_code_secteur}
+                T_MOYENNE_VENTE.DATE_VENTE = '{Param_date_vente}'
+                {OPTIONAL_ARG_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_vente': args[0],
+                'Param_code_secteur': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_vente'] = self.validateDate(kwargs['Param_date_vente'])
+
+        if kwargs['Param_date_vente'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_MOYENNE_VENTE.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_nbl_client(self, args):
