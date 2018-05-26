@@ -9445,7 +9445,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_mt_a_verser_secteur(self, args):
+    def Req_mt_a_verser_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -9454,9 +9454,24 @@ class Queries(object):
             FROM 
                 T_CHARGEMENT
             WHERE 
-                T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+                T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}'
                 AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}
         '''
+
+        try:
+            kwargs = {
+                'Param_date_chargement': args[0],
+                'Param_code_secteur': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
