@@ -9475,7 +9475,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_mt_remise_secteur(self, args):
+    def Req_mt_remise_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_DT_FACTURE.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -9496,11 +9496,28 @@ class Queries(object):
                     AND	T_DT_FACTURE.TX_GRATUIT <> 0
                     AND	T_SOUS_SECTEUR.code_secteur = {Param_CODE_SECTEUR}
                     AND	T_CLIENTS.CLIENT_EN_COMPTE = 0
-                    AND	T_FACTURE.DATE_HEURE BETWEEN {param_dt1} AND {param_dt2}
+                    AND	T_FACTURE.DATE_HEURE BETWEEN '{param_dt1}' AND '{param_dt2}'
                 )
             GROUP BY 
                 T_DT_FACTURE.CODE_ARTICLE
         '''
+
+        try:
+            kwargs = {
+                'Param_CODE_SECTEUR': args[0],
+                'param_dt1': args[1],
+                'param_dt2': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['param_dt1'] = self.validateDate(kwargs['param_dt1'])
+        kwargs['param_dt2'] = self.validateDate(kwargs['param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
