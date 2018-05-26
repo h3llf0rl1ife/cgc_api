@@ -9205,7 +9205,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_montant_a_verser(self, args):
+    def Req_montant_a_verser(self, args): #Done
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -9221,7 +9221,7 @@ class Queries(object):
                 AND
                 (
                     T_CHARGEMENT.VALID = 1
-                    AND	T_CHARGEMENT.DATE_CHARGEMENT = {Param_date_chargement}
+                    AND	T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}'
                     AND	T_OPERATEUR.FONCTION = {Param_fonction}
                 )
             GROUP BY 
@@ -9230,7 +9230,25 @@ class Queries(object):
                 T_CHARGEMENT.VALID,	
                 T_OPERATEUR.FONCTION
         '''
-        return query.format(**kwargs)
+
+        
+        try:
+            kwargs = {
+                'Param_date_chargement': args[0],
+                'Param_fonction': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+        
+        if kwargs['Param_date_chargement'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_OPERATEUR.FONCTION = {Param_fonction}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_fonction'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_montant_livraison_client(self, args): #Done
