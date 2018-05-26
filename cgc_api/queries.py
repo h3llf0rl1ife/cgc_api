@@ -8188,7 +8188,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_remises_par_secteur(self, args):
+    def Req_ls_remises_par_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
@@ -8217,10 +8217,26 @@ class Queries(object):
                 AND		T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
                 AND
                 (
-                    T_REMISE_CLIENT.Date_Debut = {Param_dt1}
-                    AND	T_REMISE_CLIENT.Date_Fin = {Param_dt2}
+                    T_REMISE_CLIENT.Date_Debut = '{Param_dt1}'
+                    AND	T_REMISE_CLIENT.Date_Fin = '{Param_dt2}'
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
