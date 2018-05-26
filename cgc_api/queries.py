@@ -6316,7 +6316,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_decompte_espece(self, args):
+    def Req_ls_decompte_espece(self, args): #Done
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -6331,10 +6331,25 @@ class Queries(object):
                 T_DECOMPTE
             WHERE 
                 T_DECOMPTE.CODE_OPERATEUR = {Param_param_operateur}
-                AND	T_DECOMPTE.DATE_DECOMPTE = {Param_date_decompte}
+                AND	T_DECOMPTE.DATE_DECOMPTE = '{Param_date_decompte}'
                 AND	T_DECOMPTE.MODE_PAIEMENT = 'E'
                 AND	T_DECOMPTE.REGLEMENT = 0
         '''
+
+        try:
+            kwargs = {
+                'Param_param_operateur': args[0],
+                'Param_date_decompte': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_decompte'] = self.validateDate(kwargs['Param_date_decompte'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
