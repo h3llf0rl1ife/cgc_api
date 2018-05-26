@@ -9594,7 +9594,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_nbl_client(self, args):
+    def Req_nbl_client(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -9603,9 +9603,24 @@ class Queries(object):
             FROM 
                 T_LIVRAISON
             WHERE 
-                T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                 AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
         '''
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_code_client': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
