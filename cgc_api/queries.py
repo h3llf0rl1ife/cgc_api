@@ -8863,17 +8863,34 @@ class Queries(object):
         return query
 
     
-    def Req_maj_position_cond(self, args):
+    def Req_maj_position_cond(self, args): #Done
         query = '''
             UPDATE 
                 T_MAGASIN_COND
             SET
                 QTE_STOCK = {Param_qte_stock}
             WHERE 
-                T_MAGASIN_COND.CODE_MAGASIN = {Param_code_magasin}
-                AND	T_MAGASIN_COND.CODE_CP = {Param_code_cp}
+                {OPTIONAL_ARG_1}
+                T_MAGASIN_COND.CODE_CP = {Param_code_cp}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_qte_stock': args[0],
+                'Param_code_magasin': args[1],
+                'Param_code_cp': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in ('Param_qte_stock', 'Param_code_cp'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_MAGASIN_COND.CODE_MAGASIN = {Param_code_magasin} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_magasin'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_mappage_article(self, args): #Done
