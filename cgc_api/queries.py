@@ -8729,7 +8729,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_magasin_article(self, args):
+    def Req_magasin_article(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -8739,12 +8739,27 @@ class Queries(object):
                 T_ARTICLES_MAGASINS
             WHERE 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE = {Param_code_article}
-                AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_magasin}
+                {OPTIONAL_ARG_1}
             GROUP BY 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE,	
                 T_ARTICLES_MAGASINS.MAGASIN
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_article': args[0],
+                'Param_code_magasin': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_code_article'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_magasin}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_magasin'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_magasin_categorie(self, args): #Done
