@@ -10117,7 +10117,7 @@ class Queries(object):
         return query
 
     
-    def Req_promotions_dt(self, args):
+    def Req_promotions_dt(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_PROMOTIONS.ID_PROMO AS ID_PROMO,	
@@ -10139,8 +10139,8 @@ class Queries(object):
                 AND		T_ARTICLES.CODE_ARTICLE = T_DT_PROMO_TRANCHE.CODE_ARTICLE
                 AND
                 (
-                    T_PROMOTIONS.Date_Debut <= {Param_dt}
-                    AND	T_PROMOTIONS.Date_Fin >= {Param_dt}
+                    T_PROMOTIONS.Date_Debut <= '{Param_dt}'
+                    AND	T_PROMOTIONS.Date_Fin >= '{Param_dt}'
                     AND	
                     (
                         T_CIBLE_PROMOTION.code_secteur = 0
@@ -10153,6 +10153,22 @@ class Queries(object):
                     )
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_dt': args[0],
+                'param_code_secteur': args[1],
+                'param_code_client': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
