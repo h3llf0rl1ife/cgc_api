@@ -11689,7 +11689,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_stock_cond(self, args):
+    def Req_stock_cond(self, args): #Done
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_CP AS CODE_CP,	
@@ -11707,6 +11707,17 @@ class Queries(object):
             GROUP BY 
                 T_MAGASIN_COND.CODE_CP
         '''
+
+        try:
+            kwargs = {
+                'Param_code_cp': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_code_cp'] in (None, 'NULL'):
+            return ValueError
+
         return query.format(**kwargs)
 
     
