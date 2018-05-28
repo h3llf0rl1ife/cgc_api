@@ -10752,7 +10752,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_recherche_prevision(self, args):
+    def Req_recherche_prevision(self, args): #Done
         query = '''
             SELECT 
                 T_PREVISION.Date_Debut AS Date_Debut,	
@@ -10762,9 +10762,22 @@ class Queries(object):
             FROM 
                 T_PREVISION
             WHERE 
-                T_PREVISION.Date_Debut <= {Param_date}
-                AND	T_PREVISION.Date_Fin >= {Param_date}
+                T_PREVISION.Date_Debut <= '{Param_date}'
+                AND	T_PREVISION.Date_Fin >= '{Param_date}'
         '''
+
+        try:
+            kwargs = {
+                'Param_date': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
+
+        if kwargs['Param_date'] in (None, 'NULL'):
+            return ValueError
+
         return query.format(**kwargs)
 
     
