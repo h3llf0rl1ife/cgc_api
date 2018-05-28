@@ -9726,7 +9726,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_objectif_clients(self, args):
+    def Req_objectif_clients(self, args): #Done
         query = '''
             SELECT 
                 T_OBJECTIF_CLIENTS.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -9741,10 +9741,25 @@ class Queries(object):
                 T_ARTICLES.CODE_ARTICLE = T_OBJECTIF_CLIENTS.CODE_PRODUIT
                 AND
                 (
-                    T_OBJECTIF_CLIENTS.DATE_OBJECTIF = {Param_date_objectif}
+                    T_OBJECTIF_CLIENTS.DATE_OBJECTIF = '{Param_date_objectif}'
                     AND	T_OBJECTIF_CLIENTS.CODE_CLIENT = {Param_code_client}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_date_objectif': args[0],
+                'Param_code_client': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_objectif'] = self.validateDate(kwargs['Param_date_objectif'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
