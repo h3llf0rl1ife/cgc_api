@@ -11783,7 +11783,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_stock_initial(self, args):
+    def Req_stock_initial(self, args): #Done
         query = '''
             SELECT 
                 T_STOCK_INIT.DATE_PS AS DATE_PS,	
@@ -11794,12 +11794,27 @@ class Queries(object):
                 T_STOCK_INIT
             WHERE 
                 T_STOCK_INIT.CATEGORIE = {Param_categorie}
-                AND	T_STOCK_INIT.DATE_PS = {Param_date_stock}
+                AND	T_STOCK_INIT.DATE_PS = '{Param_date_stock}'
             GROUP BY 
                 T_STOCK_INIT.DATE_PS,	
                 T_STOCK_INIT.CODE_ARTICLE,	
                 T_STOCK_INIT.CATEGORIE
         '''
+
+        try:
+            kwargs = {
+                'Param_categorie': args[0],
+                'Param_date_stock': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_stock'] = self.validateDate(kwargs['Param_date_stock'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
