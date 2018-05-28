@@ -9763,7 +9763,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_objectif_mois(self, args):
+    def Req_objectif_mois(self, args): #Done
         query = '''
             SELECT 
                 T_OBJECTIF_VENTE.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -9772,10 +9772,27 @@ class Queries(object):
             FROM 
                 T_OBJECTIF_VENTE
             WHERE 
-                T_OBJECTIF_VENTE.DATE_OBJECTIF = {Param_date_objectif}
-                AND	T_OBJECTIF_VENTE.code_secteur = {Param_code_secteur}
+                T_OBJECTIF_VENTE.DATE_OBJECTIF = '{Param_date_objectif}'
+                {OPTIONAL_ARG_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_objectif': args[0],
+                'Param_code_secteur': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_objectif'] = self.validateDate(kwargs['Param_date_objectif'])
+
+        if kwargs['Param_date_objectif'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_OBJECTIF_VENTE.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_objectif_perte(self, args): #Done
