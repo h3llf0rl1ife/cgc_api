@@ -11314,7 +11314,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_remise_client(self, args):
+    def Req_remise_client(self, args): #Done
         query = '''
             SELECT 
                 T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
@@ -11326,9 +11326,24 @@ class Queries(object):
             FROM 
                 T_REMISE_CLIENT
             WHERE 
-                T_REMISE_CLIENT.Date_Debut = {Param_DATE_DEBUT}
+                T_REMISE_CLIENT.Date_Debut = '{Param_DATE_DEBUT}'
                 AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_CODE_CLIENT}
         '''
+
+        try:
+            kwargs = {
+                'Param_DATE_DEBUT': args[0],
+                'Param_CODE_CLIENT': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_DATE_DEBUT'] = self.validateDate(kwargs['Param_DATE_DEBUT'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
