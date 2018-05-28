@@ -10002,13 +10002,11 @@ class Queries(object):
         try:
             kwargs = {
                 'Param_dt1': args[0],
-                'Param_dt1': args[1],
-                'Param_code_article': args[2]
+                'Param_code_article': args[1]
             }
         except IndexError as e:
             return e
         
-        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
 
         for key in kwargs:
