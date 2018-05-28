@@ -11658,7 +11658,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_stock_article_magasin(self, args):
+    def Req_stock_article_magasin(self, args): #Done
         query = '''
             SELECT 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -11672,6 +11672,20 @@ class Queries(object):
                 AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_magasin}
                 AND	T_ARTICLES_MAGASINS.CATEGORIE = {Param_categorie}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_article': args[0],
+                'Param_code_magasin': args[1],
+                'Param_categorie': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
