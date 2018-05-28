@@ -11397,7 +11397,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_remise_clt_produit(self, args):
+    def Req_remise_clt_produit(self, args): #Done
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -11418,8 +11418,8 @@ class Queries(object):
                 (
                     T_DT_REMISE_CLASSE.CODE_CLASSE = {Param_code_classe}
                     AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
-                    AND	T_FACTURE.DATE_HEURE >= {Param_dt1}
-                    AND	T_FACTURE.DATE_HEURE <= {Param_dt2}
+                    AND	T_FACTURE.DATE_HEURE >= '{Param_dt1}'
+                    AND	T_FACTURE.DATE_HEURE <= '{Param_dt2}'
                     AND	T_FACTURE.VALID = 1
                 )
             GROUP BY 
@@ -11428,6 +11428,24 @@ class Queries(object):
                 T_ARTICLES.TVA,	
                 T_ARTICLES.CODE_PRODUIT
         '''
+
+        try:
+            kwargs = {
+                'Param_code_classe': args[0],
+                'Param_code_client': args[1],
+                'Param_dt1': args[2],
+                'Param_dt2': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
