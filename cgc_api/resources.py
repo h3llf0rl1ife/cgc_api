@@ -5,7 +5,7 @@ import pymssql
 
 
 class APIRequest(Resource):
-    queries = Queries("192.168.64.234", "gestcom", "miftah", "Eljadida")
+    queries = Queries("10.7.2.1", "sqladmin", "AcChRgHax2C0p3s", "TEST_SIEGE")
 
 
     def get(self):
@@ -45,7 +45,7 @@ class APIRequest(Resource):
         except ValueError:
             raise
         except pymssql.ProgrammingError:
-            return {'Status': 400, 'Message': 'Invalid query argument.', 'Query': query(kwargs).replace('\t', '').replace('\n', '').replace('            ', '').strip()}
+            return {'Status': 400, 'Message': 'Error during query execution.', 'Query': query(kwargs).replace('\t', '').replace('\n', '').replace('            ', '').strip()}
         
         return {'Status': 400, 'Message': 'Bad request.'}
  
