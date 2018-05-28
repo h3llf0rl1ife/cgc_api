@@ -9624,7 +9624,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_nbre_facture_client(self, args):
+    def Req_nbre_facture_client(self, args): #Done
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -9632,11 +9632,28 @@ class Queries(object):
             FROM 
                 T_FACTURE
             WHERE 
-                T_FACTURE.DATE_HEURE BETWEEN {Param1} AND {Param2}
+                T_FACTURE.DATE_HEURE BETWEEN '{Param1}' AND '{Param2}'
                 AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
             GROUP BY 
                 T_FACTURE.CODE_CLIENT
         '''
+
+        try:
+            kwargs = {
+                'Param1': args[0],
+                'Param2': args[1],
+                'Param_code_client': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param1'] = self.validateDate(kwargs['Param1'])
+        kwargs['Param2'] = self.validateDate(kwargs['Param2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
