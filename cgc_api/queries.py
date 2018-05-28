@@ -9657,7 +9657,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_nouv_solde_dep(self, args):
+    def Req_nouv_solde_dep(self, args): #Done
         query = '''
             SELECT 
                 SUM(T_MOUVEMENTS_CAISSE.MONTANT) AS la_somme_MONTANT,	
@@ -9671,14 +9671,29 @@ class Queries(object):
                 AND
                 (
                     T_MOUVEMENTS_CAISSE.CODE_CAISSE = {Param_code_caisse}
-                    AND	T_OPERATIONS_CAISSE.DATE_OPERATION = {Param_date_journee}
-                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = '19000101000000'
+                    AND	T_OPERATIONS_CAISSE.DATE_OPERATION = '{Param_date_journee}'
+                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = '1900-01-01 00:00:00'
                     AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ('D', 'V') 
                 )
             GROUP BY 
                 T_OPERATIONS_CAISSE.DATE_OPERATION,	
                 T_OPERATIONS_CAISSE.DATE_VALIDATION
         '''
+
+        try:
+            kwargs = {
+                'Param_code_caisse': args[0],
+                'Param_date_journee': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
