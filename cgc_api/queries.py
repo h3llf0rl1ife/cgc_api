@@ -10698,7 +10698,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_recherche_operateur_affectation(self, args):
+    def Req_recherche_operateur_affectation(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -10720,6 +10720,19 @@ class Queries(object):
                     AND	T_OPERATEUR.FONCTION IN ({Param_fonction}) 
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_nom_operateur': args[0],
+                'Param_fonction': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
