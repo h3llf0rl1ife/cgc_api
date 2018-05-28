@@ -11621,7 +11621,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ss_tournee(self, args):
+    def Req_ss_tournee(self, args): #Done
         query = '''
             SELECT 
                 T_TOURNEES_SS.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -11644,6 +11644,17 @@ class Queries(object):
                     T_TOURNEES_SS.CODE_TOURNEE = {Param_code_tournee}
                 )
         '''
+
+        try:
+            kwargs = {
+                'Param_code_tournee': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_code_tournee'] in (None, 'NULL'):
+            return ValueError
+
         return query.format(**kwargs)
 
     
