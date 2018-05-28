@@ -11347,7 +11347,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_remise_clt(self, args):
+    def Req_remise_clt(self, args): #Done
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -11376,6 +11376,24 @@ class Queries(object):
                 T_DT_REMISE_CLASSE.TX_REMISE,	
                 T_ARTICLES.TVA
         '''
+
+        try:
+            kwargs = {
+                'Param_code_classe': args[0],
+                'Param_code_client': args[1],
+                'Param_dt1': args[2],
+                'Param_dt2': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
