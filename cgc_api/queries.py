@@ -11261,7 +11261,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_releve_dons(self, args):
+    def Req_releve_dons(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -11277,9 +11277,9 @@ class Queries(object):
                 T_LIVRAISON.NUM_LIVRAISON = T_PRODUITS_LIVREES.NUM_LIVRAISON
                 AND
                 (
-                    T_LIVRAISON.DATE_LIVRAISON BETWEEN {Param_Dt1} AND {Param_Dt2}
+                    T_LIVRAISON.DATE_LIVRAISON BETWEEN '{Param_Dt1}' AND '{Param_Dt2}'
                     AND	T_LIVRAISON.TYPE_MVT = 'D'
-                    AND	T_LIVRAISON.code_secteur = {param_code_sect}
+                    {OPTIONAL_ARG_1}
                 )
             GROUP BY 
                 T_LIVRAISON.DATE_LIVRAISON,	
@@ -11288,7 +11288,27 @@ class Queries(object):
                 T_LIVRAISON.ORDONATEUR,	
                 T_LIVRAISON.BENEFICIAIRE
         '''
-        return query.format(**kwargs)
+        
+        try:
+            kwargs = {
+                'Param_Dt1': args[0],
+                'Param_Dt2': args[1],
+                'param_code_sect': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_Dt1'] = self.validateDate(kwargs['Param_Dt1'])
+        kwargs['Param_Dt2'] = self.validateDate(kwargs['Param_Dt2'])
+
+        for key in ('Param_Dt1', 'Param_Dt2'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_LIVRAISON.code_secteur = {param_code_sect}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['param_code_sect'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_relve_cac(self, args):
