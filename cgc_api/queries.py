@@ -13308,7 +13308,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_total_commande_usine(self, args):
+    def Req_total_commande_usine(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.TYPE_COMMANDE AS TYPE_COMMANDE,	
@@ -13325,15 +13325,32 @@ class Queries(object):
                 AND
                 (
                     T_COMMANDES.TYPE_COMMANDE = 'U'
-                    AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
-                    AND	T_PRODUITS_COMMANDES.CODE_ARTICLE = {Param_code_article}
+                    AND	T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}'
+                    {OPTIONAL_ARG_1}
                 )
             GROUP BY 
                 T_COMMANDES.TYPE_COMMANDE,	
                 T_COMMANDES.DATE_LIVRAISON,	
                 T_PRODUITS_COMMANDES.CODE_ARTICLE
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_code_article': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_PRODUITS_COMMANDES.CODE_ARTICLE = {Param_code_article}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_article'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_total_commandes(self, args): #Done
