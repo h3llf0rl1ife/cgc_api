@@ -13648,7 +13648,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_credit_secteur_cond(self, args):
+    def Req_total_credit_secteur_cond(self, args): #Done
         query = '''
             SELECT 
                 T_COND_LIVRAISON.code_secteur AS code_secteur,	
@@ -13665,7 +13665,7 @@ class Queries(object):
                 AND
                 (
                     T_COND_LIVRAISON.code_secteur = {Param_code_secteur}
-                    AND	T_COND_LIVRAISON.DATE_VALIDATION = {Param_date_validation}
+                    AND	T_COND_LIVRAISON.DATE_VALIDATION = '{Param_date_validation}'
                     AND	T_COND_LIVRAISON.TYPE_MVT = 'L'
                     AND	T_LIVRAISON.STATUT <> 'A'
                 )
@@ -13675,6 +13675,21 @@ class Queries(object):
                 T_COND_LIVRAISON.DATE_VALIDATION,	
                 T_COND_LIVRAISON.TYPE_MVT
         '''
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_date_validation': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
