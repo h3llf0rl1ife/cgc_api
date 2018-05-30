@@ -12643,15 +12643,33 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_remise(self, args):
+    def Req_supp_remise(self, args): #Done
         query = '''
             DELETE FROM 
                 T_REMISE_CLIENT
             WHERE 
-                T_REMISE_CLIENT.Date_Debut = {Param_date_debut}
-                AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_code_client}
+                T_REMISE_CLIENT.Date_Debut = '{Param_date_debut}'
+                {OPTIONAL_ARG_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_debut': args[0],
+                'Param_code_client': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_debut'] = self.validateDate(kwargs['Param_date_debut'])
+
+        if kwargs['Param_nbl'] in (None, 'NULL'):
+            return ValueError
+        
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_supp_solde_caisse(self, args): #Done
