@@ -11669,7 +11669,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_solde_operateur(self, args):
+    def Req_solde_operateur(self, args): #Done
         query = '''
             SELECT 
                 T_SOLDE_INITIAL.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -11698,11 +11698,28 @@ class Queries(object):
                 T_OPERATEUR.CODE_OPERATEUR = T_SOLDE_INITIAL.CODE_OPERATEUR
                 AND
                 (
-                    T_SOLDE_INITIAL.DATE_JOURNEE = {Param_date_journee}
-                    AND	T_SOLDE_INITIAL.CODE_OPERATEUR = {Param_code_operateur}
+                    T_SOLDE_INITIAL.DATE_JOURNEE = '{Param_date_journee}'
+                    {OPTIONAL_ARG_1}
                 )
         '''
-        return query.format(**kwargs)
+        
+        try:
+            kwargs = {
+                'Param_date_journee': args[0],
+                'Param_code_operateur': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOLDE_INITIAL.CODE_OPERATEUR = {Param_code_operateur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_operateur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ss_tournee(self, args): #Done
