@@ -12596,14 +12596,29 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_produits_chargees(self, args):
+    def Req_supp_produits_chargees(self, args): #Done
         query = '''
             DELETE FROM 
                 T_PRODUITS_CHARGEE
             WHERE 
                 T_PRODUITS_CHARGEE.code_secteur = {Param_code_secteur}
-                AND	T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
+                AND	T_PRODUITS_CHARGEE.DATE_CHARGEMENT = '{Param_date_chargement}'
         '''
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_date_chargement': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
