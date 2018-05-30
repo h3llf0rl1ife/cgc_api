@@ -10878,7 +10878,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_releve_client_cac(self, args):
+    def Req_releve_client_cac(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -10904,11 +10904,11 @@ class Queries(object):
                 AND		T_GROUP_CLIENTS.ID_GP_CLIENT = T_CLIENTS.GROUP_CLIENT
                 AND
                 (
-                    T_LIVRAISON.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_LIVRAISON.DATE_VALIDATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
-                    AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}
+                    {OPTIONAL_ARG_1}
                     AND	T_LIVRAISON.STATUT <> 'A'
-                    AND	T_LIVRAISON.DATE_LIVRAISON BETWEEN {Param_dtl1} AND {Param_dtl2}
+                    {OPTIONAL_ARG_2}
                 )
             GROUP BY 
                 T_LIVRAISON.NUM_LIVRAISON,	
@@ -10923,7 +10923,34 @@ class Queries(object):
             ORDER BY 
                 TYPE_MVT ASC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_code_client': args[2],
+                'Param_dtl1': args[3],
+                'Param_dtl2': args[4]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+        kwargs['Param_dtl1'] = self.validateDate(kwargs['Param_dtl1'])
+        kwargs['Param_dtl2'] = self.validateDate(kwargs['Param_dtl2'])
+
+        for key in ('Param_dt1', 'Param_dt2'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_LIVRAISON.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_2'] = '''AND T_LIVRAISON.DATE_LIVRAISON BETWEEN '{Param_dtl1}' AND '{Param_dtl2}' '''
+
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = '' if None in (kwargs['Param_dtl1'], kwargs['Param_dtl2']) else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_releve_client_details(self, args): #Done
