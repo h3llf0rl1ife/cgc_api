@@ -12769,16 +12769,15 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_statistique(self, args):
+    def Req_supp_statistique(self, args): #Done
         query = '''
             DELETE FROM 
                 T_STATISTIQUES
             WHERE 
-                T_STATISTIQUES.DATE_JOURNEE = {Param_date_journee}
-                AND	T_STATISTIQUES.code_secteur = {Param_code_secteur}
+                T_STATISTIQUES.DATE_JOURNEE = '{Param_date_journee}'
+                {OPTIONAL_ARG_1}
                 AND	
                 (
-                    
                     (
                         T_STATISTIQUES.CODE_CLIENT = 0
                         AND	T_STATISTIQUES.CATEGORIE = 'GMS'
@@ -12787,7 +12786,24 @@ class Queries(object):
                     OR	T_STATISTIQUES.CATEGORIE = 'DEP'
                 )
         '''
-        return query.format(**kwargs)
+        
+        try:
+            kwargs = {
+                'Param_date_journee': args[0],
+                'Param_code_secteur': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_STATISTIQUES.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_supp_statistiques_clients(self, args): #Done
