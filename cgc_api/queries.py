@@ -13603,7 +13603,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_credit_secteur(self, args):
+    def Req_total_credit_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -13622,7 +13622,7 @@ class Queries(object):
                     T_PRODUITS_LIVREES.code_secteur = {Param_code_secteur}
                     AND	T_PRODUITS_LIVREES.TYPE_MVT = 'L'
                     AND	T_LIVRAISON.STATUT <> 'A'
-                    AND	T_LIVRAISON.DATE_VALIDATION = {Param_date_validation}
+                    AND	T_LIVRAISON.DATE_VALIDATION = '{Param_date_validation}'
                 )
             GROUP BY 
                 T_PRODUITS_LIVREES.CODE_ARTICLE,	
@@ -13630,6 +13630,21 @@ class Queries(object):
                 T_PRODUITS_LIVREES.TYPE_MVT,	
                 T_LIVRAISON.DATE_VALIDATION
         '''
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_date_validation': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
