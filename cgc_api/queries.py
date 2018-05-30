@@ -13068,7 +13068,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_autorisation_caisserie(self, args):
+    def Req_total_autorisation_caisserie(self, args): #Done
         query = '''
             SELECT 
                 T_AUTORISATION_SOLDE_CAISSERIE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -13082,9 +13082,22 @@ class Queries(object):
             FROM 
                 T_AUTORISATION_SOLDE_CAISSERIE
             WHERE 
-                T_AUTORISATION_SOLDE_CAISSERIE.DATE_HEURE <= {Param_dt}
-                AND	T_AUTORISATION_SOLDE_CAISSERIE.DATE_ECHU >= {Param_dt}
+                T_AUTORISATION_SOLDE_CAISSERIE.DATE_HEURE <= '{Param_dt}'
+                AND	T_AUTORISATION_SOLDE_CAISSERIE.DATE_ECHU >= '{Param_dt}'
         '''
+
+        try:
+            kwargs = {
+                'Param_dt': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+
+        if kwargs['Param_dt'] in (None, 'NULL'):
+            return ValueError
+
         return query.format(**kwargs)
 
     
