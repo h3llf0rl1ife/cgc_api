@@ -12718,15 +12718,32 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_supp_solde_init_client(self, args):
+    def Req_supp_solde_init_client(self, args): #Done
         query = '''
             DELETE FROM 
                 T_SOLDE_INITIAL_CLIENT
             WHERE 
-                T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = {Param_date_journee}
-                AND	T_SOLDE_INITIAL_CLIENT.CODE_CLIENT = {Param_code_client}
+                T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE = '{Param_date_journee}'
+                {Param_code_client}
         '''
-        return query.format(**kwargs)
+        
+        try:
+            kwargs = {
+                'Param_date_journee': args[0],
+                'Param_code_client': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        if kwargs['Param_date_journee'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOLDE_INITIAL_CLIENT.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_supp_solde_initial_operateur(self, args): #Done
