@@ -13890,7 +13890,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_ecart_chargement(self, args):
+    def Req_total_ecart_chargement(self, args): #Done
         query = '''
             SELECT 
                 T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -13900,14 +13900,28 @@ class Queries(object):
             FROM 
                 T_COND_CHARGEE
             WHERE 
-                T_COND_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
-                AND	T_COND_CHARGEE.CODE_COND = {Param_code_cp}
+                T_COND_CHARGEE.DATE_CHARGEMENT = '{Param_date_chargement}'
+                {OPTIONAL_ARG_1}
             GROUP BY 
                 T_COND_CHARGEE.DATE_CHARGEMENT,	
                 T_COND_CHARGEE.CODE_COND,	
                 T_COND_CHARGEE.COMPTE_ECART
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_chargement': args[0],
+                'Param_code_cp': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_COND_CHARGEE.CODE_COND = {Param_code_cp}'
+        kwargs['OPTIONAL_ARG_1'] = ''  if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_total_ecart_cond(self, args):
