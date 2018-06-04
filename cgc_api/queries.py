@@ -14654,7 +14654,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_total_reglement(self, args):
+    def Req_total_reglement(self, args): #Done
         query = '''
             SELECT 
                 T_DECOMPTE.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -14663,14 +14663,28 @@ class Queries(object):
             FROM 
                 T_DECOMPTE
             WHERE 
-                T_DECOMPTE.REGLEMENT = {Param_type_reg}
-                AND	T_DECOMPTE.DATE_VALIDATION = {Param_date_reglement}
+                T_DECOMPTE.REGLEMENT = {Param_type_reg} AND
+                T_DECOMPTE.DATE_VALIDATION = '{Param_date_reglement}'
                 AND	T_DECOMPTE.MODE_PAIEMENT <> 'R'
             GROUP BY 
                 T_DECOMPTE.DATE_VALIDATION,	
                 T_DECOMPTE.REGLEMENT
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_type_reg': args[0],
+                'Param_date_reglement': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_reglement'] = self.validateDate(kwargs['Param_date_reglement'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'T_DECOMPTE.REGLEMENT = {Param_type_reg} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_type_reg'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_total_regularisation_MS(self, args):
