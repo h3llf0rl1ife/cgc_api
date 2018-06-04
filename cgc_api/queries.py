@@ -14617,7 +14617,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_total_reconaissances(self, args):
+    def Req_total_reconaissances(self, args): #Done
         query = '''
             SELECT 
                 T_RECONAISSANCES.DATE_RECONAISS AS DATE_RECONAISS,	
@@ -14631,12 +14631,27 @@ class Queries(object):
             FROM 
                 T_RECONAISSANCES
             WHERE 
-                T_RECONAISSANCES.DATE_RECONAISS = {Param_date_reconaissance}
-                AND	T_RECONAISSANCES.DATE_RECONAISS <= {Param_date_max}
+                {OPTIONAL_ARG_1}
+                T_RECONAISSANCES.DATE_RECONAISS <= '{Param_date_max}'
             GROUP BY 
                 T_RECONAISSANCES.DATE_RECONAISS
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_reconaissance': args[0],
+                'Param_date_max': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_reconaissance'] = self.validateDate(kwargs['param'])
+        kwargs['Param_date_max'] = self.validateDate(kwargs['Param_date_max'])
+
+        kwargs['OPTIONAL_ARG_1'] = '''T_RECONAISSANCES.DATE_RECONAISS = '{Param_date_reconaissance}' AND'''
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_reconaissance'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_total_reglement(self, args):
