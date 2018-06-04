@@ -14579,7 +14579,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_reception(self, args):
+    def Req_total_reception(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
@@ -14592,14 +14592,29 @@ class Queries(object):
                 T_MOUVEMENTS
             WHERE 
                 T_MOUVEMENTS.TYPE_MOUVEMENT = 'R'
-                AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
-                AND	T_MOUVEMENTS.CODE_ARTICLE = {Param_code_article}
+                AND	T_MOUVEMENTS.DATE_MVT = '{Param_date_mvt}'
+                {OPTIONAL_ARG_1}
             GROUP BY 
                 T_MOUVEMENTS.TYPE_MOUVEMENT,	
                 T_MOUVEMENTS.CODE_ARTICLE,	
                 T_MOUVEMENTS.DATE_MVT
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_mvt': args[0],
+                'param_2': args[1],
+                'param_3': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_MOUVEMENTS.CODE_ARTICLE = {Param_code_article}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_article'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_total_reconaissances(self, args):
