@@ -55,9 +55,24 @@ class APIRequest(Resource):
 
 class RestfulRequest(Resource):
     def get(self, table):
-        t = Base.classes[table]
+        try:
+            t = Base.classes[table]
+        except KeyError:
+            return {'Status': 400, 'Message': 'Bad request.'}, 400
+
         Session = sessionmaker(bind=engine)
         session = Session()
-        print(session.query(t).all())
 
-        return {}
+        output = session.query(t).all()
+
+        #print(session.query(t).column_descriptions)
+        #print(t.__table__.columns.keys())
+
+        return_value = []
+        for obj in output:
+            entry = {}
+            for key in t.__table__.columns.keys():
+                entry[key] = getattr(obj, key)
+            return_value.append(entry)
+
+        return return_value
