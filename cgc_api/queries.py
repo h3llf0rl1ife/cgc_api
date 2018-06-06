@@ -15902,7 +15902,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_validation_repartition(self, args):
+    def Req_validation_repartition(self, args): #Done
         query = '''
             UPDATE 
                 T_REPARTITION
@@ -15911,8 +15911,24 @@ class Queries(object):
                 CONTROLEUR_PRODUIT = {Param_cont_produit},	
                 CONTROLEUR_COND = {Param_cont_cond}
             WHERE 
-                T_REPARTITION.DATE_REPARTITION = {Param_date_repartition}
+                T_REPARTITION.DATE_REPARTITION = '{Param_date_repartition}'
         '''
+
+        try:
+            kwargs = {
+                'Param_cont_produit': args[0],
+                'Param_cont_cond': args[1],
+                'Param_date_repartition': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_repartition'] = self.validateDate(kwargs['Param_date_repartition'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
