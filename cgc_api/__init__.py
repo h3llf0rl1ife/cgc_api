@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # Database mapping
 Base = automap_base()
-engine = create_engine("mssql+pymssql://sqladmin:AcChRgHax2C0p3s@10.7.2.1/AGENCE_TAROUDANT?charset=utf8")
+engine = create_engine("mssql+pymssql://sqladmin:AcChRgHax2C0p3s@10.7.2.1/TEST_SIEGE?charset=utf8")
 Base.prepare(engine, reflect=True)
 
 # Import resources after mapping the database
