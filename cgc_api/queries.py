@@ -15876,17 +15876,34 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_validation_livraison_prevente(self, args):
+    def Req_validation_livraison_prevente(self, args): #Done
         query = '''
             UPDATE 
                 T_LIGNE_COMMANDE
             SET 
                 QTE_LIVREE = QTE_COMMANDE
             WHERE 
-                ID_COMMANDE IN (SELECT ID_COMMANDE FROM T_COMMANDE_CLIENT WHERE DATE_COMMANDE={param_date} AND code_secteur={param_code_secteur})
+                ID_COMMANDE IN (SELECT ID_COMMANDE FROM T_COMMANDE_CLIENT WHERE DATE_COMMANDE='{param_date}'
+                AND code_secteur={param_code_secteur})
             AND 
                 CODE_ARTICLE={param_code_article}
         '''
+
+        try:
+            kwargs = {
+                'param_date': args[0],
+                'param_code_secteur': args[1],
+                'param_code_article': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['param_date'] = self.validateDate(kwargs['param_date'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+    
         return query.format(**kwargs)
 
     
