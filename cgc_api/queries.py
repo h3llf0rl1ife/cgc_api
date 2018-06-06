@@ -15944,7 +15944,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_vente_n1_client(self, args):
+    def Req_vente_n1_client(self, args): #Done
         query = '''
             SELECT 
                 T_MOY_VENTE_CLIENTS.DATE_VENTE AS DATE_VENTE,	
@@ -15955,9 +15955,24 @@ class Queries(object):
             FROM 
                 T_MOY_VENTE_CLIENTS
             WHERE 
-                T_MOY_VENTE_CLIENTS.DATE_VENTE = {Param_date}
+                T_MOY_VENTE_CLIENTS.DATE_VENTE = '{Param_date}'
                 AND	T_MOY_VENTE_CLIENTS.CODE_CLIENT = {Param_code_client}
         '''
+
+        try:
+            kwargs = {
+                'Param_date': args[0],
+                'Param_code_client': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
