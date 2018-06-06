@@ -15636,7 +15636,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_tx_couverture_article(self, args):
+    def Req_update_tx_couverture_article(self, args): #Done
         query = '''
             UPDATE 
                 T_ARTICLES
@@ -15645,6 +15645,19 @@ class Queries(object):
             WHERE 
                 T_ARTICLES.CODE_ARTICLE = {Param_code_article}
         '''
+
+        try:
+            kwargs = {
+                'Param_tx_couverture': args[0],
+                'Param_code_article': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+    
         return query.format(**kwargs)
 
     
