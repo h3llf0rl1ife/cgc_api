@@ -15863,17 +15863,32 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_validation_cond_livraison(self, args):
+    def Req_validation_cond_livraison(self, args): #Done
         query = '''
             UPDATE 
                 T_COND_LIVRAISON
             SET
-                QTE_CHARGEE = {Param_qte_chargee},	
-                DATE_VALIDATION = {Param_date_validation}
+                {OPTIONAL_ARG_1}	
+                DATE_VALIDATION = '{Param_date_validation}'
             WHERE 
                 T_COND_LIVRAISON.NUM_LIVRAISON = {Param_nbl}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_qte_chargee': args[0],
+                'Param_date_validation': args[1],
+                'Param_nbl': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'QTE_CHARGEE = {Param_qte_chargee},'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_qte_chargee'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_validation_livraison_prevente(self, args): #Done
