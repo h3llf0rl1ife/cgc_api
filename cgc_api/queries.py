@@ -15890,15 +15890,30 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_validation_produits_livraison(self, args):
+    def Req_validation_produits_livraison(self, args): #Done
         query = '''
             UPDATE 
                 T_PRODUITS_LIVREES
             SET
-                DATE_VALIDATION = {Param_date_validation}
+                DATE_VALIDATION = '{Param_date_validation}'
             WHERE 
                 T_PRODUITS_LIVREES.NUM_LIVRAISON = {Param_nbl}
         '''
+
+        try:
+            kwargs = {
+                'Param_date_validation': args[0],
+                'Param_nbl': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
