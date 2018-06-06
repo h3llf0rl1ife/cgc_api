@@ -16399,7 +16399,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_verif_trait_pda(self, args):
+    def Req_verif_trait_pda(self, args): #Done
         query = '''
             SELECT 
                 T_HIST_TRAITEMENT_PDA.code_secteur AS code_secteur,	
@@ -16410,9 +16410,24 @@ class Queries(object):
                 T_HIST_TRAITEMENT_PDA
             WHERE 
                 T_HIST_TRAITEMENT_PDA.code_secteur = {Param_code_secteur}
-                AND	T_HIST_TRAITEMENT_PDA.DATE_JOURNEE = {Param_date_journee}
+                AND	T_HIST_TRAITEMENT_PDA.DATE_JOURNEE = '{Param_date_journee}'
                 AND	T_HIST_TRAITEMENT_PDA.VALID = 1
         '''
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_date_journee': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
