@@ -16198,7 +16198,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_verif_n1_clients(self, args):
+    def Req_verif_n1_clients(self, args): #Done
         query = '''
             SELECT 
                 T_MOY_VENTE_CLIENTS.DATE_VENTE AS DATE_VENTE,	
@@ -16214,15 +16214,28 @@ class Queries(object):
                 AND		T_MOY_VENTE_CLIENTS.CODE_PRODUIT = T_PRIX.CODE_ARTICLE
                 AND
                 (
-                    T_PRIX.Date_Debut <= {param_dt}
-                    AND	T_PRIX.Date_Fin >= {param_dt}
-                    AND	T_MOY_VENTE_CLIENTS.DATE_VENTE = {param_dt}
+                    T_PRIX.Date_Debut <= '{param_dt}'
+                    AND	T_PRIX.Date_Fin >= '{param_dt}'
+                    AND	T_MOY_VENTE_CLIENTS.DATE_VENTE = '{param_dt}'
                 )
             GROUP BY 
                 T_MOY_VENTE_CLIENTS.DATE_VENTE,	
                 T_MOY_VENTE_CLIENTS.CODE_CLIENT,	
                 T_CLIENTS.NOM_CLIENT
         '''
+
+        try:
+            kwargs = {
+                'param_dt': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['param_dt'] = self.validateDate(kwargs['param_dt'])
+
+        if kwargs['param_dt'] in (None, 'NULL'):
+            return ValueError
+
         return query.format(**kwargs)
 
     
