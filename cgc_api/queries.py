@@ -15916,7 +15916,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_vent_n1_produit(self, args):
+    def Req_vent_n1_produit(self, args): #Done
         query = '''
             SELECT 
                 T_MOY_VENTE_ARTICLE.DATE_VENTE AS DATE_VENTE,	
@@ -15935,13 +15935,35 @@ class Queries(object):
                 AND		T_ARTICLES.CODE_ARTICLE = T_MOY_VENTE_ARTICLE.CODE_PRODUIT
                 AND
                 (
-                    T_MOY_VENTE_ARTICLE.DATE_VENTE = {Param_date}
+                    T_MOY_VENTE_ARTICLE.DATE_VENTE = '{Param_date}'
                     AND	T_MOY_VENTE_ARTICLE.code_secteur = {Param_code_secteur}
-                    AND	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}
-                    AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date': args[0],
+                'Param_code_secteur': args[1],
+                'Param_code_produit': args[2],
+                'Param_code_famille': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date'] = self.validateDate(kwargs['Param_date'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_famille'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_vente_n1_client(self, args): #Done
