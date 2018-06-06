@@ -16506,7 +16506,7 @@ class Queries(object):
         return query
 
     
-    def Requ_mvt_cond_gms(self, args):
+    def Requ_mvt_cond_gms(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
@@ -16522,9 +16522,9 @@ class Queries(object):
                 T_LIVRAISON.NUM_LIVRAISON = T_COND_LIVRAISON.NUM_LIVRAISON
                 AND
                 (
-                    T_LIVRAISON.DATE_VALIDATION = {Param_date_livraison}
+                    T_LIVRAISON.DATE_VALIDATION = '{Param_date_livraison}'
                     AND	T_LIVRAISON.STATUT <> 'A'
-                    AND	T_COND_LIVRAISON.CODE_CP = {Param_code_cp}
+                    {OPTIONAL_ARG_1}
                     AND	T_LIVRAISON.TYPE_MVT IN ('l', 'R') 
                 )
             GROUP BY 
@@ -16534,7 +16534,24 @@ class Queries(object):
                 T_COND_LIVRAISON.CODE_CP,	
                 T_LIVRAISON.TYPE_MVT
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_livraison': args[0],
+                'Param_code_cp': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_COND_LIVRAISON.CODE_CP = {Param_code_cp}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']'
+
+        if kwargs['Param_date_livraison'] in (None, 'NULL'):
+            return ValueError
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Requête1(self, args): #Done
