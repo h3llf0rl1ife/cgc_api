@@ -15594,7 +15594,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_operateur_versement(self, args):
+    def Req_update_operateur_versement(self, args): #Done
         query = '''
             UPDATE 
                 T_DECOMPTE
@@ -15602,10 +15602,26 @@ class Queries(object):
                 CODE_OPERATEUR = {Param_nouv_operateur}
             WHERE 
                 T_DECOMPTE.CODE_OPERATEUR = {Param_operateur}
-                AND	T_DECOMPTE.DATE_DECOMPTE = {Param_date_decompte}
+                AND	T_DECOMPTE.DATE_DECOMPTE = '{Param_date_decompte}'
                 AND	T_DECOMPTE.MODE_PAIEMENT = 'E'
                 AND	T_DECOMPTE.REGLEMENT = 0
         '''
+
+        try:
+            kwargs = {
+                'Param_nouv_operateur': args[0],
+                'Param_operateur': args[1],
+                'Param_date_decompte': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_decompte'] = self.validateDate(kwargs['Param_date_decompte'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
