@@ -16546,7 +16546,7 @@ class Queries(object):
         kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
 
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_COND_LIVRAISON.CODE_CP = {Param_code_cp}'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
 
         if kwargs['Param_date_livraison'] in (None, 'NULL'):
             return ValueError
