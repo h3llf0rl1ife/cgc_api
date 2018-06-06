@@ -15549,16 +15549,32 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_motif_non_commande(self, args):
+    def Req_update_motif_non_commande(self, args): #Done
         query = '''
             UPDATE 
                 T_SYNTHESE_LIVRAISON
             SET
                 MOTIF_NON_COMMANDE = {Param_MOTIF_NON_COMMANDE}
             WHERE 
-                T_SYNTHESE_LIVRAISON.DATE_JOURNEE = {Param_DATE_JOURNEE}
+                T_SYNTHESE_LIVRAISON.DATE_JOURNEE = '{Param_DATE_JOURNEE}'
                 AND	T_SYNTHESE_LIVRAISON.CODE_CLIENT = {Param_CODE_CLIENT}
         '''
+
+        try:
+            kwargs = {
+                'Param_MOTIF_NON_COMMANDE': args[0],
+                'Param_DATE_JOURNEE': args[1],
+                'Param_CODE_CLIENT': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_DATE_JOURNEE'] = self.validateDate(kwargs['Param_DATE_JOURNEE'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
