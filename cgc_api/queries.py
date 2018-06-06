@@ -16383,7 +16383,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_verif_synchro(self, args):
+    def Req_verif_synchro(self, args): #Done
         query = '''
             SELECT 
                 T_SYNCHRO.OPERATION AS OPERATION,	
@@ -16396,6 +16396,20 @@ class Queries(object):
                 AND	T_SYNCHRO.SOUS_OPERATION = {Param_sous_operation}
                 AND	T_SYNCHRO.ID_OPERATION = {Param_id_operation}
         '''
+
+        try:
+            kwargs = {
+                'Param_operation': args[0],
+                'Param_sous_operation': args[1],
+                'Param_id_operation': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
