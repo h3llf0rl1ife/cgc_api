@@ -15574,7 +15574,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_NS_CAISSERIE(self, args):
+    def Req_update_NS_CAISSERIE(self, args): #Done
         query = '''
             UPDATE 
                 T_JOURNEE
@@ -15589,8 +15589,31 @@ class Queries(object):
                 NS_CS_BLC = {Param_NS_C_BLC},	
                 NV_CS1 = {Param_NV_CS1}
             WHERE 
-                T_JOURNEE.DATE_JOURNEE = {Param_date_journee}
+                T_JOURNEE.DATE_JOURNEE = '{Param_date_journee}'
         '''
+
+        try:
+            kwargs = {
+                'Param_solde_emballage': args[0],
+                'Param_NS_STD': args[1],
+                'Param_NS_P_AG': args[2],
+                'NS_P_UHT': args[3],
+                'NS_C_AG': args[4],
+                'NS_C_PR': args[5],
+                'NS_PAL_EURO': args[6],
+                'NS_CS_BLC': args[7],
+                'NV_CS1': args[8],
+                'Param_date_journee': args[9]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
