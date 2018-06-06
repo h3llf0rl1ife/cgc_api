@@ -15572,9 +15572,9 @@ class Queries(object):
                 'Param_qte_livree': args[0],
                 'Param_qte_promo': args[1],
                 'Param_prix': args[2],
-                'Param_tx_gratuit': args[0],
-                'Param_id_commande': args[1],
-                'Param_code_article': args[2]
+                'Param_tx_gratuit': args[3],
+                'Param_id_commande': args[4],
+                'Param_code_article': args[5]
             }
         except IndexError as e:
             return e
