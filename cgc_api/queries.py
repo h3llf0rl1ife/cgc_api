@@ -15518,18 +15518,38 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_info_trajet(self, args):
+    def Req_update_info_trajet(self, args): #Done
         query = '''
             UPDATE 
                 T_CHARGEMENT
             SET
-                HEURE_SORTIE = {Param_dateheure_sortie},	
-                HEURE_ENTREE = {Param_dateheure_entree},	
+                HEURE_SORTIE = '{Param_dateheure_sortie}',	
+                HEURE_ENTREE = '{Param_dateheure_entree}',	
                 KM_PARCOURUS = {Param_km_parcourus},	
-                HEURE_ENTREE_EXEMP = {Param_heure_exemp}
+                HEURE_ENTREE_EXEMP = '{Param_heure_exemp}'
             WHERE 
                 T_CHARGEMENT.CODE_CHARGEMENT = {Param_code_chargement}
         '''
+
+        try:
+            kwargs = {
+                'Param_dateheure_sortie': args[0],
+                'Param_dateheure_entree': args[1],
+                'Param_km_parcourus': args[2],
+                'Param_heure_exemp': args[3],
+                'Param_code_chargement': args[4]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dateheure_sortie'] = self.validateDate(kwargs['Param_dateheure_sortie'])
+        kwargs['Param_dateheure_entree'] = self.validateDate(kwargs['Param_dateheure_entree'])
+        kwargs['Param_heure_exemp'] = self.validateDate(kwargs['Param_heure_exemp'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
