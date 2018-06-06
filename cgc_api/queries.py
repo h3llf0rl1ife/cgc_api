@@ -15533,7 +15533,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_ligne_commande(self, args):
+    def Req_update_ligne_commande(self, args): #Done
         query = '''
             UPDATE 
                 T_LIGNE_COMMANDE
@@ -15546,6 +15546,23 @@ class Queries(object):
                 T_LIGNE_COMMANDE.ID_COMMANDE = {Param_id_commande}
                 AND	T_LIGNE_COMMANDE.CODE_ARTICLE = {Param_code_article}
         '''
+
+        try:
+            kwargs = {
+                'Param_qte_livree': args[0],
+                'Param_qte_promo': args[1],
+                'Param_prix': args[2],
+                'Param_tx_gratuit': args[0],
+                'Param_id_commande': args[1],
+                'Param_code_article': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
