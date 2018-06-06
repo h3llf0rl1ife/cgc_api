@@ -15648,7 +15648,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_vendeur_chargement(self, args):
+    def Req_update_vendeur_chargement(self, args): #Done
         query = '''
             UPDATE 
                 T_PRODUITS_CHARGEE
@@ -15657,6 +15657,19 @@ class Queries(object):
             WHERE 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT = {Param_code_chargement}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_vendeur': args[0],
+                'Param_code_chargement': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
