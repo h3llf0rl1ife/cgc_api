@@ -14786,7 +14786,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_solde_autorise(self, args):
+    def Req_total_solde_autorise(self, args): #Done
         query = '''
             SELECT 
                 T_AUTORISATIONS_SOLDE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -14794,11 +14794,25 @@ class Queries(object):
             FROM 
                 T_AUTORISATIONS_SOLDE
             WHERE 
-                T_AUTORISATIONS_SOLDE.DATE_OPERATION <= {Param_dt}
-                AND	T_AUTORISATIONS_SOLDE.DATE_ECHU >= {Param_dt}
+                T_AUTORISATIONS_SOLDE.DATE_OPERATION <= '{Param_dt}'
+                AND	T_AUTORISATIONS_SOLDE.DATE_ECHU >= '{Param_dt}'
             GROUP BY 
                 T_AUTORISATIONS_SOLDE.CODE_OPERATEUR
         '''
+
+        try:
+            kwargs = {
+                'Param_dt': args[0]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
