@@ -7105,7 +7105,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_motifs(self, args):
+    def Req_ls_motifs(self, args): #Done
         query = '''
             SELECT 
                 T_MOTIF.CODE_MOTIF AS CODE_MOTIF,	
@@ -7118,6 +7118,19 @@ class Queries(object):
                 T_MOTIF.MOTIF_TRANSFERT = {Param_transfert}
                 AND	T_MOTIF.MOTIF_RETOUR_CAC = {Param_retour_cac}
         '''
+
+        try:
+            kwargs = {
+                'Param_transfert': args[0],
+                'Param_retour_cac': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
