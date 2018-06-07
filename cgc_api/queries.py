@@ -9617,7 +9617,8 @@ class Queries(object):
             kwargs = {
                 'Param_dt1': args[0],
                 'Param_dt2': args[1],
-                'Param3': args[2]
+                'Param_code_produit': args[2],
+                'Param_code_famille': args[3]
             }
         except IndexError as e:
             return e
