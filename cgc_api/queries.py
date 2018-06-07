@@ -12994,7 +12994,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def req_susp_cond_chargement_journee(self, args):
+    def req_susp_cond_chargement_journee(self, args): #Done
         query = '''
             SELECT 
                 T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -13014,9 +13014,9 @@ class Queries(object):
                 AND		T_COND_CHARGEE.CODE_CHARGEMENT = T_CHARGEMENT.CODE_CHARGEMENT
                 AND
                 (
-                    T_COND_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
-                    AND	T_COND_CHARGEE.CODE_OPERATEUR = {Param_operateur}
-                    AND	T_COND_CHARGEE.CODE_COND = {Param_code_cp}
+                    T_COND_CHARGEE.DATE_CHARGEMENT = '{Param_date_chargement}'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
             GROUP BY 
                 T_COND_CHARGEE.DATE_CHARGEMENT,	
@@ -13025,7 +13025,27 @@ class Queries(object):
                 T_CHARGEMENT.CHARGEMENT_CAC,	
                 T_CHARGEMENT.VALID
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'req_susp_cond_chargement_journee': args[0],
+                'Param_operateur': args[1],
+                'Param_code_cp': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['req_susp_cond_chargement_journee'] = self.validateDate(kwargs['req_susp_cond_chargement_journee'])
+
+        if kwargs['Param_date_chargement'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_COND_CHARGEE.CODE_OPERATEUR = {Param_operateur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_operateur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_COND_CHARGEE.CODE_COND = {Param_code_cp}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_susp_emballage(self, args): #Done
