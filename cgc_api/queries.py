@@ -14970,7 +14970,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_statistiques_client(self, args):
+    def Req_total_statistiques_client(self, args): #Done
         query = '''
             SELECT 
                 T_STATISTIQUES.CODE_CLIENT AS CODE_CLIENT,	
@@ -14986,7 +14986,7 @@ class Queries(object):
                 T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
                 AND
                 (
-                    T_STATISTIQUES.DATE_JOURNEE BETWEEN {Param_dt1} AND {Param_dt2}
+                    T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_STATISTIQUES.CODE_CLIENT = {Param_code_client}
                 )
             GROUP BY 
@@ -14994,6 +14994,23 @@ class Queries(object):
                 T_STATISTIQUES.CATEGORIE,	
                 T_STATISTIQUES.CODE_CLIENT
         '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_code_client': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
