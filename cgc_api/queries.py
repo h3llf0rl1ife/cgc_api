@@ -8237,7 +8237,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_ls_remise_clients(self, args):
+    def Req_ls_remise_clients(self, args): #Done
         query = '''
             SELECT 
                 T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
@@ -8281,10 +8281,10 @@ class Queries(object):
                 AND		T_REMISE_CLIENT.CODE_CLIENT = T_CLIENTS.CODE_CLIENT
                 AND
                 (
-                    T_REMISE_CLIENT.Date_Debut BETWEEN {Param_dt1} AND {Param_dt2}
-                    AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_code_client}
-                    AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
-                    AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
+                    T_REMISE_CLIENT.Date_Debut BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
                     AND	T_REMISE_CLIENT.STATUT >= 0
                 )
             ORDER BY 
@@ -8293,7 +8293,33 @@ class Queries(object):
                 NOM_SECTEUR ASC,	
                 NOM_CLIENT ASC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_code_client': args[2],
+                'Param_code_secteur': args[3],
+                'Param_code_superviseur': args[4]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in ('Param_dt1', 'Param_dt2'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_code_superviseur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_remises_clients(self, args): #Done
