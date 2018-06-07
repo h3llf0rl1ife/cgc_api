@@ -15355,7 +15355,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_upd_maj_secteur(self, args):
+    def Req_upd_maj_secteur(self, args): #Done
         query = '''
             UPDATE 
                 T_SECTEUR
@@ -15364,6 +15364,19 @@ class Queries(object):
             WHERE 
                 T_SECTEUR.code_secteur = {Param_cde_secteur}
         '''
+
+        try:
+            kwargs = {
+                'Param_dernier_maj': args[0],
+                'Param_cde_secteur': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
