@@ -15434,7 +15434,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_affectation_logistique(self, args):
+    def Req_update_affectation_logistique(self, args): #Done
         query = '''
             UPDATE 
                 T_CHARGEMENT
@@ -15443,9 +15443,27 @@ class Queries(object):
                 ID_VEHICULE_PV = {ParamID_VEHICULE_PV},	
                 ID_TRANSPORTEUR = {id_proprietaire}
             WHERE 
-                T_CHARGEMENT.DATE_CHARGEMENT = {ParamDATE_CHARGEMENT}
+                T_CHARGEMENT.DATE_CHARGEMENT = '{ParamDATE_CHARGEMENT}'
                 AND	T_CHARGEMENT.code_secteur = {ParamCODE_SECTEUR}
         '''
+
+        try:
+            kwargs = {
+                'ParamID_VEHICULE': args[0],
+                'ParamID_VEHICULE_PV': args[1],
+                'id_proprietaire': args[2],
+                'ParamDATE_CHARGEMENT': args[2],
+                'ParamCODE_SECTEUR': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['ParamDATE_CHARGEMENT'] = self.validateDate(kwargs['ParamDATE_CHARGEMENT'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
