@@ -15407,7 +15407,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_upd_statut_remise_client(self, args):
+    def Req_upd_statut_remise_client(self, args): #Done
         query = '''
             UPDATE 
                 T_REMISE_CLIENT
@@ -15418,6 +15418,23 @@ class Queries(object):
                 AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_CODE_CLIENT}
                 AND	T_REMISE_CLIENT.STATUT = {Param_STATUT_ACT}
         '''
+
+        try:
+            kwargs = {
+                'Param_STATUT': args[0],
+                'Param_DATE_DEBUT': args[1],
+                'Param_CODE_CLIENT': args[2],
+                'Param_STATUT_ACT': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_DATE_DEBUT'] = self.validateDate(kwargs['Param_DATE_DEBUT'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
