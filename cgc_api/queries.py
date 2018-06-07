@@ -10538,7 +10538,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_realisation_globale(self, args):
+    def Req_realisation_globale(self, args): #Done
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -10574,12 +10574,12 @@ class Queries(object):
                 AND		T_PRODUITS.CODE_PRODUIT = T_ARTICLES.CODE_PRODUIT
                 AND
                 (
-                    T_CHARGEMENT.DATE_CHARGEMENT BETWEEN {Param_date1} AND {Param_date2}
-                    AND	T_PRODUITS.CODE_FAMILLE = {param_code_famille}
-                    AND	T_PRODUITS.CODE_PRODUIT = {param_code_produit}
-                    AND	T_PRODUITS.CAT_PRODUIT = {param_cat_produit}
-                    AND	T_ZONE.CODE_SUPERVISEUR = {param_code_superviseur}
-                    AND	T_ZONE.RESP_VENTE = {param_code_resp_vente}
+                    T_CHARGEMENT.DATE_CHARGEMENT BETWEEN '{Param_date1}' AND '{Param_date2}'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                    {OPTIONAL_ARG_4}
+                    {OPTIONAL_ARG_5}
                 )
             GROUP BY 
                 T_CHARGEMENT.DATE_CHARGEMENT,	
@@ -10591,7 +10591,39 @@ class Queries(object):
                 T_BLOC.NOM_BLOC,	
                 T_SECTEUR.code_secteur
         '''
-        return query.format(**kwargs)
+        
+        try:
+            kwargs = {
+                'Param_date1': args[0],
+                'Param_date2': args[1],
+                'param_code_famille': args[2],
+                'param_code_produit': args[3],
+                'param_cat_produit': args[4],
+                'param_code_superviseur': args[5],
+                'param_code_resp_vente': args[6]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date1'] = self.validateDate(kwargs['Param_date1'])
+        kwargs['Param_date2'] = self.validateDate(kwargs['Param_date2'])
+
+        for key in ('Param_date1', 'Param_date2'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_PRODUITS.CODE_FAMILLE = {param_code_famille}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['param_code_famille'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_PRODUITS.CODE_PRODUIT = {param_code_produit}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['param_code_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_PRODUITS.CAT_PRODUIT = {param_cat_produit}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['param_cat_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+        kwargs['OPTIONAL_ARG_4'] = 'AND	T_ZONE.CODE_SUPERVISEUR = {param_code_superviseur}'
+        kwargs['OPTIONAL_ARG_4'] = '' if kwargs['param_code_superviseur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_4']
+        kwargs['OPTIONAL_ARG_5'] = 'AND	T_ZONE.RESP_VENTE = {param_code_resp_vente}'
+        kwargs['OPTIONAL_ARG_5'] = '' if kwargs['param_code_resp_vente'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_5']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_recap_factures_produits(self, args): #Done
