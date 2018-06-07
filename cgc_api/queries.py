@@ -15367,7 +15367,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_upd_num_commande(self, args):
+    def Req_upd_num_commande(self, args): #Done
         query = '''
             UPDATE 
                 T_COMMANDES
@@ -15376,6 +15376,19 @@ class Queries(object):
             WHERE 
                 T_COMMANDES.ID_COMMANDE = {Param_ID_COMMANDE}
         '''
+
+        try:
+            kwargs = {
+                'Param_NUM_COMMANDE': args[0],
+                'Param_ID_COMMANDE': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
