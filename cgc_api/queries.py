@@ -14055,7 +14055,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_total_ecart_cond(self, args):
+    def Req_total_ecart_cond(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
@@ -14071,16 +14071,36 @@ class Queries(object):
                 AND		T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS_CAISSERIE.ORIGINE
                 AND
                 (
-                    T_OPERATIONS.DATE_OPERATION = {Param_date_mvt}
-                    AND	T_MOUVEMENTS_CAISSERIE.CODE_CP = {Param_code_cp}
-                    AND	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART = {Param_operateur}
+                    T_OPERATIONS.DATE_OPERATION = '{Param_date_mvt}'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
             GROUP BY 
                 T_MOUVEMENTS_CAISSERIE.CODE_CP,	
                 T_OPERATEUR.FONCTION,	
                 T_MOUVEMENTS_CAISSERIE.COMPTE_ECART
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_mvt': args[0],
+                'Param2': args[1],
+                'Param3': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        if kwargs['Param_date_mvt'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_MOUVEMENTS_CAISSERIE.CODE_CP = {Param_code_cp}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_cp'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_MOUVEMENTS_CAISSERIE.COMPTE_ECART = {Param_operateur}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_operateur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_total_ecart_inventaires(self, args): #Done
