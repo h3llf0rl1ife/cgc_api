@@ -7795,7 +7795,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_produits(self, args):
+    def Req_ls_produits(self, args): #Done
         query = '''
             SELECT DISTINCT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -7825,14 +7825,34 @@ class Queries(object):
                     T_ARTICLES.ACTIF = 1
                     AND	T_ARTICLES_MAGASINS.MAGASIN = {Param_code_mag}
                     AND	T_PRIX.CODE_AGCE = {Param_code_agce}
-                    AND	T_PRIX.Date_Debut <= {param_dt}
-                    AND	T_PRIX.Date_Fin >= {param_dt}
-                    AND	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}
+                    AND	T_PRIX.Date_Debut <= '{param_dt}'
+                    AND	T_PRIX.Date_Fin >= '{param_dt}'
+                    {OPTIONAL_ARG_1}
                 )
             ORDER BY 
                 RANG ASC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_mag': args[0],
+                'Param_code_agce': args[1],
+                'param_dt': args[2],
+                'Param_code_produit': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['param_dt'] = self.validateDate(kwargs['param_dt'])
+
+        for key in ('param_dt', 'Param_code_mag', 'Param_code_agce'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_ARTICLES.CODE_PRODUIT = {Param_code_produit}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_produits_actif(self, args): #Done
