@@ -9575,6 +9575,10 @@ class Queries(object):
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'], 0)
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
 
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
