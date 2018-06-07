@@ -15485,8 +15485,8 @@ class Queries(object):
                 'ParamID_VEHICULE': args[0],
                 'ParamID_VEHICULE_PV': args[1],
                 'id_proprietaire': args[2],
-                'ParamDATE_CHARGEMENT': args[2],
-                'ParamCODE_SECTEUR': args[2]
+                'ParamDATE_CHARGEMENT': args[3],
+                'ParamCODE_SECTEUR': args[4]
             }
         except IndexError as e:
             return e
