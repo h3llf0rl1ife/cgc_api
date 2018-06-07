@@ -15421,16 +15421,32 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_affectation_bl(self, args):
+    def Req_update_affectation_bl(self, args): #Done
         query = '''
             UPDATE 
                 T_LIVRAISON
             SET
                 code_vendeur = {Param_code_vendeur}
             WHERE 
-                T_LIVRAISON.DATE_LIVRAISON = {Param_date_livraison}
+                T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
                 AND	T_LIVRAISON.code_secteur = {Param_code_secteur}
         '''
+
+        try:
+            kwargs = {
+                'Param_code_vendeur': args[0],
+                'Param_date_livraison': args[1],
+                'Param_code_secteur': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
