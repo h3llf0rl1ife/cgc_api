@@ -16459,7 +16459,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_valeur_commande(self, args):
+    def Req_valeur_commande(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -16480,15 +16480,15 @@ class Queries(object):
                 AND		T_ARTICLES.CODE_ARTICLE = T_PRIX.CODE_ARTICLE
                 AND
                 (
-                    T_COMMANDES.TYPE_COMMANDE = {Param_type_commande}
-                    AND	T_COMMANDES.code_secteur = {Param_code_secteur}
-                    AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}
-                    AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
-                    AND	T_PRODUITS.CAT_PRODUIT = {Param_cat_produit}
-                    AND	T_COMMANDES.CODE_CLIENT = {Param_code_client}
-                    AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
-                    AND	T_PRIX.Date_Debut <= {Param_date_livraison}
-                    AND	T_PRIX.Date_Fin >= {Param_date_livraison}
+                    {OPTIONAL_ARG_1}
+                    T_COMMANDES.code_secteur = {Param_code_secteur}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                    {OPTIONAL_ARG_4}
+                    {OPTIONAL_ARG_5}
+                    AND	T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}'
+                    AND	T_PRIX.Date_Debut <= '{Param_date_livraison}'
+                    AND	T_PRIX.Date_Fin >= '{Param_date_livraison}'
                 )
             GROUP BY 
                 T_COMMANDES.DATE_LIVRAISON,	
@@ -16496,7 +16496,38 @@ class Queries(object):
                 T_COMMANDES.code_secteur,	
                 T_COMMANDES.CODE_CLIENT
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_type_commande': args[0],
+                'Param_code_secteur': args[1],
+                'Param_code_produit': args[2],
+                'Param_code_famille': args[3],
+                'Param_cat_produit': args[4],
+                'Param_code_client': args[5],
+                'Param_date_livraison': args[6]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in ('Param_date_livraison', 'Param_code_secteur'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_COMMANDES.TYPE_COMMANDE = {Param_type_commande} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_type_commande'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_code_famille'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+        kwargs['OPTIONAL_ARG_4'] = 'AND	T_PRODUITS.CAT_PRODUIT = {Param_cat_produit}'
+        kwargs['OPTIONAL_ARG_4'] = '' if kwargs['Param_cat_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_4']
+        kwargs['OPTIONAL_ARG_5'] = 'AND	T_COMMANDES.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_5'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_5']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_validation_cond_livraison(self, args): #Done
