@@ -6806,7 +6806,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_factures_clients(self, args):
+    def Req_ls_factures_clients(self, args): #Done
         query = '''
             SELECT 
                 T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -6843,12 +6843,12 @@ class Queries(object):
                 AND		T_DT_FACTURE.NUM_FACTURE = T_FACTURE.NUM_FACTURE
                 AND
                 (
-                    T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
-                    AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
-                    AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+                    {OPTIONAL_ARG_1}
+                    T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    {OPTIONAL_ARG_2}
                     AND	T_FACTURE.VALID = 1
-                    AND	T_CLIENTS.CLASSE = {Param_classe}
-                    AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}
+                    {OPTIONAL_ARG_3}
+                    {OPTIONAL_ARG_4}
                     AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
                     AND	T_ZONE.RESP_VENTE = {Param_resp_vente}
                 )
@@ -6868,7 +6868,38 @@ class Queries(object):
                 T_ZONE.CODE_SUPERVISEUR,	
                 T_ZONE.RESP_VENTE
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2],
+                'Param_code_client': args[3],
+                'Param_classe': args[4],
+                'Param_cac': args[5],
+                'Param_code_superviseur': args[6],
+                'Param_resp_vente': args[7]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in ('Param_dt1', 'Param_dt2', 'Param_code_superviseur', 'Param_resp_vente'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
+        kwargs['OPTIONAL_ARG_1'] = 'T_SOUS_SECTEUR.code_secteur = {Param_code_secteur} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_FACTURE.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_CLIENTS.CLASSE = {Param_classe}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_classe'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+        kwargs['OPTIONAL_ARG_4'] = 'AND	T_CLIENTS.CLIENT_EN_COMPTE = {Param_cac}'
+        kwargs['OPTIONAL_ARG_4'] = '' if kwargs['Param_cac'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_4']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_gms(self, args): #Done
