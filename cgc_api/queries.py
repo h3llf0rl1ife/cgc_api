@@ -13907,7 +13907,7 @@ class Queries(object):
                 (
                     T_OPERATIONS_CAISSE.TYPE_OPERATION IN ({Param_type_operation}) 
                     AND	T_MOUVEMENTS_CAISSE.CODE_CAISSE = {Param_code_caisse}
-                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = '{Param_date_validation}'
                 )
             GROUP BY 
                 T_OPERATIONS_CAISSE.TYPE_OPERATION,	
