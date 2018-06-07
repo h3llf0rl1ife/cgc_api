@@ -10244,7 +10244,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_qte_commande(self, args):
+    def Req_qte_commande(self, args): #Done
         query = '''
             SELECT 
                 T_COMMANDES.code_secteur AS code_secteur,	
@@ -10261,12 +10261,30 @@ class Queries(object):
                 AND
                 (
                     T_COMMANDES.code_secteur = {Param_code_secteur}
-                    AND	T_COMMANDES.DATE_LIVRAISON = {Param_date_livraison}
-                    AND	T_PRODUITS_COMMANDES.CODE_ARTICLE = {Param_code_article}
-                    AND	T_COMMANDES.CODE_CLIENT = {Param_code_client}
+                    AND	T_COMMANDES.DATE_LIVRAISON = '{Param_date_livraison}'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_secteur': args[0],
+                'Param_date_livraison': args[1],
+                'Param_code_article': args[2],
+                'Param_code_client': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_PRODUITS_COMMANDES.CODE_ARTICLE = {Param_code_article}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_article'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_COMMANDES.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_rapp_ca_pda(self, args): #Done
