@@ -15476,13 +15476,13 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_commande(self, args):
+    def Req_update_commande(self, args): #Done
         query = '''
             UPDATE 
                 T_COMMANDES
             SET
                 TYPE_COMMANDE = {Param_type_commande},	
-                DATE_LIVRAISON = {Param_date_livraison},	
+                DATE_LIVRAISON = '{Param_date_livraison}',	
                 code_secteur = {Param_code_secteur},	
                 CODE_CLIENT = {Param_code_client},	
                 NUM_COMMANDE = {Param_num_commande},	
@@ -15490,6 +15490,26 @@ class Queries(object):
             WHERE 
                 T_COMMANDES.ID_COMMANDE = {Param_id_commande}
         '''
+
+        try:
+            kwargs = {
+                'Param_type_commande': args[0],
+                'Param_date_livraison': args[1],
+                'Param_code_secteur': args[2],
+                'Param_code_client': args[3],
+                'Param_num_commande': args[4],
+                'ParamOS': args[5],
+                'Param_id_commande': args[6]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_livraison'] = self.validateDate(kwargs['Param_date_livraison'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
