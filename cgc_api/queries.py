@@ -15493,17 +15493,34 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_cond(self, args):
+    def Req_update_cond(self, args): #Done
         query = '''
             UPDATE 
                 T_MAGASIN_COND
             SET
                 QTE_STOCK = {Param_qte}
             WHERE 
-                T_MAGASIN_COND.CODE_MAGASIN = {Param_magasin}
-                AND	T_MAGASIN_COND.CODE_CP = {Param_code_cp}
+                {OPTIONAL_ARG_1}
+                T_MAGASIN_COND.CODE_CP = {Param_code_cp}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_qte': args[0],
+                'Param_magasin': args[1],
+                'Param_code_cp': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in ('Param_qte', 'Param_code_cp'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_MAGASIN_COND.CODE_MAGASIN = {Param_magasin} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_magasin'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_update_dispo(self, args): #Done
