@@ -15414,7 +15414,7 @@ class Queries(object):
             SET
                 STATUT = {Param_STATUT}
             WHERE 
-                T_REMISE_CLIENT.Date_Debut = {Param_DATE_DEBUT}
+                T_REMISE_CLIENT.Date_Debut = '{Param_DATE_DEBUT}'
                 AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_CODE_CLIENT}
                 AND	T_REMISE_CLIENT.STATUT = {Param_STATUT_ACT}
         '''
