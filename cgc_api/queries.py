@@ -10644,7 +10644,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_recensement_clts_nt(self, args):
+    def Req_recensement_clts_nt(self, args): #Done
         query = '''
             SELECT 
                 T_RECENSEMENT.ID_RECENSEMENT AS ID_RECENSEMENT,	
@@ -10691,12 +10691,29 @@ class Queries(object):
                 AND		T_CAT_CLIENTS.CODE_CAT_CLIENT = T_RECENSEMENT.TYPOLOGIE
                 AND
                 (
-                    T_RECENSEMENT.CODE_CLIENT = {Param_egale}
-                    AND	T_RECENSEMENT.CODE_CLIENT <> {Param_diff}
-                    AND	T_RECENSEMENT.VALID = {Param_valid}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_egale': args[0],
+                'Param_diff': args[1],
+                'Param_valid': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_RECENSEMENT.CODE_CLIENT = {Param_egale} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_egale'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'T_RECENSEMENT.CODE_CLIENT <> {Param_diff} AND'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_diff'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'T_RECENSEMENT.VALID = {Param_valid}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_valid'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_recherche_client_code_interne(self, args): #Done
