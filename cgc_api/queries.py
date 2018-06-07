@@ -11381,7 +11381,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_relve_cac(self, args):
+    def Req_relve_cac(self, args): #Done
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON_T_,	
@@ -11413,13 +11413,38 @@ class Queries(object):
                 AND		T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
                 AND
                 (
-                    T_LIVRAISON.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
-                    AND	T_LIVRAISON.STATUT <> 'A'
+                    {OPTIONAL_ARG_1}
+                    T_LIVRAISON.STATUT <> 'A'
                     AND	T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
-                    AND	T_LIVRAISON.DATE_LIVRAISON BETWEEN {Param_dtj1} AND {Param_dtj2}
+                    {OPTIONAL_ARG_2}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_dtj1': args[2],
+                'Param_dtj2': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+        kwargs['Param_dtj1'] = self.validateDate(kwargs['Param_dtj1'])
+        kwargs['Param_dtj2'] = self.validateDate(kwargs['Param_dtj2'])
+
+        kwargs['OPTIONAL_ARG_1'] = '''T_LIVRAISON.DATE_VALIDATION BETWEEN '{Param_dt1}' AND '{Param_dt2}' AND'''
+        kwargs['OPTIONAL_ARG_2'] = '''AND	T_LIVRAISON.DATE_LIVRAISON BETWEEN '{Param_dtj1}' AND '{Param_dtj2}' '''
+
+        if kwargs['Param_dt1'] in (None, 'NULL') or kwargs['Param_dt2'] in (None, 'NULL'):
+            kwargs['OPTIONAL_ARG_1'] = ''
+        
+        if kwargs['Param_dtj1'] in (None, 'NULL') or kwargs['Param_dtj2'] in (None, 'NULL'):
+            kwargs['OPTIONAL_ARG_2'] = ''
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_remarque_journee(self, args): #Done
