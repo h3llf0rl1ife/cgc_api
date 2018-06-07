@@ -8201,7 +8201,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_ls_remises_clients(self, args):
+    def Req_ls_remises_clients(self, args): #Done
         query = '''
             SELECT 
                 T_REMISE_CLIENT.Date_Debut AS Date_Debut,	
@@ -8231,16 +8231,36 @@ class Queries(object):
                 AND		T_CLIENTS.CODE_CLIENT = T_REMISE_CLIENT.CODE_CLIENT
                 AND
                 (
-                    T_REMISE_CLIENT.Date_Debut = {Param_date_debut}
-                    AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
-                    AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
-                    AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}
+                    T_REMISE_CLIENT.Date_Debut = '{Param_date_debut}'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
                 )
             ORDER BY 
                 NOM_SECTEUR ASC,	
                 NOM_CLIENT ASC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_debut': args[0],
+                'Param_code_secteur': args[1],
+                'Param_code_superviseur': args[2],
+                'Param_code_resp_vente': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_debut'] = self.validateDate(kwargs['Param_date_debut'])
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_superviseur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_code_resp_vente'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_remises_par_secteur(self, args): #Done
