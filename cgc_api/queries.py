@@ -9919,7 +9919,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
     
-    def Req_objectifs_clients(self, args):
+    def Req_objectifs_clients(self, args): #Done
         query = '''
             SELECT 
                 T_BLOC.CODE_ZONE AS CODE_ZONE,	
@@ -9948,7 +9948,24 @@ class Queries(object):
                     AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_client': args[0],
+                'Param_code_superviseur': args[1],
+                'Param_code_secteur': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_OBJECTIFS.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_superviseur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_position_cond(self, args): #Done
