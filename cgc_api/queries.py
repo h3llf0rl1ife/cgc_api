@@ -7457,7 +7457,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs).format(**kwargs)
 
     
-    def Req_ls_operations_caisse(self, args):
+    def Req_ls_operations_caisse(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -7484,15 +7484,38 @@ class Queries(object):
                 AND		T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
                 AND
                 (
-                    T_OPERATIONS_CAISSE.DATE_OPERATION BETWEEN {Param_dt1} AND {Param_dt2}
-                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = {Param_date_validation}
+                    T_OPERATIONS_CAISSE.DATE_OPERATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    {OPTIONAL_ARG_1}
                     AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ({Param_type_operation}) 
                     AND	T_OPERATIONS_CAISSE.DATE_VALIDATION <> ({Param_diff_validation}) 
                 )
             ORDER BY 
                 CODE_OPERATION DESC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'Param_date_validation': args[2],
+                'Param_type_operation': args[3],
+                'Param_diff_validation': args[4]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+        kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+
+        for key in ('Param_dt1', 'Param_dt2', 'Param_type_operation', 'Param_diff_validation'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
+        kwargs['OPTIONAL_ARG_1'] = '''AND T_OPERATIONS_CAISSE.DATE_VALIDATION = '{Param_date_validation}' '''
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_validation'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_operations_non_justifies(self, args): #Done
