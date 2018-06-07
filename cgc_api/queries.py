@@ -10669,7 +10669,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_recap_factures_produits_cumul(self, args):
+    def Req_recap_factures_produits_cumul(self, args): #Done
         query = '''
             SELECT 
                 T_RESP.NOM_OPERATEUR AS NOM_RESP_VENTE,	
@@ -10712,7 +10712,7 @@ class Queries(object):
                 (
                     T_FACTURE.VALID = 1
                     AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
-                    AND	T_FACTURE.DATE_HEURE BETWEEN {Param_dt1} AND {Param_dt2}
+                    AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
                     AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}
                     AND	T_SECTEUR.code_secteur = {Param_code_secteur}
@@ -10732,7 +10732,42 @@ class Queries(object):
             ORDER BY
                 NOM_SECTEUR,NOM_CLIENT,NOM_PRODUIT
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_code_client': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2],
+                'Param_code_superviseur': args[3],
+                'Param_code_resp_vente': args[4],
+                'Param_code_secteur': args[5],
+                'param_eg_classe': args[6],
+                'param_diff_classe': args[7]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for key in ('Param_dt1', 'Param_dt2'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_FACTURE.CODE_CLIENT = {Param_code_client}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_superviseur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_code_resp_vente'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+        kwargs['OPTIONAL_ARG_4'] = 'AND	T_SECTEUR.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_4'] = '' if kwargs['Param_code_secteur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_4']
+        kwargs['OPTIONAL_ARG_5'] = 'AND	T_CLIENTS.CLASSE = {param_eg_classe}'
+        kwargs['OPTIONAL_ARG_5'] = '' if kwargs['param_eg_classe'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_5']
+        kwargs['OPTIONAL_ARG_6'] = 'AND	T_CLIENTS.CLASSE <> {param_diff_classe}'
+        kwargs['OPTIONAL_ARG_6'] = '' if kwargs['param_diff_classe'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_6']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_recap_factures_valeur(self, args): #Done
