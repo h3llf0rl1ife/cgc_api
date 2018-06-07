@@ -15506,16 +15506,30 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_update_dispo(self, args):
+    def Req_update_dispo(self, args): #Done
         query = '''
             UPDATE 
                 T_ARTICLES
             SET
                 DISPO = {Param_dispo}
-            WHERE 
-                T_ARTICLES.CODE_ARTICLE = {Param_code_article}
+            {OPTIONAL_ARG_1}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dispo': args[0],
+                'Param_code_article': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_dispo'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'WHERE T_ARTICLES.CODE_ARTICLE = {Param_code_article}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_article'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_update_info_trajet(self, args): #Done
