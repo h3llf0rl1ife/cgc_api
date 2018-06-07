@@ -15329,18 +15329,36 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_upd_chargement_1(self, args):
+    def Req_upd_chargement_1(self, args): #Done
         query = '''
             UPDATE 
                 T_CHARGEMENT
             SET
                 VALID = {Param_VALID},	
-                MONTANT_A_VERSER = {Param_MONTANT_A_VERSER},	
-                CODE_PREVENDEUR = {Param_CODE_PREVENDEUR}
+                MONTANT_A_VERSER = {Param_MONTANT_A_VERSER}
+                {OPTIONAL_ARG_1}
             WHERE 
                 T_CHARGEMENT.CODE_CHARGEMENT = {Param_CODE_CHARGEMENT}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_VALID': args[0],
+                'Param_MONTANT_A_VERSER': args[1],
+                'Param_CODE_PREVENDEUR': args[2],
+                'Param_CODE_CHARGEMENT': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in ('Param_VALID', 'Param_MONTANT_A_VERSER', 'Param_CODE_CHARGEMENT'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = ', CODE_PREVENDEUR = {Param_CODE_PREVENDEUR}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_CODE_PREVENDEUR'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_upd_etat_liv(self, args): #Done
