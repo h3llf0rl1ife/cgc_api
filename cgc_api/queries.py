@@ -14411,7 +14411,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_mvt_cond(self, args):
+    def Req_total_mvt_cond(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -14428,9 +14428,9 @@ class Queries(object):
                 T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS_CAISSERIE.ORIGINE
                 AND
                 (
-                    T_OPERATIONS.DATE_OPERATION = {Param_date_operation}
+                    T_OPERATIONS.DATE_OPERATION = '{Param_date_operation}'
                     AND	T_OPERATIONS.TYPE_OPERATION = {Param_type_operation}
-                    AND	T_OPERATIONS.SOUS_TYPE_OPERATION = {Param_sous_type}
+                    {OPTIONAL_ARG_1}
                 )
             GROUP BY 
                 T_OPERATIONS.DATE_OPERATION,	
@@ -14440,7 +14440,26 @@ class Queries(object):
                 T_OPERATIONS.CODE_AGCE1,	
                 T_OPERATIONS.CODE_AGCE2
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_operation': args[0],
+                'Param_type_operation': args[1],
+                'Param_sous_type': args[2]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
+
+        for key in ('Param_date_operation', 'Param_type_operation'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_OPERATIONS.SOUS_TYPE_OPERATION = {Param_sous_type}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_sous_type'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_total_mvt_cond_cac(self, args): #Done
