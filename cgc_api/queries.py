@@ -16333,7 +16333,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_val_objectif_secteur(self, args):
+    def Req_val_objectif_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_OBJECTIF_SECTEURS.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -16350,19 +16350,44 @@ class Queries(object):
                 AND		T_ARTICLES.CODE_ARTICLE = T_OBJECTIF_SECTEURS.CODE_PRODUIT
                 AND
                 (
-                    T_PRIX.Date_Debut <= {Param_dt}
-                    AND	T_PRIX.Date_Fin >= {Param_dt}
-                    AND	T_OBJECTIF_SECTEURS.DATE_OBJECTIF = {Param_dt}
+                    T_PRIX.Date_Debut <= '{Param_dt}'
+                    AND	T_PRIX.Date_Fin >= '{Param_dt}'
+                    AND	T_OBJECTIF_SECTEURS.DATE_OBJECTIF = '{Param_dt}'
                     AND	T_OBJECTIF_SECTEURS.code_secteur = {Param_code_secteur}
-                    AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}
-                    AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
-                    AND	T_PRODUITS.CAT_PRODUIT = {Param_cat_produit}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
                 )
             GROUP BY 
                 T_OBJECTIF_SECTEURS.DATE_OBJECTIF,	
                 T_OBJECTIF_SECTEURS.code_secteur
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_dt': args[0],
+                'Param_code_secteur': args[1],
+                'Param_code_produit': args[2],
+                'Param_code_famille': args[3],
+                'Param_cat_produit': args[4]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
+
+        for key in ('Param_dt', 'Param_code_secteur'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_famille'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_PRODUITS.CAT_PRODUIT = {Param_cat_produit}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_cat_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def req_valeur_chargement_secteur(self, args): #Done
