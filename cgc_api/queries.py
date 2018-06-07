@@ -15023,7 +15023,7 @@ class Queries(object):
         return query
 
     
-    def Req_total_transfert_entree(self, args):
+    def Req_total_transfert_entree(self, args): #Done
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -15041,7 +15041,7 @@ class Queries(object):
                 AND
                 (
                     T_MOUVEMENTS.QTE_MOUVEMENT > 0
-                    AND	T_MOUVEMENTS.DATE_MVT = {Param_date_mvt}
+                    AND	T_MOUVEMENTS.DATE_MVT = '{Param_date_mvt}'
                     AND	T_MOUVEMENTS.TYPE_MOUVEMENT = 'T'
                     AND	T_MOUVEMENTS.TYPE_PRODUIT = 'PRODUIT'
                     AND	T_OPERATIONS.SOUS_TYPE_OPERATION <> {Param_sous_type}
@@ -15054,6 +15054,21 @@ class Queries(object):
                 T_MOUVEMENTS.TYPE_PRODUIT,	
                 T_OPERATIONS.SOUS_TYPE_OPERATION
         '''
+
+        try:
+            kwargs = {
+                'Param_date_mvt': args[0],
+                'Param_sous_type': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_mvt'] = self.validateDate(kwargs['Param_date_mvt'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+            
         return query.format(**kwargs)
 
     
