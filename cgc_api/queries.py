@@ -16365,7 +16365,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def req_valeur_chargement_secteur(self, args):
+    def req_valeur_chargement_secteur(self, args): #Done
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.code_secteur AS code_secteur,	
@@ -16391,11 +16391,11 @@ class Queries(object):
                 AND		T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
                 AND
                 (
-                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT = {Param_date_chargement}
-                    AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
-                    AND	T_ZONE.RESP_VENTE = {Param_resp_vente}
-                    AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}
-                    AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}
+                    T_PRODUITS_CHARGEE.DATE_CHARGEMENT = '{Param_date_chargement}'
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                    {OPTIONAL_ARG_4}
                 )
             GROUP BY 
                 T_PRODUITS_CHARGEE.code_secteur,	
@@ -16406,7 +16406,33 @@ class Queries(object):
             ORDER BY 
                 RANG ASC
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_chargement': args[0],
+                'Param_code_superviseur': args[1],
+                'Param_resp_vente': args[2],
+                'Param_code_produit': args[3],
+                'Param_code_famille': args[4]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
+
+        if kwargs['Param_date_chargement'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_superviseur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_ZONE.RESP_VENTE = {Param_resp_vente}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_resp_vente'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        kwargs['OPTIONAL_ARG_3'] = 'AND	T_PRODUITS.CODE_PRODUIT = {Param_code_produit}'
+        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_code_produit'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_3']
+        kwargs['OPTIONAL_ARG_4'] = 'AND	T_PRODUITS.CODE_FAMILLE = {Param_code_famille}'
+        kwargs['OPTIONAL_ARG_4'] = '' if kwargs['Param_code_famille'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_4']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_valeur_chargements(self, args): #Done
