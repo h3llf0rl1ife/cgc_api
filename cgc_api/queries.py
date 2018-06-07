@@ -15343,7 +15343,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_upd_etat_liv(self, args):
+    def Req_upd_etat_liv(self, args): #Done
         query = '''
             UPDATE 
                 T_LIVRAISON
@@ -15352,6 +15352,19 @@ class Queries(object):
             WHERE 
                 T_LIVRAISON.NUM_LIVRAISON = {Param_num_livraison}
         '''
+
+        try:
+            kwargs = {
+                'Param_motif': args[0],
+                'Param_num_livraison': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
