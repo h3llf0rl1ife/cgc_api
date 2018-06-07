@@ -10711,13 +10711,13 @@ class Queries(object):
                 AND
                 (
                     T_FACTURE.VALID = 1
-                    AND	T_FACTURE.CODE_CLIENT = {Param_code_client}
+                    {OPTIONAL_ARG_1}
                     AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
-                    AND	T_ZONE.CODE_SUPERVISEUR = {Param_code_superviseur}
-                    AND	T_ZONE.RESP_VENTE = {Param_code_resp_vente}
-                    AND	T_SECTEUR.code_secteur = {Param_code_secteur}
-                    AND	T_CLIENTS.CLASSE = {param_eg_classe}
-                    AND	T_CLIENTS.CLASSE <> {param_diff_classe}
+                    {OPTIONAL_ARG_2}
+                    {OPTIONAL_ARG_3}
+                    {OPTIONAL_ARG_4}
+                    {OPTIONAL_ARG_5}
+                    {OPTIONAL_ARG_6}
                 )
             GROUP BY 
                 T_FACTURE.CODE_CLIENT,	
