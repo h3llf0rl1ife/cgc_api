@@ -4461,7 +4461,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def REQ_ls_appareil(self, args):
+    def REQ_ls_appareil(self, args): #Done
         query = '''
             SELECT 
                 T_APPAREIL.CODE_APPAREIL AS CODE_APPAREIL,	
@@ -4483,12 +4483,26 @@ class Queries(object):
             FROM 
                 T_APPAREIL
             WHERE 
-                T_APPAREIL.CODE_APPAREIL = {pAppareil}
-                AND	ISNULL(T_APPAREIL.CODE_OPERATEUR , -1)  = {pOperateur_Moins1PourNull}
+                {OPTIONAL_ARG_1}
+                {OPTIONAL_ARG_2}
             ORDER BY
                 NUMERO_SERIE
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'pAppareil': args[0],
+                'pOperateur_Moins1PourNull': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_APPAREIL.CODE_APPAREIL = {pAppareil} AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['pAppareil'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'ISNULL(T_APPAREIL.CODE_OPERATEUR , -1)  = {pOperateur_Moins1PourNull}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['pOperateur_Moins1PourNull'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+        
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_articles(self, args): #Done
