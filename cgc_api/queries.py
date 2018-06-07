@@ -8098,7 +8098,7 @@ class Queries(object):
         return query
 
     
-    def Req_ls_reglement(self, args):
+    def Req_ls_reglement(self, args): #Done
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -8117,12 +8117,37 @@ class Queries(object):
                 AND
                 (
                     T_DECOMPTE.REGLEMENT = {Param_reglement}
-                    AND	T_DECOMPTE.DATE_VALIDATION BETWEEN {Param_dt1} AND {Param_dt2}
-                    AND	T_DECOMPTE.CODE_OPERATEUR = {Param_code_operateur}
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                     AND	T_DECOMPTE.MODE_PAIEMENT <> 'R'
                 )
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_reglement': args[0],
+                'Param_dt1': args[1],
+                'Param_dt2': args[2],
+                'Param_code_operateur': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        if kwargs['Param_reglement'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = '''AND	T_DECOMPTE.DATE_VALIDATION BETWEEN '{Param_dt1}' AND '{Param_dt2}' '''
+        
+        if kwargs['Param_dt1'] in (None, 'NULL') or kwargs['Param_dt2'] in (None, 'NULL'):
+            kwargs['OPTIONAL_ARG_1'] = ''
+        
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_DECOMPTE.CODE_OPERATEUR = {Param_code_operateur}'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_operateur'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_ls_reglements(self, args): #Done
