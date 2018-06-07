@@ -15379,7 +15379,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_upd_remise_lait(self, args):
+    def Req_upd_remise_lait(self, args): #Done
         query = '''
             UPDATE 
                 T_REMISE_CLIENT
@@ -15388,9 +15388,27 @@ class Queries(object):
                 MT_REMISE_LAIT = {Param_MT_REMISE_LAIT},	
                 TX_LAIT = {Param_TX_LAIT}
             WHERE 
-                T_REMISE_CLIENT.Date_Debut = {Param_DATE_DEBUT}
+                T_REMISE_CLIENT.Date_Debut = '{Param_DATE_DEBUT}'
                 AND	T_REMISE_CLIENT.CODE_CLIENT = {Param_CODE_CLIENT}
         '''
+
+        try:
+            kwargs = {
+                'Param_CA_MOY_LAIT': args[0],
+                'Param_MT_REMISE_LAIT': args[1],
+                'Param_TX_LAIT': args[2],
+                'Param_DATE_DEBUT': args[3],
+                'Param_CODE_CLIENT': args[4]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_DATE_DEBUT'] = self.validateDate(kwargs['Param_DATE_DEBUT'])
+
+        for key in kwargs:
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+
         return query.format(**kwargs)
 
     
