@@ -14502,7 +14502,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_total_mvt_operation(self, args):
+    def Req_total_mvt_operation(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -14520,10 +14520,10 @@ class Queries(object):
                 T_OPERATIONS.CODE_OPERATION = T_MOUVEMENTS_CAISSERIE.ORIGINE
                 AND
                 (
-                    T_OPERATIONS.DATE_OPERATION = {Param_date_operation}
+                    T_OPERATIONS.DATE_OPERATION = '{Param_date_operation}'
                     AND	T_MOUVEMENTS_CAISSERIE.TYPE_MOUVEMENT = {Param_type_mouvement}
-                    AND	T_OPERATIONS.SOUS_TYPE_OPERATION = {Param_sous_type}
-                    AND	T_OPERATIONS.MOTIF IN ({Param_ls_motifs}) 
+                    {OPTIONAL_ARG_1}
+                    {OPTIONAL_ARG_2}
                 )
             GROUP BY 
                 T_OPERATIONS.DATE_OPERATION,	
@@ -14532,7 +14532,29 @@ class Queries(object):
                 T_OPERATIONS.SOUS_TYPE_OPERATION,	
                 T_OPERATIONS.MOTIF
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_date_operation': args[0],
+                'Param_type_mouvement': args[1],
+                'Param_sous_type': args[2],
+                'Param_ls_motifs': args[3]
+            }
+        except IndexError as e:
+            return e
+        
+        kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
+
+        for key in ('Param_date_operation', 'Param_type_mouvement'):
+            if kwargs[key] in (None, 'NULL'):
+                return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_OPERATIONS.SOUS_TYPE_OPERATION = {Param_sous_type}'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_sous_type'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+        kwargs['OPTIONAL_ARG_2'] = 'AND	T_OPERATIONS.MOTIF IN ({Param_ls_motifs}) '
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_ls_motifs'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_2']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_total_mvt_vente(self, args): #Done
