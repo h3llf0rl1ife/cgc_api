@@ -10791,7 +10791,7 @@ class Queries(object):
         return query.format(**kwargs)
 
     
-    def Req_recherche_par_matricule(self, args):
+    def Req_recherche_par_matricule(self, args): #Done
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -10801,10 +10801,25 @@ class Queries(object):
             FROM 
                 T_OPERATEUR
             WHERE 
-                T_OPERATEUR.FONCTION IN ({Param_fonction}) 
-                AND	T_OPERATEUR.Matricule = {Param_matricule}
+                {OPTIONAL_ARG_1}
+                T_OPERATEUR.Matricule = {Param_matricule}
         '''
-        return query.format(**kwargs)
+
+        try:
+            kwargs = {
+                'Param_fonction': args[0],
+                'Param_matricule': args[1]
+            }
+        except IndexError as e:
+            return e
+        
+        if kwargs['Param_matricule'] in (None, 'NULL'):
+            return ValueError
+        
+        kwargs['OPTIONAL_ARG_1'] = 'T_OPERATEUR.FONCTION IN ({Param_fonction}) AND'
+        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_fonction'] in (None, 'NULL') else kwargs['OPTIONAL_ARG_1']
+
+        return query.format(**kwargs).format(**kwargs)
 
     
     def Req_recherche_prevision(self, args): #Done
