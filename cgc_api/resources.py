@@ -52,26 +52,59 @@ class APIRequest(Resource):
         return {'Status': 400, 'Message': 'Bad request.'}
 
 
-class RestfulRequest(Resource):
+class ResfulQuery(Resource):
+    _Query = Query(*CURRENT_CONFIG)
+    
+    
     def get(self, table):
         try:
-            t = Base.classes[table]
+            table = self._Query.validateTable(table)
         except KeyError:
-            return {'Status': 400, 'Message': 'Bad request.'}, 400
+            return {'Status': 404, 'Message': 'Table not found.', 'Parameters': {'Table': table}}, 404
+    
+        except pymssql.OperationalError:
+            return {'Status': 503, 'Message': 'Database connection failed.'}, 503
+        
+        data = request.get_json()
+        column, value = None, None
 
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        if data is not None:
+            try:
+                column = [*data['Parameters']][0]
+            except KeyError:
+                return {'Status': 400, 'Message': 'Bad request.', 'JSON Data': data}, 400
 
-        output = session.query(t).all()
+            try:
+                column = self._Query.validateColumn(table, column)
+            except pymssql.OperationalError:
+                return {'Status': 503, 'Message': 'Database connection failed.'}, 503
 
-        #print(session.query(t).column_descriptions)
-        #print(t.__table__.columns.keys())
+            try:
+                value = data['Parameters'][column]
+            except KeyError:
+                params = {'Table': table, 'Column': [*data['Parameters']][0]}
+                return {'Status': 400, 'Message': 'Column not found.', 'Parameters': params}, 400
+            
+        query = self._Query.getRequest(table, column)
 
-        return_value = []
-        for obj in output:
-            entry = {}
-            for key in t.__table__.columns.keys():
-                entry[key] = getattr(obj, key)
-            return_value.append(entry)
+        try:
+            return self._Query.executeQuery(query=query, param=value), 200
+    
+        except pymssql.OperationalError:
+            params = {'Table': table, 'Column': column, 'Value': value}
+            return {'Status': 400, 'Message': 'Error during query execution.', 'Parameters': params}, 400
 
-        return return_value
+        except pymssql.ProgrammingError:
+            return {'Status': 500, 'Message': 'Error during query execution.'}, 500
+
+
+    def post(self, table):
+        pass
+    
+
+    def put(self, table):
+        pass
+
+    
+    def delete(self, table):
+        pass
