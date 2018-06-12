@@ -70,7 +70,7 @@ class ResfulQuery(Resource):
 
         if data is not None:
             try:
-                column = [*data['Parameters']][0]
+                column = [*data['Parameters']['Where']][0]
             except KeyError:
                 return {'Status': 400, 'Message': 'Bad request.', 'JSON Data': data}, 400
 
@@ -80,9 +80,9 @@ class ResfulQuery(Resource):
                 return {'Status': 503, 'Message': 'Database connection failed.'}, 503
 
             try:
-                value = data['Parameters'][column]
+                value = data['Parameters']['Where'][column]
             except KeyError:
-                params = {'Table': table, 'Column': [*data['Parameters']][0]}
+                params = {'Table': table, 'Column': [*data['Parameters']['Where']][0]}
                 return {'Status': 400, 'Message': 'Column not found.', 'Parameters': params}, 400
             
         query = self._Query.getRequest(table, column)
@@ -120,7 +120,7 @@ class ResfulQuery(Resource):
 
         if data is not None:
             try:
-                column = [*data['Parameters']][0]
+                column = [*data['Parameters']['Where']][0]
             except KeyError:
                 return {'Status': 400, 'Message': 'Bad request.', 'JSON Data': data}, 400
 
@@ -130,9 +130,9 @@ class ResfulQuery(Resource):
                 return {'Status': 503, 'Message': 'Database connection failed.'}, 503
 
             try:
-                value = data['Parameters'][column]
+                value = data['Parameters']['Where'][column]
             except KeyError:
-                params = {'Table': table, 'Column': [*data['Parameters']][0]}
+                params = {'Table': table, 'Column': [*data['Parameters']['Where']][0]}
                 return {'Status': 400, 'Message': 'Column not found.', 'Parameters': params}, 400
             
         query = self._Query.deleteRequest(table, column)
