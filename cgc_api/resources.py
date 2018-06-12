@@ -107,4 +107,43 @@ class ResfulQuery(Resource):
 
     
     def delete(self, table):
-        pass
+        try:
+            table = self._Query.validateTable(table)
+        except KeyError:
+            return {'Status': 404, 'Message': 'Table not found.', 'Parameters': {'Table': table}}, 404
+
+        except pymssql.OperationalError:
+            return {'Status': 503, 'Message': 'Database connection failed.'}, 503
+
+        data = request.get_json()
+        column, value = None, None
+
+        if data is not None:
+            try:
+                column = [*data['Parameters']][0]
+            except KeyError:
+                return {'Status': 400, 'Message': 'Bad request.', 'JSON Data': data}, 400
+
+            try:
+                column = self._Query.validateColumn(table, column)
+            except pymssql.OperationalError:
+                return {'Status': 503, 'Message': 'Database connection failed.'}, 503
+
+            try:
+                value = data['Parameters'][column]
+            except KeyError:
+                params = {'Table': table, 'Column': [*data['Parameters']][0]}
+                return {'Status': 400, 'Message': 'Column not found.', 'Parameters': params}, 400
+            
+        query = self._Query.deleteRequest(table, column)
+
+        try:
+            row_count = self._Query.executeQuery(query=query, param=value, with_result=False)
+            return {'Status': 200, 'Message': 'Deleted {} records from {}.'.format(row_count, table)}, 200
+
+        except pymssql.OperationalError:
+            params = {'Table': table, 'Column': column, 'Value': value}
+            return {'Status': 400, 'Message': 'Error during query execution.', 'Parameters': params}, 400
+
+        except pymssql.ProgrammingError:
+            return {'Status': 500, 'Message': 'Error during query execution.'}, 500
