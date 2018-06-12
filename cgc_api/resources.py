@@ -1,14 +1,13 @@
 from flask import request
 from flask_restful import Resource
 from cgc_api.queries import Queries
+from cgc_api.query import Query
+from cgc_api.config import CURRENT_CONFIG
 import pymssql
-
-from cgc_api import Base, engine
-from sqlalchemy.orm import sessionmaker
 
 
 class APIRequest(Resource):
-    queries = Queries("10.7.2.1", "sqladmin", "AcChRgHax2C0p3s", "TEST_SIEGE")
+    queries = Queries(*CURRENT_CONFIG)
 
 
     def get(self):
