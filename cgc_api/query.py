@@ -96,3 +96,12 @@ class Query:
             args.append(column)
 
         return query.format(*args)
+    
+
+    def postRequest(self, tablename, columns):
+        query = 'INSERT INTO {} ({}) VALUES({})'
+        values = ', '.join(['%s' for column in columns])
+        columns = ', '.join(columns)
+        args = [tablename, columns, values]
+
+        return query.format(*args)

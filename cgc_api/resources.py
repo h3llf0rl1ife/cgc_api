@@ -99,7 +99,48 @@ class ResfulQuery(Resource):
 
 
     def post(self, table):
-        pass
+        try:
+            table = self._Query.validateTable(table)
+        except KeyError:
+            return {'Status': 404, 'Message': 'Table not found.', 'Parameters': {'Table': table}}, 404
+
+        except pymssql.OperationalError:
+            return {'Status': 503, 'Message': 'Database connection failed.'}, 503
+
+        data = request.get_json()
+
+        try:
+            columns = [*data['Parameters']['Insert']['Values']]
+        except KeyError:
+            return {'Status': 400, 'Message': 'Bad request.', 'JSON Data': data}, 400
+        
+        except TypeError:
+            return {'Status': 400, 'Message': 'Bad request. Please provide insert values.'}, 400
+        
+        n_columns = len(columns)
+
+        try:
+            columns = self._Query.validateColumn(table, columns, is_list=True)
+        except pymssql.OperationalError:
+            return {'Status': 503, 'Message': 'Database connection failed.'}, 503
+
+        if n_columns != len(columns):
+            params = {'Table': table, 'Columns': [*data['Parameters']['Insert']['Values']]}
+            return {'Status': 400, 'Message': 'No match found for one or more provided columns.', 'Parameters': params}, 400
+
+        values = tuple([data['Parameters']['Insert']['Values'][column] for column in columns])
+        query = self._Query.postRequest(table, columns)
+
+        try:
+            row_count = self._Query.executeQuery(query=query, param=values, with_result=False)
+            return {'Status': 200, 'Message': 'Inserted {} record into {}.'.format(row_count, table)}, 200
+
+        except pymssql.OperationalError:
+            params = {'Table': table, 'Values': data['Parameters']['Insert']['Values']}
+            return {'Status': 400, 'Message': 'Error during query execution. Please verify your data.', 'Parameters': params}, 400
+
+        except pymssql.ProgrammingError:
+            return {'Status': 500, 'Message': 'Error during query execution.'}, 500
     
 
     def put(self, table):
