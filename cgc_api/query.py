@@ -52,7 +52,7 @@ class Query:
                 raise KeyError
     
 
-    def validateColumn(self, table, column):
+    def validateColumn(self, table, column, is_list=False):
         with pymssql.connect(*self.connParams) as conn:
             with conn.cursor(as_dict=True) as cursor:
                 try:
@@ -61,9 +61,18 @@ class Query:
                 except pymssql.ProgrammingError:
                     raise
                 
+                if is_list is False:
                 for row in cursor:
                     if column == row['name']:
                         return row['name']
+                else:
+                    columns = column
+                    new_columns = []
+                    for row in cursor:
+                        for column in columns:
+                            if column == row['name']:
+                                new_columns.append(row['name'])
+                    return new_columns
                 return None
     
     
