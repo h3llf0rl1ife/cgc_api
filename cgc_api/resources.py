@@ -209,33 +209,33 @@ class RestfulQuery(Resource):
             return {'Status': 503, 'Message': 'Database connection failed.'}, 503
 
         data = request.get_json()
-        column, value = None, None
+        columns, values = None, None
 
         if data is not None:
             try:
-                column = [*data['Parameters']['Delete']['Where']][0]
+                columns = [*data['Parameters']['Delete']['Where']]
             except KeyError:
                 return {'Status': 400, 'Message': 'Bad request.', 'JSON Data': data}, 400
 
             try:
-                column = self._Query.validateColumn(table, column)
+                columns = self._Query.validateColumn(table, columns)
             except pymssql.OperationalError:
                 return {'Status': 503, 'Message': 'Database connection failed.'}, 503
 
             try:
-                value = data['Parameters']['Delete']['Where'][column]
+                values = tuple([data['Parameters']['Delete']['Where'][column] for column in columns])
             except KeyError:
-                params = {'Table': table, 'Column': [*data['Parameters']['Delete']['Where']][0]}
-                return {'Status': 400, 'Message': 'Column not found.', 'Parameters': params}, 400
+                params = {'Table': table, 'Columns': [*data['Parameters']['Delete']['Where']]}
+                return {'Status': 400, 'Message': 'No match found for one or more provided columns.', 'Parameters': params}, 400
             
-        query = self._Query.deleteRequest(table, column)
+        query = self._Query.deleteRequest(table, columns)
 
         try:
-            row_count = self._Query.executeQuery(query=query, param=value, with_result=False)
+            row_count = self._Query.executeQuery(query=query, param=values, with_result=False)
             return {'Status': 200, 'Message': 'Deleted {} records from {}.'.format(row_count, table)}, 200
 
         except pymssql.OperationalError:
-            params = {'Table': table, 'Column': column, 'Value': value}
+            params = {'Table': table, 'Columns': columns, 'Values': values}
             return {'Status': 400, 'Message': 'Error during query execution. Please verify your data.', 'Parameters': params}, 400
 
         except pymssql.ProgrammingError:

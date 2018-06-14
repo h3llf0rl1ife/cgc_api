@@ -87,13 +87,14 @@ class Query:
         return query.format(*args)
 
 
-    def deleteRequest(self, tablename, column=None):
+    def deleteRequest(self, tablename, columns=None):
         query = 'DELETE FROM {}'
         args = [tablename]
 
-        if column is not None:
-            query += ' WHERE [{}] = %s'
-            args.append(column)
+        if columns is not None:
+            query += ' WHERE {}'
+            columns = ' = %s AND '.join(columns) + ' = %s'
+            args.append(columns)
 
         return query.format(*args)
     
