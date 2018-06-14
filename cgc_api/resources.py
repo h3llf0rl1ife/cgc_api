@@ -52,7 +52,7 @@ class APIRequest(Resource):
         return {'Status': 400, 'Message': 'Bad request.'}
 
 
-class ResfulQuery(Resource):
+class RestfulQuery(Resource):
     _Query = Query(*CURRENT_CONFIG)
     
     

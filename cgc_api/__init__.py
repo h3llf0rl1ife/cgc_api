@@ -14,7 +14,7 @@ api = Api(api_bp)
 
 # Add resources
 api.add_resource(r.APIRequest, '/api')
-api.add_resource(r.ResfulQuery, '/api/<string:table>')
+api.add_resource(r.RestfulQuery, '/api/<string:table>')
 
 # Register blueprints
 app.register_blueprint(api_bp)
