@@ -144,7 +144,59 @@ class ResfulQuery(Resource):
     
 
     def put(self, table):
-        pass
+        try:
+            table = self._Query.validateTable(table)
+        except KeyError:
+            return {'Status': 404, 'Message': 'Table not found.', 'Parameters': {'Table': table}}, 404
+
+        except pymssql.OperationalError:
+            return {'Status': 503, 'Message': 'Database connection failed.'}, 503
+
+        data = request.get_json()
+
+        try:
+            update_columns = [*data['Parameters']['Update']['Values']]
+            where_columns = [*data['Parameters']['Update']['Where']]
+        except (KeyError, TypeError):
+            return {'Status': 400, 'Message': 'Bad request.', 'JSON Data': data}, 400
+        
+        n_u_columns, n_w_columns = len(update_columns), len(where_columns)
+
+        try:
+            update_columns = self._Query.validateColumn(table, update_columns, is_list=True)
+            where_columns = self._Query.validateColumn(table, where_columns, is_list=True)
+        except pymssql.OperationalError:
+            return {'Status': 503, 'Message': 'Database connection failed.'}, 503
+
+        for columns, n_columns in zip([update_columns, where_columns], [n_u_columns, n_w_columns]):
+            if n_columns != len(columns):
+                params = {
+                    'Table': table, 'Columns': {
+                    'Values': [*data['Parameters']['Update']['Values']],
+                    'Where': [*data['Parameters']['Update']['Where']]
+                }}
+                return {'Status': 400, 'Message': 'No match found for one or more provided columns.', 'Parameters': params}, 400
+
+        update_values = tuple([data['Parameters']['Update']['Values'][column] for column in update_columns])
+        where_values = tuple([data['Parameters']['Update']['Where'][column] for column in where_columns])
+        values = update_values + where_values
+        
+        query = self._Query.putRequest(table, update_columns, where_columns)
+
+        try:
+            row_count = self._Query.executeQuery(query=query, param=values, with_result=False)
+            return {'Status': 200, 'Message': 'Updated {} record in {}.'.format(row_count, table)}, 200
+
+        except pymssql.OperationalError:
+            params = {
+                    'Table': table, 'Columns': {
+                    'Values': data['Parameters']['Update']['Values'],
+                    'Where': data['Parameters']['Update']['Where']
+                }}
+            return {'Status': 400, 'Message': 'Error during query execution. Please verify your data.', 'Parameters': params}, 400
+
+        except pymssql.ProgrammingError:
+            return {'Status': 500, 'Message': 'Error during query execution.'}, 500
 
     
     def delete(self, table):

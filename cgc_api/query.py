@@ -62,9 +62,9 @@ class Query:
                     raise
                 
                 if is_list is False:
-                for row in cursor:
-                    if column == row['name']:
-                        return row['name']
+                    for row in cursor:
+                        if column == row['name']:
+                            return row['name']
                 else:
                     columns = column
                     new_columns = []
@@ -104,4 +104,13 @@ class Query:
         columns = ', '.join(columns)
         args = [tablename, columns, values]
 
+        return query.format(*args)
+    
+
+    def putRequest(self, tablename, u_columns, w_columns):
+        query = 'UPDATE {} SET {} WHERE {}'
+        u_columns = ' = %s, '.join(u_columns) + ' = %s'
+        w_columns = ' = %s AND '.join(w_columns) + ' = %s'
+        args = [tablename, u_columns, w_columns]
+        print(query.format(*args))
         return query.format(*args)
