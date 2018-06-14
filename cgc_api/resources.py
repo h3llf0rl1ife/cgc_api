@@ -218,7 +218,7 @@ class RestfulQuery(Resource):
                 return {'Status': 400, 'Message': 'Bad request.', 'JSON Data': data}, 400
 
             try:
-                columns = self._Query.validateColumn(table, columns)
+                columns = self._Query.validateColumn(table, columns, is_list=True)
             except pymssql.OperationalError:
                 return {'Status': 503, 'Message': 'Database connection failed.'}, 503
 
