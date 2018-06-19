@@ -240,3 +240,36 @@ class RestfulQuery(Resource):
 
         except pymssql.ProgrammingError:
             return {'Status': 500, 'Message': 'Error during query execution.'}, 500
+            return {'Status': 500, 'Message': 'Error during query execution.'}, 500
+
+
+class RestfulSchema(Resource):
+    def get(self):
+        schema = {
+            'Parameters': {
+                'Insert': {
+                    'Values': {
+                        '<column>': '<value>'
+                    }
+                },
+                'Select': {
+                    'Where': {
+                        '<column>': '<value>'
+                    }
+                },
+                'Delete': {
+                    'Where': {
+                        '<column>': '<value>'
+                    }
+                },
+                'Update': {
+                    'Values': {
+                        '<column>': '<value>'
+                    },
+                    'Where': {
+                        '<column>': '<value>'
+                    }
+                }
+            }
+        }
+        return schema
