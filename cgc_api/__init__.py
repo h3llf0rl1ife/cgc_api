@@ -2,6 +2,7 @@ from flask import Flask, Blueprint
 from flask_restful import Api
 
 from cgc_api import resources as r
+from cgc_api.config import DEBUG_CONFIG 
 
 
 app = Flask(__name__)
@@ -22,4 +23,4 @@ app.register_blueprint(api_bp)
 
 # Debugging
 if __name__ == '__main__':
-    app.run(debug=True)  # host='0.0.0.0', port=80,
+    app.run(**DEBUG_CONFIG)
