@@ -1,9 +1,11 @@
+import pymssql
+import requests
 from flask import request
 from flask_restful import Resource
+
 from cgc_api.queries import Queries
 from cgc_api.query import Query
 from cgc_api.config import CURRENT_CONFIG
-import pymssql
 
 
 class APIRequest(Resource):
@@ -78,6 +80,7 @@ class RestfulQuery(Resource):
                     'Message': 'Database connection failed.'}, 503
 
         data = request.get_json()
+        print(data)
         column, value = None, None
 
         if data is not None:
@@ -308,31 +311,108 @@ class RestfulQuery(Resource):
                     'Message': 'Error during query execution.'}, 500
 
 
-class RestfulSchema(Resource):
+class RestfulSchemaV1(Resource):
     def get(self):
         schema = {
-            'Parameters': {
-                'Insert': {
-                    'Values': {
-                        '<column>': '<value>'
+            'Version': 1,
+            'Resources': {
+                '/queries': {
+                    'Parameters': {
+                        'query': '<query>',
+                        'kwargs': {
+                            '<arg>': '<value>'
+                        }
                     }
                 },
-                'Select': {
-                    'Where': {
-                        '<column>': '<value>'
+                '/query/<table>': {
+                    'Parameters': {
+                        'Select': {
+                            'Where': {
+                                '<column>': '<value>'
+                            }
+                        },
+                        'Insert': {
+                            'Values': {
+                                '<column>': '<value>'
+                            }
+                        },
+                        'Update': {
+                            'Values': {
+                                '<column>': '<value>'
+                            },
+                            'Where': {
+                                '<column>': '<value>'
+                            }
+                        },
+                        'Delete': {
+                            'Where': {
+                                '<column>': '<value>'
+                            }
+                        }
                     }
-                },
-                'Delete': {
-                    'Where': {
-                        '<column>': '<value>'
-                    }
-                },
-                'Update': {
-                    'Values': {
-                        '<column>': '<value>'
-                    },
-                    'Where': {
-                        '<column>': '<value>'
+                }
+            }
+        }
+        return schema
+
+
+class TemporaryRedirect(Resource):
+    def post(self, table):
+        json = request.get_json()
+
+        methods = {
+            'GET': requests.get,
+            'POST': requests.post,
+            'PUT': requests.put,
+            'DELETE': requests.delete
+        }
+
+        url = 'http://localhost/api/v1/query/{}'.format(table)
+
+        if len(json['Parameters']) != 0:
+            params = {'Parameters': json['Parameters']}
+        else:
+            params = None
+
+        kwargs = {'json': params}
+
+        r = methods[json['Method']](url, **kwargs)
+
+        print(r.json())
+        return r.json(), r.status_code
+
+
+class RestfulSchemaV0(Resource):
+    def get(self):
+        schema = {
+            'Version': 0,
+            'Resources': {
+                '/query/<table>': {
+                    'Method': '<HTTP Method>',
+                    'Parameters': {
+                        'Select': {
+                            'Where': {
+                                '<column>': '<value>'
+                            }
+                        },
+                        'Insert': {
+                            'Values': {
+                                '<column>': '<value>'
+                            }
+                        },
+                        'Update': {
+                            'Values': {
+                                '<column>': '<value>'
+                            },
+                            'Where': {
+                                '<column>': '<value>'
+                            }
+                        },
+                        'Delete': {
+                            'Where': {
+                                '<column>': '<value>'
+                            }
+                        }
                     }
                 }
             }
