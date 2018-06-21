@@ -258,12 +258,13 @@ class RestfulQuery(Resource):
                 for column in w_columns[operator]:
                     w_values_ += (w_values[operator][column], )
             w_values = w_values_
+            kwargs = w_columns
         else:
             w_values = tuple([w_values[column] for column in w_columns])
+            kwargs = {'w_columns': w_columns}
 
         values = u_values + w_values
-
-        query = self._Query.putRequest(table, u_columns, **w_columns)
+        query = self._Query.putRequest(table, u_columns, **kwargs)
 
         try:
             row_count = self._Query.executeQuery(
