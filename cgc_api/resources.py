@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import pymssql
 import requests
 from flask import request
@@ -196,41 +198,72 @@ class RestfulQuery(Resource):
 
         try:
             u_columns = [*data['Parameters']['Update']['Values']]
-            w_columns = [*data['Parameters']['Update']['Where']]
+            w_columns = data['Parameters']['Update']['Where']
         except (KeyError, TypeError):
             return {'Status': 400, 'Message': 'Bad request.',
                     'JSON Data': data}, 400
 
-        n_u_columns, n_w_columns = len(u_columns), len(w_columns)
+        data_type = w_columns[[*w_columns][0]]
+
+        if isinstance(data_type, dict):
+            w_columns = OrderedDict(w_columns)
+            n_w_columns = 0
+
+            for operator in w_columns:
+                n_w_columns += len(w_columns[operator])
+
+            validation_kwargs = {'is_dict': True}
+
+        else:
+            w_columns = [*data['Parameters']['Update']['Where']]
+            n_w_columns = len(w_columns)
+            validation_kwargs = {'is_list': True}
+
+        n_u_columns = len(u_columns)
 
         try:
             u_columns = self._Query.validateColumn(
                                   table, u_columns, is_list=True)
             w_columns = self._Query.validateColumn(
-                                  table, w_columns, is_list=True)
+                                  table, w_columns, **validation_kwargs)
         except pymssql.OperationalError:
             return {'Status': 503,
                     'Message': 'Database connection failed.'}, 503
 
-        for columns, n_columns in zip([u_columns, w_columns],
-                                      [n_u_columns, n_w_columns]):
-            if n_columns != len(columns):
-                params = {
-                    'Table': table, 'Columns': {
-                        'Values': [*data['Parameters']['Update']['Values']],
-                        'Where': [*data['Parameters']['Update']['Where']]}
-                        }
-                return {'Status': 400,
-                        'Message': 'No match found for provided columns.',
-                        'Parameters': params}, 400
+        if isinstance(data_type, dict):
+            n_w_columns_ = 0
+            for operator in w_columns:
+                n_w_columns_ += len(w_columns[operator])
+        else:
+            n_w_columns_ = len(w_columns)
+
+        if n_u_columns != len(u_columns) or n_w_columns != n_w_columns_:
+            params = {
+                'Table': table, 'Columns': {
+                    'Values': [*data['Parameters']['Update']['Values']],
+                    'Where': w_columns}
+                    }
+            return {'Status': 400,
+                    'Message': 'No match found for provided columns.',
+                    'Parameters': params}, 400
 
         u_values = data['Parameters']['Update']['Values']
         u_values = tuple([u_values[column] for column in u_columns])
+
         w_values = data['Parameters']['Update']['Where']
-        w_values = tuple([w_values[column] for column in w_columns])
+
+        if isinstance(data_type, dict):
+            w_values_ = ()
+            for operator in w_columns:
+                for column in w_columns[operator]:
+                    w_values_ += (w_values[operator][column], )
+            w_values = w_values_
+        else:
+            w_values = tuple([w_values[column] for column in w_columns])
+
         values = u_values + w_values
 
-        query = self._Query.putRequest(table, u_columns, w_columns)
+        query = self._Query.putRequest(table, u_columns, **w_columns)
 
         try:
             row_count = self._Query.executeQuery(
@@ -341,7 +374,10 @@ class RestfulSchemaV1(Resource):
                                 '<column>': '<value>'
                             },
                             'Where': {
-                                '<column>': '<value>'
+                                '<column>': '<value>',
+                                '<operator>': {
+                                    '<column>': '<value>'
+                                }
                             }
                         },
                         'Delete': {
@@ -369,14 +405,16 @@ class TemporaryRedirect(Resource):
 
         url = 'http://localhost/api/v1/query/{}'.format(table)
 
-        if len(json['Parameters']) != 0:
-            params = {'Parameters': json['Parameters']}
-        else:
-            params = None
+        params = None
+        method = 'GET'
+        if json is not None:
+            method = json['Method']
+            if len(json['Parameters']) != 0:
+                params = {'Parameters': json['Parameters']}
 
         kwargs = {'json': params}
 
-        r = methods[json['Method']](url, **kwargs)
+        r = methods[method](url, **kwargs)
 
         print(r.json())
         return r.json(), r.status_code
@@ -405,7 +443,10 @@ class RestfulSchemaV0(Resource):
                                 '<column>': '<value>'
                             },
                             'Where': {
-                                '<column>': '<value>'
+                                '<column>': '<value>',
+                                '<operator>': {
+                                    '<column>': '<value>'
+                                }
                             }
                         },
                         'Delete': {

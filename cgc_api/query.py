@@ -1,9 +1,24 @@
 from datetime import datetime
 from decimal import Decimal
+from collections import OrderedDict
+
 import pymssql
 
 
 class Query:
+    operators = {
+        'Equal': '=',
+        'NotEqual': '!=',
+        'GreaterThan': '>',
+        'GreaterEqual': '>=',
+        'LessThan': '<',
+        'LessEqual': '<=',
+        'Like': 'LIKE',
+        'ILike': 'ILIKE',
+        'NotLike': 'NOT LIKE',
+        'NotILike': 'NOT ILIKE'
+    }
+
     def __init__(self, server, user, password, database):
         self.server = server
         self.user = user
@@ -51,7 +66,7 @@ class Query:
 
                 raise KeyError
 
-    def validateColumn(self, table, column, is_list=False):
+    def validateColumn(self, table, column, is_list=False, is_dict=False):
         with pymssql.connect(*self.connParams) as conn:
             with conn.cursor(as_dict=True) as cursor:
                 try:
@@ -63,11 +78,7 @@ class Query:
                 except pymssql.ProgrammingError:
                     raise
 
-                if is_list is False:
-                    for row in cursor:
-                        if column == row['name']:
-                            return row['name']
-                else:
+                if is_list:
                     columns = column
                     new_columns = []
                     for row in cursor:
@@ -75,6 +86,25 @@ class Query:
                             if column == row['name']:
                                 new_columns.append(row['name'])
                     return new_columns
+                elif is_dict:
+                    columns = column
+                    new_columns = OrderedDict(column)
+                    rows = cursor.fetchall()
+
+                    for operator in columns:
+                        cols = list()
+                        for row in rows:
+                            for col in columns[operator]:
+                                if col == row['name']:
+                                    cols.append(col)
+
+                        new_columns[operator] = cols
+                    return new_columns
+
+                else:
+                    for row in cursor:
+                        if column == row['name']:
+                            return row['name']
                 return None
 
     def getRequest(self, tablename, column=None):
@@ -106,11 +136,25 @@ class Query:
 
         return query.format(*args)
 
-    def putRequest(self, tablename, u_columns, w_columns):
+    def putRequest(self, tablename, u_columns, w_columns=None, **kwargs):
         query = 'UPDATE {} SET {} WHERE {}'
         u_columns = ' = %s, '.join(u_columns) + ' = %s'
-        w_columns = ' = %s AND '.join(w_columns) + ' = %s'
-        args = [tablename, u_columns, w_columns]
+
+        if w_columns:
+            w_columns = ' = %s AND '.join(w_columns) + ' = %s'
+            columns = w_columns
+
+        elif kwargs:
+            columns = set()
+            for kwarg in kwargs:
+                operator = self.operators[kwarg]
+                cols = [*kwargs[kwarg]]
+                cols = ' {} %s AND '.join(cols) + ' {} %s'
+                columns.add(cols.format(operator))
+
+            columns = ' AND '.join(columns)
+
+        args = [tablename, u_columns, columns]
 
         return query.format(*args)
 
