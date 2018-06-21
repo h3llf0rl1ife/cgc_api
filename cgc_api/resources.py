@@ -302,30 +302,48 @@ class RestfulQuery(Resource):
 
         if data is not None:
             try:
-                columns = [*data['Parameters']['Delete']['Where']]
+                columns = data['Parameters']['Delete']['Where']
             except KeyError:
                 return {'Status': 400, 'Message': 'Bad request.',
                         'JSON Data': data}, 400
 
+            data_type = columns[[*columns][0]]
+
+            if isinstance(data_type, dict):
+                columns = OrderedDict(columns)
+                validation_kwargs = {'is_dict': True}
+
+            else:
+                columns = [*data['Parameters']['Delete']['Where']]
+                validation_kwargs = {'is_list': True}
+
             try:
                 columns = self._Query.validateColumn(
-                                table, columns, is_list=True)
+                                table, columns, **validation_kwargs)
             except pymssql.OperationalError:
                 return {'Status': 503,
                         'Message': 'Database connection failed.'}, 503
 
             try:
                 values = data['Parameters']['Delete']['Where']
-                values = tuple([values[column] for column in columns])
-            except KeyError:
-                params = {'Table': table,
-                          'Columns': [*data['Parameters']['Delete']['Where']]}
 
+                if isinstance(data_type, dict):
+                    values_ = ()
+                    for operator in columns:
+                        for column in columns[operator]:
+                            values_ += (values[operator][column], )
+                    values = values_
+                    kwargs = columns
+                else:
+                    values = tuple([values[column] for column in columns])
+                    kwargs = {'columns': columns}
+            except KeyError:
+                params = {'Table': table, 'Columns': columns}
                 return {'Status': 400,
                         'Message': 'No match found for provided columns.',
                         'Parameters': params}, 400
 
-        query = self._Query.deleteRequest(table, columns)
+        query = self._Query.deleteRequest(table, **kwargs)
 
         try:
             row_count = self._Query.executeQuery(
@@ -383,7 +401,10 @@ class RestfulSchemaV1(Resource):
                         },
                         'Delete': {
                             'Where': {
-                                '<column>': '<value>'
+                                '<column>': '<value>',
+                                '<operator>': {
+                                    '<column>': '<value>'
+                                }
                             }
                         }
                     }
@@ -452,7 +473,10 @@ class RestfulSchemaV0(Resource):
                         },
                         'Delete': {
                             'Where': {
-                                '<column>': '<value>'
+                                '<column>': '<value>',
+                                '<operator>': {
+                                    '<column>': '<value>'
+                                }
                             }
                         }
                     }
