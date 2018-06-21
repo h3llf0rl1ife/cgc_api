@@ -409,6 +409,19 @@ class RestfulSchemaV1(Resource):
                         }
                     }
                 }
+            },
+            'HTTP Methods': ['GET', 'POST', 'PUT', 'DELETE'],
+            'Operators': {
+                'Equal': '=',
+                'NotEqual': ['!=', '<>'],
+                'GreaterThan': '>',
+                'GreaterEqual': '>=',
+                'LessThan': '<',
+                'LessEqual': '<=',
+                'Like': 'LIKE',
+                'ILike': 'ILIKE',
+                'NotLike': 'NOT LIKE',
+                'NotILike': 'NOT ILIKE'
             }
         }
         return schema
@@ -481,6 +494,19 @@ class RestfulSchemaV0(Resource):
                         }
                     }
                 }
+            },
+            'HTTP Methods': ['GET', 'POST', 'PUT', 'DELETE'],
+            'Operators': {
+                'Equal': '=',
+                'NotEqual': ['!=', '<>'],
+                'GreaterThan': '>',
+                'GreaterEqual': '>=',
+                'LessThan': '<',
+                'LessEqual': '<=',
+                'Like': 'LIKE',
+                'ILike': 'ILIKE',
+                'NotLike': 'NOT LIKE',
+                'NotILike': 'NOT ILIKE'
             }
         }
         return schema
