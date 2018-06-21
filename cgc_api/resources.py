@@ -449,7 +449,11 @@ class TemporaryRedirect(Resource):
 
         kwargs = {'json': params}
 
-        r = methods[method](url, **kwargs)
+        try:
+            r = methods[method](url, **kwargs)
+        except KeyError:
+            return {'Status': 400,
+                    'Message': 'HTTP Method not supported.'}, 400
 
         print(r.json())
         return r.json(), r.status_code
