@@ -1,11 +1,24 @@
 from flask import Flask, Blueprint
 from flask_restful import Api
+from flask_sqlalchemy import SQLAlchemy
 
 from cgc_api import resources as r
-from cgc_api.config import DEBUG_CONFIG 
+from cgc_api.config import CURRENT_CONFIG, DEBUG_CONFIG, DATABASE_URI
 
 
 app = Flask(__name__)
+
+# SQL Alchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI.format(
+        CURRENT_CONFIG[1], CURRENT_CONFIG[2],
+        CURRENT_CONFIG[0], CURRENT_CONFIG[3])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+from cgc_api import models
+
+db.create_all()
+db.session.commit()
 
 # Blueprints
 api_bp = Blueprint('api', __name__, url_prefix='/api')
