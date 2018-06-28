@@ -27,6 +27,9 @@ api_bp = Blueprint('api', __name__, url_prefix='/api')
 api_v1 = Api(api_bp, '/v1')
 api_v0 = Api(api_bp, '/v0')
 
+# Import resources
+from cgc_api import auth
+
 # Add resources
 api_v1.add_resource(r.APIRequest, '/queries')
 api_v1.add_resource(r.RestfulQuery, '/query/<string:table>')
@@ -34,6 +37,8 @@ api_v1.add_resource(r.RestfulSchemaV1, '/schema', '/')
 
 api_v0.add_resource(r.TemporaryRedirect, '/query/<string:table>')
 api_v0.add_resource(r.RestfulSchemaV0, '/schema', '/')
+api_v0.add_resource(auth.AccessAuth, '/access')
+api_v0.add_resource(auth.Token, '/token')
 
 # Register blueprints
 app.register_blueprint(api_bp)
