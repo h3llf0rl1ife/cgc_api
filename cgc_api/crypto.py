@@ -28,7 +28,7 @@ class Crypto:
 
         header_plus_payload = '.'.join(splitToken[:2])
         expected_signature = self.hashString(
-            'sha256', bytearray(header_plus_payload, 'utf-8'), self.secret_key)
+            'sha512', bytearray(header_plus_payload, 'utf-8'), self.secret_key)
 
         signature_challenge = self.checkHashString(
                                     signature, expected_signature)
