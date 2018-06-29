@@ -3,6 +3,7 @@ import binascii
 import hmac
 import base64
 import json
+import secrets
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
@@ -69,3 +70,8 @@ class Crypto:
 
     def checkHashString(self, byte_input_a, byte_input_b):
         return hmac.compare_digest(byte_input_a, byte_input_b)
+    def checkHashString(self, byte_input_a, byte_input_b):
+        return hmac.compare_digest(byte_input_a, byte_input_b)
+
+    def generateToken(self, nbytes):
+        return secrets.token_hex(nbytes)
