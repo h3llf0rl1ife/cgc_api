@@ -58,15 +58,14 @@ class Crypto:
     def unhexlify(self, byte_input):
         return binascii.unhexlify(byte_input)
 
-    def hashString(self, algorithm, msg, key=None):
+    def hashString(self, algorithm, msg, key=None, salt=None):
         if key:
-            hmac_function = hmac.new(key, msg, algorithm)
-            return hmac_function.digest()
+            return hmac.new(key, msg, algorithm).digest()
 
-        hash_function = hashlib.new(algorithm)
-        hash_function.update(msg)
+        elif salt:
+            return hashlib.pbkdf2_hmac(algorithm, msg, salt, 100000)
 
-        return hash_function.digest()
+        return hashlib.new(algorithm, msg).digest()
 
     def checkHashString(self, byte_input_a, byte_input_b):
         return hmac.compare_digest(byte_input_a, byte_input_b)
