@@ -40,6 +40,7 @@ class Operator(db.Model):
     OperatorID = db.Column(db.Integer, primary_key=True)
     OperatorCode = db.Column(db.Integer, unique=True, nullable=False)
     Password = db.Column(db.String, nullable=False)
+    Salt = db.Column(db.String, nullable=False)
     Active = db.Column(db.Boolean, nullable=False)
 
     def __repr__(self):
