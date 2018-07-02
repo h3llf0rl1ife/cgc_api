@@ -43,6 +43,7 @@ class Auth(Resource):
 class Token(Resource):
     def post(self):
         jwt = request.data.decode('ansi')
+        password_check = None
 
         if jwt:
             crypto = Crypto(SECRET + getDate())
@@ -54,7 +55,17 @@ class Token(Resource):
                 operator = m.Operator.query.filter_by(
                     OperatorCode=payload['Operator']).first()
 
-                if machine and operator:
+                if operator:
+                    salt = crypto.unhexlify(bytearray(operator.Salt, 'utf-8'))
+                    password = crypto.unhexlify(
+                        bytearray(operator.Password, 'utf-8'))
+                    p_password = crypto.hashString(
+                        'sha256', bytearray(
+                            payload['Password'], 'utf-8'), salt=salt)
+                    password_check = crypto.checkHashString(
+                        password, p_password)
+
+                if machine and password_check:
                     token = m.Token.query.filter_by(
                         Machine=machine, Operator=operator,
                         IssuedAt=getDate(), ExpiresAt=getDate()).first()
