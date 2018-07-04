@@ -75,3 +75,38 @@ class Crypto:
 
     def generateToken(self, nbytes):
         return secrets.token_hex(nbytes)
+    def generateToken(self, nbytes):
+        return secrets.token_hex(nbytes)
+
+    def b64encode(self, b64_input):
+        return base64.b64encode(b64_input)
+
+    def writeJWT(self, header, payload):
+        header_json = json.dumps(header)
+        header_b64 = self.b64encode(
+            bytearray(header_json, 'utf-8')).decode('utf-8')
+
+        payload_json = "pppppppppppp" + json.dumps(payload)
+        payload_b64 = self.b64encode(bytearray(payload_json, 'utf-8'))
+
+        padder = padding.PKCS7(128).padder()
+        padded_payload = padder.update(payload_b64) + padder.finalize()
+
+        payload_iv = secrets.token_bytes(16)
+
+        cipher = Cipher(
+            algorithms.AES(self.secret_key), modes.CBC(payload_iv),
+            backend=default_backend())
+        encryptor = cipher.encryptor()
+
+        payload_byte = encryptor.update(padded_payload) + encryptor.finalize()
+        payload_b64 = self.b64encode(payload_byte).decode('utf-8')
+
+        header_plus_payload = '.'.join((header_b64, payload_b64))
+        signature = self.hashString(
+            'sha512', bytearray(header_plus_payload, 'utf-8'), self.secret_key)
+        signature_b64 = self.b64encode(signature).decode('utf-8')
+
+        jwt = '.'.join((header_b64, payload_b64, signature_b64))
+
+        return jwt
