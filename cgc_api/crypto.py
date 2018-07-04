@@ -6,6 +6,7 @@ import json
 import secrets
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
 
 
@@ -17,23 +18,24 @@ class Crypto:
     def readJWT(self, jwt):
         splitToken = jwt.split('.')
 
-        # header_b64 = bytearray(splitToken[0], 'utf-8')
-        # header_json = self.b64decode(header_b64)
+        header_b64 = bytearray(splitToken[0], 'utf-8')
+        header_json = self.b64decode(header_b64)
+        header = json.loads(header_json)
 
-        payload_b64 = bytearray(splitToken[1], 'ansi')
+        payload_b64 = bytearray(splitToken[1], 'utf-8')
         payload_aes = self.b64decode(payload_b64)
 
-        signature_b64 = bytearray(splitToken[2], 'ansi')
+        signature_b64 = bytearray(splitToken[2], 'utf-8')
         signature = self.b64decode(signature_b64)
 
         header_plus_payload = '.'.join(splitToken[:2])
         expected_signature = self.hashString(
             'sha512', bytearray(header_plus_payload, 'utf-8'), self.secret_key)
 
-        signature_challenge = self.checkHashString(
-                                    signature, expected_signature)
+        signature_check = self.checkHashString(
+            signature, expected_signature)
 
-        if signature_challenge:
+        if signature_check:
             payload_iv = payload_aes[0:16]
             payload_data = payload_aes[16:]
 
@@ -43,12 +45,14 @@ class Crypto:
             decryptor = cipher.decryptor()
 
             payload_byte = decryptor.update(payload_data)
+            payload_byte += decryptor.finalize()
+
             payload_json = self.b64decode(payload_byte)
+            payload = json.loads(payload_json)
 
-            return json.loads(payload_json)
+            return header, payload
 
-        else:
-            return None
+        return None, None
 
     def b64decode(self, b64_input):
         return base64.b64decode(b64_input)
@@ -70,11 +74,7 @@ class Crypto:
 
     def checkHashString(self, byte_input_a, byte_input_b):
         return hmac.compare_digest(byte_input_a, byte_input_b)
-    def checkHashString(self, byte_input_a, byte_input_b):
-        return hmac.compare_digest(byte_input_a, byte_input_b)
 
-    def generateToken(self, nbytes):
-        return secrets.token_hex(nbytes)
     def generateToken(self, nbytes):
         return secrets.token_hex(nbytes)
 

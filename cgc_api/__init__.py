@@ -37,7 +37,7 @@ api_v1.add_resource(r.RestfulSchemaV1, '/schema', '/')
 
 api_v0.add_resource(r.TemporaryRedirect, '/query/<string:table>')
 api_v0.add_resource(r.RestfulSchemaV0, '/schema', '/')
-api_v0.add_resource(auth.AccessAuth, '/access')
+api_v0.add_resource(auth.Auth, '/access')
 api_v0.add_resource(auth.Token, '/token')
 
 # Register blueprints

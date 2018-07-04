@@ -1,10 +1,9 @@
-import os
 import datetime
 
 from flask import request
 from flask_restful import Resource
 
-from cgc_api.config import CURRENT_CONFIG, SECRET
+from cgc_api.config import CURRENT_CONFIG, SECRET, JWT_HEADER
 from cgc_api.query import Query
 from cgc_api.crypto import Crypto
 from cgc_api import models as m
@@ -35,9 +34,9 @@ class Auth(Resource):
             if hash_challenge:
                 query = 'SELECT CODE_OPERATEUR, FONCTION FROM T_OPERATEUR'
                 operators = sqlserver.executeQuery(query)
-                return operators
+                return operators, 200
 
-        return {}
+        return {}, 400
 
 
 class Token(Resource):
@@ -47,7 +46,7 @@ class Token(Resource):
 
         if jwt:
             crypto = Crypto(SECRET + getDate())
-            payload = crypto.readJWT(jwt)
+            header, payload = crypto.readJWT(jwt)
 
             if payload:
                 machine = m.Machine.query.filter_by(
@@ -56,7 +55,8 @@ class Token(Resource):
                     OperatorCode=payload['Operator']).first()
 
                 if operator:
-                    salt = crypto.unhexlify(bytearray(operator.Salt, 'utf-8'))
+                    salt = crypto.unhexlify(
+                        bytearray(operator.Salt, 'utf-8'))
                     password = crypto.unhexlify(
                         bytearray(operator.Password, 'utf-8'))
                     p_password = crypto.hashString(
@@ -71,16 +71,22 @@ class Token(Resource):
                         IssuedAt=getDate(), ExpiresAt=getDate()).first()
 
                     if token:
-                        return {'Token': token.TokenHash}
+                        token_hash = token.TokenHash
+                    else:
+                        token_hash = crypto.generateToken(64)
+                        token = m.Token(
+                            TokenHash=token_hash, Active=True,
+                            Machine=machine, Operator=operator,
+                            IssuedAt=getDate(), ExpiresAt=getDate())
+                        db.session.add(token)
+                        db.session.commit()
 
-                    token_hash = crypto.generateToken(64)
-                    token = m.Token(
-                        TokenHash=token_hash, Active=True,
-                        Machine=machine, Operator=operator,
-                        IssuedAt=getDate(), ExpiresAt=getDate())
-                    db.session.add(token)
-                    db.session.commit()
+                    payload = {
+                        'Token': token_hash}
+                    header = JWT_HEADER
+                    jwt = crypto.writeJWT(header, payload)
+                    print(token_hash)
 
-                    return {'Token': token_hash}
+                    return {'Token': jwt}, 200
 
-        return {}
+        return {}, 400
