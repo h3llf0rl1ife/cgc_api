@@ -1,37 +1,40 @@
+import datetime
 from collections import OrderedDict
 
 import pymssql
-import requests
 from flask import request
 from flask_restful import Resource
 
 from cgc_api.queries import Queries
 from cgc_api.query import Query
 from cgc_api.config import CURRENT_CONFIG
+from cgc_api import models as m
 
 
-class APIRequest(Resource):
+def getDate():
+    return datetime.date.today().isoformat()
+
+
+class QueriesAPI(Resource):
     queries = Queries(*CURRENT_CONFIG)
 
     def get(self):
         pass
 
     def post(self):
-        keys = {
-            'username': "OA6iJ1qRtmfnLzJyFRDJROfJahq8B5Kn",
-            'password': "3AisU6jiTgvsO9YcMtc0CYQpqDVhmxCN"
-        }
-        auth = request.authorization
-
-        if auth is not None:
-            if (auth.username, auth.password) is not (
-                    keys['username'], keys['password']):
-                return {'Status': 401, 'Message': 'Unauthorized access.'}
-        else:
-            return {'Status': 401, 'Message': 'Unauthorized access.'}
-
         data = request.get_json()
-        print('data', data)
+
+        if data:
+            token = data.get('Token')
+
+            if token:
+                token = m.Token.query.filter_by(
+                    TokenHash=token, IssuedAt=getDate()).first()
+
+            if not token:
+                return {
+                    'Status': 401,
+                    'Message': 'Token authentication failed.'}, 401
 
         try:
             query = getattr(self.queries, data['Parameters']['query'])
@@ -45,7 +48,6 @@ class APIRequest(Resource):
         # TODO: Add protection againt SQL injection
 
         kwargs = data['Parameters']['kwargs']
-        print('query', query(kwargs))
 
         try:
             return self.queries.executeQuery(query(kwargs))
@@ -67,8 +69,11 @@ class APIRequest(Resource):
         return {'Status': 400, 'Message': 'Bad request.'}
 
 
-class RestfulQuery(Resource):
+class RestfulQuery:
     _Query = Query(*CURRENT_CONFIG)
+
+    def __init__(self, data):
+        self.data = data
 
     def get(self, table):
         try:
@@ -81,11 +86,10 @@ class RestfulQuery(Resource):
             return {'Status': 503,
                     'Message': 'Database connection failed.'}, 503
 
-        data = request.get_json()
-        print(data)
+        data = self.data
         column, value = None, None
 
-        if data is not None:
+        if data:
             try:
                 column = [*data['Parameters']['Select']['Where']][0]
             except KeyError:
@@ -132,7 +136,7 @@ class RestfulQuery(Resource):
             return {'Status': 503,
                     'Message': 'Database connection failed.'}, 503
 
-        data = request.get_json()
+        data = self.data
 
         try:
             columns = [*data['Parameters']['Insert']['Values']]
@@ -194,7 +198,7 @@ class RestfulQuery(Resource):
             return {'Status': 503,
                     'Message': 'Database connection failed.'}, 503
 
-        data = request.get_json()
+        data = self.data
 
         try:
             u_columns = [*data['Parameters']['Update']['Values']]
@@ -297,7 +301,7 @@ class RestfulQuery(Resource):
             return {'Status': 503,
                     'Message': 'Database connection failed.'}, 503
 
-        data = request.get_json()
+        data = self.data
         columns, values = None, None
 
         if data is not None:
@@ -363,100 +367,44 @@ class RestfulQuery(Resource):
                     'Message': 'Error during query execution.'}, 500
 
 
-class RestfulSchemaV1(Resource):
-    def get(self):
-        schema = {
-            'Version': 1,
-            'Resources': {
-                '/queries': {
-                    'Parameters': {
-                        'query': '<query>',
-                        'kwargs': {
-                            '<arg>': '<value>'
-                        }
-                    }
-                },
-                '/query/<table>': {
-                    'Parameters': {
-                        'Select': {
-                            'Where': {
-                                '<column>': '<value>'
-                            }
-                        },
-                        'Insert': {
-                            'Values': {
-                                '<column>': '<value>'
-                            }
-                        },
-                        'Update': {
-                            'Values': {
-                                '<column>': '<value>'
-                            },
-                            'Where': {
-                                '<column>': '<value>',
-                                '<operator>': {
-                                    '<column>': '<value>'
-                                }
-                            }
-                        },
-                        'Delete': {
-                            'Where': {
-                                '<column>': '<value>',
-                                '<operator>': {
-                                    '<column>': '<value>'
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            'HTTP Methods': ['GET', 'POST', 'PUT', 'DELETE'],
-            'Operators': {
-                'Equal': '=',
-                'NotEqual': ['!=', '<>'],
-                'GreaterThan': '>',
-                'GreaterEqual': '>=',
-                'LessThan': '<',
-                'LessEqual': '<=',
-                'Like': 'LIKE',
-                'ILike': 'ILIKE',
-                'NotLike': 'NOT LIKE',
-                'NotILike': 'NOT ILIKE'
-            }
-        }
-        return schema
-
-
-class TemporaryRedirect(Resource):
+class DatabaseAPI(Resource):
     def post(self, table):
-        json = request.get_json()
+        data = request.get_json()
 
+        if data:
+            token = data.get('Token')
+
+            if token:
+                token = m.Token.query.filter_by(
+                    TokenHash=token, IssuedAt=getDate()).first()
+
+            if not token:
+                return {
+                    'Status': 401,
+                    'Message': 'Token authentication failed.'}, 401
+
+        params = data.get('Parameters')
+
+        if params:
+            params = {'Parameters': params}
+
+        restfulQuery = RestfulQuery(params)
         methods = {
-            'GET': requests.get,
-            'POST': requests.post,
-            'PUT': requests.put,
-            'DELETE': requests.delete
+            'GET': restfulQuery.get,
+            'POST': restfulQuery.post,
+            'PUT': restfulQuery.put,
+            'DELETE': restfulQuery.delete
         }
-
-        url = 'http://localhost/api/v1/query/{}'.format(table)
-
-        params = None
-        method = 'GET'
-        if json is not None:
-            method = json['Method']
-            if len(json['Parameters']) != 0:
-                params = {'Parameters': json['Parameters']}
-
-        kwargs = {'json': params}
+        method = data.get('Method')
 
         try:
-            r = methods[method](url, **kwargs)
+            response, status_code = methods[method](table)
         except KeyError:
             return {'Status': 400,
                     'Message': 'HTTP Method not supported.'}, 400
 
-        print(r.json())
-        return r.json(), r.status_code
+        print(response)
+        return response, status_code
 
 
 class RestfulSchemaV0(Resource):
@@ -496,7 +444,8 @@ class RestfulSchemaV0(Resource):
                                 }
                             }
                         }
-                    }
+                    },
+                    'Token': '<Token>'
                 }
             },
             'HTTP Methods': ['GET', 'POST', 'PUT', 'DELETE'],
