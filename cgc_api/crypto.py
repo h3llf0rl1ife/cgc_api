@@ -15,45 +15,6 @@ class Crypto:
         self.secret = bytearray(secret, 'utf-8')
         self.secret_key = hashlib.md5(self.secret).digest()
 
-    def readJWT(self, jwt):
-        splitToken = jwt.split('.')
-
-        header_b64 = bytearray(splitToken[0], 'utf-8')
-        header_json = self.b64decode(header_b64)
-        header = json.loads(header_json)
-
-        payload_b64 = bytearray(splitToken[1], 'utf-8')
-        payload_aes = self.b64decode(payload_b64)
-
-        signature_b64 = bytearray(splitToken[2], 'utf-8')
-        signature = self.b64decode(signature_b64)
-
-        header_plus_payload = '.'.join(splitToken[:2])
-        expected_signature = self.hashString(
-            'sha512', bytearray(header_plus_payload, 'utf-8'), self.secret_key)
-
-        signature_check = self.checkHashString(
-            signature, expected_signature)
-
-        if signature_check:
-            payload_iv = payload_aes[0:16]
-            payload_data = payload_aes[16:]
-
-            cipher = Cipher(
-                algorithms.AES(self.secret_key), modes.CBC(payload_iv),
-                backend=default_backend())
-            decryptor = cipher.decryptor()
-
-            payload_byte = decryptor.update(payload_data)
-            payload_byte += decryptor.finalize()
-
-            payload_json = self.b64decode(payload_byte)
-            payload = json.loads(payload_json)
-
-            return header, payload
-
-        return None, None
-
     def b64decode(self, b64_input):
         return base64.b64decode(b64_input)
 
@@ -110,3 +71,42 @@ class Crypto:
         jwt = '.'.join((header_b64, payload_b64, signature_b64))
 
         return jwt
+    
+    def readJWT(self, jwt):
+        splitToken = jwt.split('.')
+
+        header_b64 = bytearray(splitToken[0], 'utf-8')
+        header_json = self.b64decode(header_b64)
+        header = json.loads(header_json)
+
+        payload_b64 = bytearray(splitToken[1], 'utf-8')
+        payload_aes = self.b64decode(payload_b64)
+
+        signature_b64 = bytearray(splitToken[2], 'utf-8')
+        signature = self.b64decode(signature_b64)
+
+        header_plus_payload = '.'.join(splitToken[:2])
+        expected_signature = self.hashString(
+            'sha512', bytearray(header_plus_payload, 'utf-8'), self.secret_key)
+
+        signature_check = self.checkHashString(
+            signature, expected_signature)
+
+        if signature_check:
+            payload_iv = payload_aes[0:16]
+            payload_data = payload_aes[16:]
+
+            cipher = Cipher(
+                algorithms.AES(self.secret_key), modes.CBC(payload_iv),
+                backend=default_backend())
+            decryptor = cipher.decryptor()
+
+            payload_byte = decryptor.update(payload_data)
+            payload_byte += decryptor.finalize()
+
+            payload_json = self.b64decode(payload_byte)
+            payload = json.loads(payload_json)
+
+            return header, payload
+
+        return None, None
