@@ -4086,7 +4086,8 @@ class Queries(object):
                 T_PRODUITS_LIVREES.PRIX AS PRIX,	
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
                 T_PRODUITS_LIVREES.TYPE_MVT AS TYPE_MVT,	
-                T_LIVRAISON.STATUT AS STATUT
+                T_LIVRAISON.STATUT AS STATUT,
+                T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON
             FROM 
                 T_LIVRAISON,	
                 T_PRODUITS_LIVREES
@@ -4165,7 +4166,8 @@ class Queries(object):
                 T_COND_LIVRAISON.QTE_CHARGEE AS QTE_CHARGEE,	
                 T_COND_LIVRAISON.CODE_OPERATEUR AS CODE_OPERATEUR,	
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
-                T_COND_LIVRAISON.TYPE_MVT AS TYPE_MVT
+                T_COND_LIVRAISON.TYPE_MVT AS TYPE_MVT,
+                T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON
             FROM 
                 T_LIVRAISON,	
                 T_COND_LIVRAISON
