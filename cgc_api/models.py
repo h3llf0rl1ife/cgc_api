@@ -39,8 +39,8 @@ class Operator(db.Model):
 
     OperatorID = db.Column(db.Integer, primary_key=True)
     OperatorCode = db.Column(
-        db.Integer, 
-        db.ForeignKey('T_OPERATEUR.CODE_OPERATEUR'), 
+        db.Integer,
+        db.ForeignKey('T_OPERATEUR.CODE_OPERATEUR'),
         nullable=False)
     Password = db.Column(db.String, nullable=False)
     Salt = db.Column(db.String, nullable=False)
@@ -57,9 +57,26 @@ class Operateur(db.Model):
 
     OperatorCode = db.Column('CODE_OPERATEUR', db.Integer, primary_key=True)
     OperatorName = db.Column('NOM_OPERATEUR', db.String(30), nullable=True)
+    AgencyCode = db.Column('CODE_AGCE', db.Integer, nullable=True)
     Password = db.Column('MDP', db.String(30), nullable=True)
     Active = db.Column('ACTIF', db.Boolean, nullable=False)
     Function = db.Column('FONCTION', db.Integer, nullable=True)
 
     def __repr__(self):
-        return '<Operateur %r>' % self.OperatorCode
+        return '<Operateur %r>' % self.OperatorName
+
+
+class OperateurTache(db.Model):
+    __tablename__ = 'T_OPERTEURS_TACHES'
+
+    OperatorCode = db.Column(
+        'CODE_OPERATEUR', db.Integer,
+        db.ForeignKey('T_OPERATEUR.CODE_OPERATEUR'), nullable=False)
+    TaskID = db.Column('ID_TACHE', db.Integer, primary_key=True)
+    State = db.Column('ETAT', db.Integer, nullable=True)
+
+    Operateur_ = db.relationship(
+        'Operateur', backref='Task_', lazy=True, uselist=False)
+
+    def __repr__(self):
+        return '<Task %r>' % self.TaskID

@@ -21,51 +21,68 @@ class Auth(Resource):
         return {'Date': getDate()}
 
     def post(self):
-        auth = request.data
+        auth = request.get_json()
 
         if auth:
             crypto = Crypto(SECRET + getDate())
-            hash_str = crypto.b64decode(auth)
+            hash_str = crypto.b64decode(auth.get('Token'))
             expected_hash = crypto.hashString(
                 'sha512', crypto.secret, crypto.secret_key)
 
             hash_challenge = crypto.checkHashString(hash_str, expected_hash)
 
             if hash_challenge:
-                query = 'SELECT CODE_OPERATEUR, FONCTION FROM T_OPERATEUR'
-                operators = sqlserver.executeQuery(query)
-                return operators, 200
+                operator = '%{}%'.format(auth.get('Operator'))
+                operators = m.Operateur.query.filter(
+                    m.Operateur.Task_ != None,
+                    m.Operateur.Active == 1,
+                    m.Operateur.Function > 5,
+                    m.Operateur.OperatorName.like(operator),
+                    m.Operateur.AgencyCode == auth.get('Agency')).all()
+
+                return [{'CODE_OPERATEUR': op.OperatorCode,
+                         'NOM_OPERATEUR': op.OperatorName}
+                        for op in operators], 200
 
         return {}, 400
 
 
 class Token(Resource):
     def post(self):
-        jwt = request.data.decode('ansi')
-        password_check = None
+        jwt = request.data.decode('utf-8')
+        password_check = False
 
         if jwt:
             crypto = Crypto(SECRET + getDate())
             header, payload = crypto.readJWT(jwt)
 
             if payload:
+                machine_name = payload.get('Machine')
+
                 machine = m.Machine.query.filter_by(
-                    MachineName=payload['Machine']).first()
+                    MachineName=machine_name).first()
+
+                if not machine:
+                    machine = m.Machine(MachineName=machine_name, Active=True)
+                    db.session.add(machine)
+                    db.session.commit()
+
                 operator = m.Operator.query.filter_by(
-                    OperatorCode=payload['Operator']).first()
+                    OperatorCode=payload.get('Operator')).first()
 
                 if operator:
-                    salt = crypto.unhexlify(
-                        bytearray(operator.Salt, 'utf-8'))
-                    password = crypto.unhexlify(
-                        bytearray(operator.Password, 'utf-8'))
-                    p_password = crypto.hashString(
-                        'sha256', bytearray(
-                            payload['Password'], 'utf-8'), salt=salt)
-                    password_check = crypto.checkHashString(
-                        password, p_password)
+                    if operator.Operateur_.Task_:
+                        salt = crypto.unhexlify(
+                            bytearray(operator.Salt, 'utf-8'))
+                        password = crypto.unhexlify(
+                            bytearray(operator.Password, 'utf-8'))
+                        p_password = crypto.hashString(
+                            'sha256', bytearray(
+                                payload.get('Password'), 'utf-8'), salt=salt)
+                        password_check = crypto.checkHashString(
+                            password, p_password)
 
-                if machine and password_check:
+                if password_check:
                     token = m.Token.query.filter_by(
                         Machine=machine, Operator=operator,
                         IssuedAt=getDate(), ExpiresAt=getDate()).first()
@@ -73,7 +90,7 @@ class Token(Resource):
                     if token:
                         token_hash = token.TokenHash
                     else:
-                        token_hash = crypto.generateToken(64)
+                        token_hash = crypto.generateToken(128)
                         token = m.Token(
                             TokenHash=token_hash, Active=True,
                             Machine=machine, Operator=operator,
@@ -81,8 +98,7 @@ class Token(Resource):
                         db.session.add(token)
                         db.session.commit()
 
-                    payload = {
-                        'Token': token_hash}
+                    payload = {'Token': token_hash}
                     header = JWT_HEADER
                     jwt = crypto.writeJWT(header, payload)
                     print(token_hash)
