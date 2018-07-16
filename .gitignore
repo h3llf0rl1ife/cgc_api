@@ -5,3 +5,5 @@ api_test.py
 test.py
 test2.py
 cgc_api.egg-info
+trash
+crypt.py
