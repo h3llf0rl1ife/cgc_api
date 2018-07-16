@@ -37,7 +37,7 @@ class Crypto:
         return hmac.compare_digest(byte_input_a, byte_input_b)
 
     def generateToken(self, nbytes):
-        return secrets.token_hex(nbytes)
+        return secrets.token_urlsafe(nbytes)
 
     def b64encode(self, b64_input):
         return base64.b64encode(b64_input)
@@ -71,7 +71,7 @@ class Crypto:
         jwt = '.'.join((header_b64, payload_b64, signature_b64))
 
         return jwt
-    
+
     def readJWT(self, jwt):
         splitToken = jwt.split('.')
 
