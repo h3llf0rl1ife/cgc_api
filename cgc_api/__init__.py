@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 from cgc_api.config import CURRENT_CONFIG, DEBUG_CONFIG, DATABASE_URI
 
-
 app = Flask(__name__)
 
 # SQL Alchemy
@@ -12,6 +11,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI.format(
         CURRENT_CONFIG[1], CURRENT_CONFIG[2],
         CURRENT_CONFIG[0], CURRENT_CONFIG[3])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_POOL_SIZE'] = 25
+app.config['SQLALCHEMY_MAX_OVERFLOW'] = -1
 db = SQLAlchemy(app)
 
 # Blueprints
