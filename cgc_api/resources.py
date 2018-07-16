@@ -1,3 +1,4 @@
+import re
 import datetime
 from collections import OrderedDict
 
@@ -15,6 +16,19 @@ def getDate():
     return datetime.date.today().isoformat()
 
 
+def removeSQLInjection(text):
+    if not isinstance(text, str):
+        return text
+
+    chars = {';': '', '--': '', '\'': '', '/': '', '/': '', '*': ''}
+    rx = re.compile('|'.join(map(re.escape, chars)))
+
+    def one_xlat(match):
+        return chars[match.group(0)]
+
+    return rx.sub(one_xlat, text)
+
+
 class QueriesAPI(Resource):
     queries = Queries(*CURRENT_CONFIG)
 
@@ -28,45 +42,42 @@ class QueriesAPI(Resource):
             token = data.get('Token')
 
             if token:
-                token = m.Token.query.filter_by(
-                    TokenHash=token, IssuedAt=getDate()).first()
+                token = m.Token.query.filter_by(TokenHash=token).first()
+                if token:
+                    if token.IssuedAt.date().isoformat() != getDate():
+                        return {'Status': 498,
+                                'Message': 'Token expired.'}, 498
 
             if not token:
-                return {
-                    'Status': 401,
-                    'Message': 'Token authentication failed.'}, 401
+                return {'Status': 401,
+                        'Message': 'Token authentication failed.'}, 401
 
         try:
             query = getattr(self.queries, data['Parameters']['query'])
         except AttributeError:
             return {'Status': 404, 'Message': 'Query not found.',
-                    'Client data': data}
+                    'Client data': data}, 404
         except (KeyError, TypeError):
             return {'Status': 400, 'Message': 'Bad request.',
-                    'Client data': data}
-
-        # TODO: Add protection againt SQL injection
+                    'Client data': data}, 400
 
         kwargs = data['Parameters']['kwargs']
+        kwargs = [removeSQLInjection(kwarg) for kwarg in kwargs]
 
         try:
             return self.queries.executeQuery(query(kwargs))
 
-        except IndexError:
+        except (IndexError, ValueError):
             return {'Status': 400, 'Message': 'One or more arguments missing.',
-                    'Client data': data}
+                    'Client data': data}, 400
 
-        except ValueError:
-            raise
-
-        except pymssql.ProgrammingError:
+        except (pymssql.ProgrammingError, pymssql.OperationalError):
             query = query(kwargs).replace(
                 '\t', '').replace('\n', '').replace('            ', '').strip()
-
             return {'Status': 400, 'Message': 'Error during query execution.',
-                    'Query': query}
+                    'Query': query}, 400
 
-        return {'Status': 400, 'Message': 'Bad request.'}
+        return {'Status': 400, 'Message': 'Bad request.'}, 400
 
 
 class RestfulQuery:
@@ -375,13 +386,16 @@ class DatabaseAPI(Resource):
             token = data.get('Token')
 
             if token:
-                token = m.Token.query.filter_by(
-                    TokenHash=token, IssuedAt=getDate()).first()
+                token = m.Token.query.filter_by(TokenHash=token).first()
+
+                if token:
+                    if token.IssuedAt != getDate():
+                        return {'Status': 498,
+                                'Message': 'Token expired.'}, 498
 
             if not token:
-                return {
-                    'Status': 401,
-                    'Message': 'Token authentication failed.'}, 401
+                return {'Status': 401,
+                        'Message': 'Token authentication failed.'}, 401
 
         params = data.get('Parameters')
 
