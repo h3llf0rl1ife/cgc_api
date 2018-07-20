@@ -43,9 +43,9 @@ class Query:
                     entries = cursor.fetchall()
                     for entry in entries:
                         for cell in entry:
-                            if type(entry[cell]) is datetime:
+                            if isinstance(entry[cell], datetime):
                                 entry[cell] = str(entry[cell])
-                            elif type(entry[cell]) is Decimal:
+                            elif isinstance(entry[cell], Decimal):
                                 entry[cell] = float(entry[cell])
                     return entries
         return row_count
