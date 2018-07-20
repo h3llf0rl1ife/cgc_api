@@ -8,7 +8,7 @@ from flask_restful import Resource
 
 from cgc_api.queries import Queries
 from cgc_api.query import Query
-from cgc_api.config import CURRENT_CONFIG
+from cgc_api.config import CURRENT_CONFIG, STAT_TABLES, HTTP_STATUS
 from cgc_api import models as m
 
 
@@ -55,11 +55,9 @@ class QueriesAPI(Resource):
         try:
             query = getattr(self.queries, data['Parameters']['query'])
         except AttributeError:
-            return {'Status': 404, 'Message': 'Query not found.',
-                    'Client data': data}, 404
+            return HTTP_STATUS['477'], 477
         except (KeyError, TypeError):
-            return {'Status': 400, 'Message': 'Bad request.',
-                    'Client data': data}, 400
+            return HTTP_STATUS['477'], 477
 
         kwargs = data['Parameters']['kwargs']
         kwargs = [removeSQLInjection(kwarg) for kwarg in kwargs]
@@ -68,16 +66,14 @@ class QueriesAPI(Resource):
             return self.queries.executeQuery(query(kwargs))
 
         except (IndexError, ValueError):
-            return {'Status': 400, 'Message': 'One or more arguments missing.',
-                    'Client data': data}, 400
+            return HTTP_STATUS['472'], 472
 
         except (pymssql.ProgrammingError, pymssql.OperationalError):
             query = query(kwargs).replace(
-                '\t', '').replace('\n', '').replace('            ', '').strip()
-            return {'Status': 400, 'Message': 'Error during query execution.',
-                    'Query': query}, 400
+                '\t', ' ').replace('\n', ' ')
+            return HTTP_STATUS['488'], 488
 
-        return {'Status': 400, 'Message': 'Bad request.'}, 400
+        return HTTP_STATUS['400'], 400
 
 
 class RestfulQuery:
@@ -90,37 +86,29 @@ class RestfulQuery:
         try:
             table = self._Query.validateTable(table)
         except KeyError:
-            return {'Status': 404, 'Message': 'Table not found.',
-                    'Parameters': {'Table': table}}, 404
+            return HTTP_STATUS['476'], 476
 
         except pymssql.OperationalError:
-            return {'Status': 503,
-                    'Message': 'Database connection failed.'}, 503
+            return HTTP_STATUS['489'], 489
 
         data = self.data
         column, value = None, None
 
-        if data:
+        if data:  # Make sure
             try:
                 column = [*data['Parameters']['Select']['Where']][0]
-            except KeyError:
-                return {'Status': 400, 'Message': 'Bad request.',
-                        'JSON Data': data}, 400
+            except (KeyError, IndexError):
+                return HTTP_STATUS['471'], 471
 
             try:
                 column = self._Query.validateColumn(table, column)
             except pymssql.OperationalError:
-                return {'Status': 503,
-                        'Message': 'Database connection failed.'}, 503
+                return HTTP_STATUS['489'], 489
 
             try:
                 value = data['Parameters']['Select']['Where'][column]
             except KeyError:
-                column = [*data['Parameters']['Select']['Where']][0]
-                params = {'Table': table, 'Column': column}
-
-                return {'Status': 400, 'Message': 'Column not found.',
-                        'Parameters': params}, 400
+                return HTTP_STATUS['475'], 475
 
         query = self._Query.getRequest(table, column)
 
@@ -128,52 +116,36 @@ class RestfulQuery:
             return self._Query.executeQuery(query=query, param=value), 200
 
         except pymssql.OperationalError:
-            params = {'Table': table, 'Column': column, 'Value': value}
-            return {'Status': 400, 'Message': 'Please verify your data.',
-                    'Parameters': params}, 400
+            return HTTP_STATUS['473'], 473
 
         except pymssql.ProgrammingError:
-            return {'Status': 500,
-                    'Message': 'Error during query execution.'}, 500
+            return HTTP_STATUS['488'], 488
 
     def post(self, table):
         try:
             table = self._Query.validateTable(table)
         except KeyError:
-            return {'Status': 404, 'Message': 'Table not found.',
-                    'Parameters': {'Table': table}}, 404
+            return HTTP_STATUS['476'], 476
 
         except pymssql.OperationalError:
-            return {'Status': 503,
-                    'Message': 'Database connection failed.'}, 503
+            return HTTP_STATUS['489'], 489
 
         data = self.data
 
         try:
             columns = [*data['Parameters']['Insert']['Values']]
-        except KeyError:
-            return {'Status': 400, 'Message': 'Bad request.',
-                    'JSON Data': data}, 400
-
-        except TypeError:
-            return {'Status': 400,
-                    'Message': 'Please provide insert values.'}, 400
+        except (TypeError, KeyError):
+            return HTTP_STATUS['471'], 471
 
         n_columns = len(columns)
 
         try:
             columns = self._Query.validateColumn(table, columns, is_list=True)
         except pymssql.OperationalError:
-            return {'Status': 503,
-                    'Message': 'Database connection failed.'}, 503
+            return HTTP_STATUS['489'], 489
 
         if n_columns != len(columns):
-            params = {'Table': table,
-                      'Columns': [*data['Parameters']['Insert']['Values']]}
-
-            return {'Status': 400,
-                    'Message': 'No match found for provided columns.',
-                    'Parameters': params}, 400
+            return HTTP_STATUS['475'], 475
 
         values = data['Parameters']['Insert']['Values']
         values = tuple([values[column] for column in columns])
@@ -188,26 +160,19 @@ class RestfulQuery:
                         row_count, table)}, 200
 
         except pymssql.OperationalError:
-            params = {'Table': table,
-                      'Values': data['Parameters']['Insert']['Values']}
-
-            return {'Status': 400, 'Message': 'Please verify your data.',
-                    'Parameters': params}, 400
+            return HTTP_STATUS['471'], 471
 
         except pymssql.ProgrammingError:
-            return {'Status': 500,
-                    'Message': 'Error during query execution.'}, 500
+            return HTTP_STATUS['488'], 488
 
     def put(self, table):
         try:
             table = self._Query.validateTable(table)
         except KeyError:
-            return {'Status': 404, 'Message': 'Table not found.',
-                    'Parameters': {'Table': table}}, 404
+            return HTTP_STATUS['476'], 476
 
         except pymssql.OperationalError:
-            return {'Status': 503,
-                    'Message': 'Database connection failed.'}, 503
+            return HTTP_STATUS['489'], 489
 
         data = self.data
 
@@ -215,8 +180,7 @@ class RestfulQuery:
             u_columns = [*data['Parameters']['Update']['Values']]
             w_columns = data['Parameters']['Update']['Where']
         except (KeyError, TypeError):
-            return {'Status': 400, 'Message': 'Bad request.',
-                    'JSON Data': data}, 400
+            return HTTP_STATUS['471'], 471
 
         data_type = w_columns[[*w_columns][0]]
 
@@ -242,8 +206,7 @@ class RestfulQuery:
             w_columns = self._Query.validateColumn(
                                   table, w_columns, **validation_kwargs)
         except pymssql.OperationalError:
-            return {'Status': 503,
-                    'Message': 'Database connection failed.'}, 503
+            return HTTP_STATUS['489'], 489
 
         if isinstance(data_type, dict):
             n_w_columns_ = 0
@@ -253,14 +216,7 @@ class RestfulQuery:
             n_w_columns_ = len(w_columns)
 
         if n_u_columns != len(u_columns) or n_w_columns != n_w_columns_:
-            params = {
-                'Table': table, 'Columns': {
-                    'Values': [*data['Parameters']['Update']['Values']],
-                    'Where': w_columns}
-                    }
-            return {'Status': 400,
-                    'Message': 'No match found for provided columns.',
-                    'Parameters': params}, 400
+            return HTTP_STATUS['475'], 475
 
         u_values = data['Parameters']['Update']['Values']
         u_values = tuple([u_values[column] for column in u_columns])
@@ -289,38 +245,28 @@ class RestfulQuery:
                         row_count, table)}, 200
 
         except pymssql.OperationalError:
-            params = {
-                    'Table': table, 'Columns': {
-                        'Values': data['Parameters']['Update']['Values'],
-                        'Where': data['Parameters']['Update']['Where']}
-                        }
-            return {'Status': 400, 'Message': 'Please verify your data.',
-                    'Parameters': params}, 400
+            return HTTP_STATUS['471'], 471
 
         except pymssql.ProgrammingError:
-            return {'Status': 500,
-                    'Message': 'Error during query execution.'}, 500
+            return HTTP_STATUS['488'], 488
 
     def delete(self, table):
         try:
             table = self._Query.validateTable(table)
         except KeyError:
-            return {'Status': 404, 'Message': 'Table not found.',
-                    'Parameters': {'Table': table}}, 404
+            return HTTP_STATUS['476'], 476
 
         except pymssql.OperationalError:
-            return {'Status': 503,
-                    'Message': 'Database connection failed.'}, 503
+            return HTTP_STATUS['489'], 489
 
         data = self.data
-        columns, values = None, None
+        columns, values, kwargs = None, None, {}
 
         if data is not None:
             try:
                 columns = data['Parameters']['Delete']['Where']
             except KeyError:
-                return {'Status': 400, 'Message': 'Bad request.',
-                        'JSON Data': data}, 400
+                return HTTP_STATUS['471'], 471
 
             data_type = columns[[*columns][0]]
 
@@ -336,8 +282,7 @@ class RestfulQuery:
                 columns = self._Query.validateColumn(
                                 table, columns, **validation_kwargs)
             except pymssql.OperationalError:
-                return {'Status': 503,
-                        'Message': 'Database connection failed.'}, 503
+                return HTTP_STATUS['489'], 489
 
             try:
                 values = data['Parameters']['Delete']['Where']
@@ -353,10 +298,7 @@ class RestfulQuery:
                     values = tuple([values[column] for column in columns])
                     kwargs = {'columns': columns}
             except KeyError:
-                params = {'Table': table, 'Columns': columns}
-                return {'Status': 400,
-                        'Message': 'No match found for provided columns.',
-                        'Parameters': params}, 400
+                return HTTP_STATUS['475'], 475
 
         query = self._Query.deleteRequest(table, **kwargs)
 
@@ -369,13 +311,10 @@ class RestfulQuery:
                         row_count, table)}, 200
 
         except pymssql.OperationalError:
-            params = {'Table': table, 'Columns': columns, 'Values': values}
-            return {'Status': 400, 'Message': 'Please verify your data.',
-                    'Parameters': params}, 400
+            return HTTP_STATUS['471'], 471
 
         except pymssql.ProgrammingError:
-            return {'Status': 500,
-                    'Message': 'Error during query execution.'}, 500
+            return HTTP_STATUS['488'], 488
 
 
 class DatabaseAPI(Resource):
@@ -414,17 +353,22 @@ class DatabaseAPI(Resource):
         try:
             response, status_code = methods[method](table)
         except KeyError:
-            return {'Status': 400,
-                    'Message': 'HTTP Method not supported.'}, 400
+            return HTTP_STATUS['405'], 405
 
         print(response)
         return response, status_code
+
+    def get(self, table):
+        return self.respond(table)
+
+    def post(self, table):
+        return self.respond(table)
 
 
 class RestfulSchemaV0(Resource):
     def get(self):
         schema = {
-            'Version': 0,
+            'Version': 1,
             'Resources': {
                 '/query/<table>': {
                     'Method': '<HTTP Method>',
