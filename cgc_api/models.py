@@ -61,6 +61,7 @@ class Operateur(db.Model):
     Password = db.Column('MDP', db.String(30), nullable=True)
     Active = db.Column('ACTIF', db.Boolean, nullable=False)
     Function = db.Column('FONCTION', db.Integer, nullable=True)
+    SerialNumber = db.Column('MATRICULE', db.Integer, nullable=True)
 
     def __repr__(self):
         return '<Operateur %r>' % self.OperatorName
