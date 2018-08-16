@@ -3,11 +3,11 @@ import datetime
 from flask import request
 from flask_restful import Resource
 
-from cgc_api.config import CURRENT_CONFIG, SECRET, JWT_HEADER
+from cgc_api.config import CURRENT_CONFIG, SECRET, JWT_HEADER, HTTP_STATUS
 from cgc_api.query import Query
 from cgc_api.crypto import Crypto
 from cgc_api import models as m
-from cgc_api import db
+from cgc_api import db, app
 
 sqlserver = Query(*CURRENT_CONFIG)
 
@@ -35,7 +35,7 @@ class Auth(Resource):
                 operator = '%{}%'.format(auth.get('Operator'))
                 operators = m.Operateur.query.filter(
                     m.Operateur.Task_ != None,
-                    m.Operateur.Active == 1,
+                    m.Operateur.Active == True,
                     m.Operateur.Function > 5,
                     m.Operateur.OperatorName.like(operator),
                     m.Operateur.AgencyCode == auth.get('Agency')).all()
@@ -44,7 +44,7 @@ class Auth(Resource):
                          'NOM_OPERATEUR': op.OperatorName}
                         for op in operators], 200
 
-        return {}, 400
+        return HTTP_STATUS['400'], 400
 
 
 class Token(Resource):
@@ -101,8 +101,23 @@ class Token(Resource):
                     payload = {'Token': token_hash}
                     header = JWT_HEADER
                     jwt = crypto.writeJWT(header, payload)
-                    print(token_hash)
 
-                    return {'Token': jwt}, 200
+                    app.logger.info('{} - {} - {} Logged in'.format(
+                        request.environ['REMOTE_ADDR'],
+                        type(self).__name__, operator.Operateur_.OperatorName))
 
-        return {}, 400
+                    params = m.Parameters.query.get(
+                        operator.Operateur_.AgencyCode)
+
+                    return {
+                        'Token': jwt,
+                        'Function': operator.Operateur_.Function,
+                        'SerialNumber': operator.Operateur_.SerialNumber,
+                        'MAG_STOCK': params.MagStock,
+                        'MAG_RENDUS': params.MagRendus,
+                        'MAG_CAISSERIE': params.MagCaisserie,
+                        'MAG_INVENDU': params.MagInvendu,
+                        'CAISSE_P': params.CaissePrincipale,
+                        'CAISSE_D': params.CaisseDepenses}, 200
+
+        return HTTP_STATUS['400'], 400
