@@ -81,3 +81,16 @@ class OperateurTache(db.Model):
 
     def __repr__(self):
         return '<Task %r>' % self.TaskID
+
+
+class Parameters(db.Model):
+    __tablename__ = 'T_PARAMETRES_AGENCE'
+
+    CodeAGCE = db.Column('CODE_AGCE', db.Integer, primary_key=True)
+    MagStock = db.Column('MAG_STOCK', db.Integer, nullable=False)
+    MagRendus = db.Column('MAG_RENDUS', db.Integer, nullable=False)
+    MagCaisserie = db.Column('MAG_CAISSERIE', db.Integer, nullable=False)
+    MagInvendu = db.Column('MAG_INVENDU', db.Integer, nullable=False)
+    CaissePrincipale = db.Column(
+        'CAISSE_PRINCIPALE', db.Integer, nullable=False)
+    CaisseDepenses = db.Column('CAISSE_DEPENSES', db.Integer, nullable=False)
