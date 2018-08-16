@@ -8,7 +8,7 @@ from flask_restful import Resource
 
 from cgc_api.queries import Queries
 from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET, STAT_TABLES
-from cgc_api import app, db
+from cgc_api import app, db, models as v1m
 from cgc_api.api.v2 import models as m
 from cgc_api.crypto import Crypto
 from cgc_api.api.v2.query import Query
@@ -105,24 +105,29 @@ class QueriesAPI_V2(Resource):
         pass
 
     def post(self):
-        data = request.get_json()
-
-        """if data:
-            token = data.get('Token')
-
-            if token:
-                token = m.Token.query.filter_by(TokenHash=token).first()
-                if token:
-                    if token.IssuedAt.date().isoformat() != getDate():
-                        return {'Status': 498,
-                                'Message': 'Token expired'}, 498
-
-            if not token:
-                return {'Status': 401,
-                        'Message': 'Unauthorized access'}, 401"""
-
-        params = data.get('Parameters')
+        jwt = request.data.decode('utf-8')
+        params = None
         responses = list()
+
+        if jwt:
+            crypto = Crypto(SECRET + getDate())
+            header, payload = crypto.readJWT(jwt)
+
+            if payload:
+                token = payload.get('Token')
+
+                if token:
+                    token = v1m.Token.query.filter_by(TokenHash=token).first()
+                    if token:
+                        if token.IssuedAt.date().isoformat() != getDate():
+                            return {'Status': 498,
+                                    'Message': 'Token expired'}, 498
+
+                if not token:
+                    return {'Status': 401,
+                            'Message': 'Unauthorized access'}, 401
+
+                params = payload.get('Parameters')
 
         if params:
             for param in params:
@@ -359,55 +364,59 @@ class RestfulQuery_V2:
 
 class DatabaseAPI_V2(Resource):
     def respond(self, table):
-        data = request.get_json()
+        jwt = request.data.decode('utf-8')
+        params = None
         responses = list()
-        """if data:
-            token = data.get('Token')
 
-            if token:
-                token = m.Token.query.filter_by(TokenHash=token).first()
+        if jwt:
+            crypto = Crypto(SECRET + getDate())
+            header, payload = crypto.readJWT(jwt)
+
+            if payload:
+                token = payload.get('Token')
 
                 if token:
-                    if token.IssuedAt.date().isoformat() != getDate():
-                        return {'Status': 498,
-                                'Message': 'Token expired.'}, 498
+                    token = v1m.Token.query.filter_by(TokenHash=token).first()
+                    if token:
+                        if token.IssuedAt.date().isoformat() != getDate():
+                            return {'Status': 498,
+                                    'Message': 'Token expired'}, 498
 
-            if not token:
-                return {'Status': 401,
-                        'Message': 'Unauthorized access.'}, 401"""
+                if not token:
+                    return {'Status': 401,
+                            'Message': 'Unauthorized access'}, 401
 
-        if data:
-            params = data.get('Parameters')
+                params = payload.get('Parameters')
 
-            if params:
-                for param in params:
-                    param = {'Parameters': param}
+        if params:
+            for param in params:
+                param = {'Parameters': param}
 
-                    restfulQuery = RestfulQuery_V2(param)
+                restfulQuery = RestfulQuery_V2(param)
 
-                    if table in STAT_TABLES:
-                        args = CURRENT_CONFIG[:3] + ('STATISTIQUES',)
-                        restfulQuery._Query = Query(*args)
+                if table in STAT_TABLES:
+                    args = CURRENT_CONFIG[:3] + ('STATISTIQUES',)
+                    restfulQuery._Query = Query(*args)
 
-                    methods = {
-                        'GET': restfulQuery.get,
-                        'POST': restfulQuery.post,
-                        'PUT': restfulQuery.put,
-                        'DELETE': restfulQuery.delete
-                    }
-                    method = data.get('Method')
+                methods = {
+                    'GET': restfulQuery.get,
+                    'POST': restfulQuery.post,
+                    'PUT': restfulQuery.put,
+                    'DELETE': restfulQuery.delete
+                }
+                method = payload.get('Method')
 
-                    try:
-                        response, status_code = methods[method](table)
-                    except KeyError:
-                        responses.append([HTTP_STATUS['405'], 405])
-                        continue
-                    finally:
-                        app.logger.warn('{} {} Data: {}'.format(
-                            request.environ['REMOTE_ADDR'],
-                            type(self).__name__, data))
+                try:
+                    response, status_code = methods[method](table)
+                except KeyError:
+                    responses.append([HTTP_STATUS['405'], 405])
+                    continue
+                finally:
+                    app.logger.warn('{} {} Data: {}'.format(
+                        request.environ['REMOTE_ADDR'],
+                        type(self).__name__, payload))
 
-                    responses.append([response, status_code])
+                responses.append([response, status_code])
 
             return responses, 200
 
