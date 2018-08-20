@@ -98,19 +98,11 @@ class Token(Resource):
                         db.session.add(token)
                         db.session.commit()
 
-                    payload = {'Token': token_hash}
-                    header = JWT_HEADER
-                    jwt = crypto.writeJWT(header, payload)
-
-                    app.logger.info('{} - {} - {} Logged in'.format(
-                        request.environ['REMOTE_ADDR'],
-                        type(self).__name__, operator.Operateur_.OperatorName))
-
                     params = m.Parameters.query.get(
                         operator.Operateur_.AgencyCode)
 
-                    return {
-                        'Token': jwt,
+                    payload = {
+                        'Token': token_hash,
                         'Function': operator.Operateur_.Function,
                         'SerialNumber': operator.Operateur_.SerialNumber,
                         'MAG_STOCK': params.MagStock,
@@ -118,6 +110,16 @@ class Token(Resource):
                         'MAG_CAISSERIE': params.MagCaisserie,
                         'MAG_INVENDU': params.MagInvendu,
                         'CAISSE_P': params.CaissePrincipale,
-                        'CAISSE_D': params.CaisseDepenses}, 200
+                        'CAISSE_D': params.CaisseDepenses}
+                    header = JWT_HEADER
+                    jwt = crypto.writeJWT(header, payload)
+
+                    app.logger.info('{} - {} - {} Logged in'.format(
+                        request.environ['REMOTE_ADDR'],
+                        type(self).__name__, operator.Operateur_.OperatorName))
+
+                    return {'Token': jwt}, 200
 
         return HTTP_STATUS['400'], 400
+
+# TODO: Add logging
