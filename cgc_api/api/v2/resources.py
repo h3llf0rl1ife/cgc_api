@@ -116,7 +116,7 @@ class QueriesAPI_V2(Resource):
             if payload:
                 token = payload.get('Token')
 
-                if token:
+                """if token:
                     token = v1m.Token.query.filter_by(TokenHash=token).first()
                     if token:
                         if token.IssuedAt.date().isoformat() != getDate():
@@ -125,21 +125,25 @@ class QueriesAPI_V2(Resource):
 
                 if not token:
                     return {'Status': 401,
-                            'Message': 'Unauthorized access'}, 401
+                            'Message': 'Unauthorized access'}, 401"""
 
                 params = payload.get('Parameters')
 
         if params:
             for param in params:
                 query = param.get('query')
+                kwargs = param.get('kwargs')
+                log = '{} {} - Query: {} - Data: {}'.format(
+                        request.environ['REMOTE_ADDR'],
+                        type(self).__name__, query, kwargs)
 
                 if query:
                     try:
                         query = getattr(self.queries, query)
-                    except AttributeError:
+                    except AttributeError as e:
+                        app.logger.warning(log)
+                        app.log_exception(e)
                         responses.append([HTTP_STATUS['477'], 477])
-
-                    kwargs = param.get('kwargs')
 
                     if kwargs:
                         kwargs = [removeSQLInjection(kwarg)
@@ -153,21 +157,20 @@ class QueriesAPI_V2(Resource):
                             [self.queries.executeQuery(query(kwargs)), 200])
 
                     except (IndexError, ValueError) as e:
+                        app.logger.warning(log)
+                        app.log_exception(e)
                         responses.append([HTTP_STATUS['472'], 472])
 
                     except (pymssql.ProgrammingError,
                             pymssql.OperationalError) as e:
-                        app.logger.error('Exception: {}'.format(e))
+                        app.logger.warning(log)
+                        app.log_exception(e)
                         responses.append([HTTP_STATUS['488'], 488])
 
                     except pymssql.IntegrityError as e:
-                        app.logger.error('Exception: {}'.format(e))
+                        app.logger.warning(log)
+                        app.log_exception(e)
                         responses.append([HTTP_STATUS['487'], 487])
-
-                    finally:
-                        app.logger.info('{} {} - Query: {} - Data: {}'.format(
-                            request.environ['REMOTE_ADDR'],
-                            type(self).__name__, param.get('query'), kwargs))
 
             return responses, 200
 
@@ -183,6 +186,9 @@ class RestfulQuery_V2:
     def get(self, table):
         data = self.data
         args = list()
+        log = '{} - {} - Table: {} - Data: {}'.format(
+                request.environ['REMOTE_ADDR'], type(self).__name__,
+                table, data)
 
         if data:
             s_columns = data['Parameters']['Select'].get('Columns')
@@ -210,21 +216,21 @@ class RestfulQuery_V2:
                 query=query, params=tuple(w_values)), 200
 
         except pymssql.OperationalError as e:
+            app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['473'], 473
 
         except pymssql.ProgrammingError as e:
+            app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488
-
-        finally:
-            app.logger.info('{} {} Table: {} Data: {}'.format(
-                request.environ['REMOTE_ADDR'],
-                type(self).__name__, table, data))
 
     def delete(self, table):
         data = self.data
         args = list()
+        log = '{} - {} - Table: {} - Data: {}'.format(
+                request.environ['REMOTE_ADDR'], type(self).__name__,
+                table, data)
 
         if data:
             where_data = data['Parameters']['Delete'].get('Where')
@@ -253,20 +259,22 @@ class RestfulQuery_V2:
                     'Message': 'Deleted {} records from {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError:
+        except pymssql.OperationalError as e:
+            app.logger.warning(log)
+            app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError:
+        except pymssql.ProgrammingError as e:
+            app.logger.warning(log)
+            app.log_exception(e)
             return HTTP_STATUS['488'], 488
-
-        finally:
-            app.logger.info('{} {} Table: {} Data: {}'.format(
-                request.environ['REMOTE_ADDR'],
-                type(self).__name__, table, data))
 
     def post(self, table):
         data = self.data
         args = list()
+        log = '{} - {} - Table: {} - Data: {}'.format(
+                request.environ['REMOTE_ADDR'], type(self).__name__,
+                table, data)
 
         if data:
             insert_data = data['Parameters']['Insert'].get('Values')
@@ -292,23 +300,27 @@ class RestfulQuery_V2:
                     'Message': 'Inserted {} records into {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError:
+        except pymssql.OperationalError as e:
+            app.logger.warning(log)
+            app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError:
+        except pymssql.ProgrammingError as e:
+            app.logger.warning(log)
+            app.log_exception(e)
             return HTTP_STATUS['488'], 488
 
-        except pymssql.IntegrityError:
+        except pymssql.IntegrityError as e:
+            app.logger.warning(log)
+            app.log_exception(e)
             return HTTP_STATUS['487'], 487
-
-        finally:
-            app.logger.info('{} {} Table: {} Data: {}'.format(
-                request.environ['REMOTE_ADDR'],
-                type(self).__name__, table, data))
 
     def put(self, table):
         data = self.data
         args = list()
+        log = '{} - {} - Table: {} - Data: {}'.format(
+                request.environ['REMOTE_ADDR'], type(self).__name__,
+                table, data)
 
         if data:
             update_data = data['Parameters']['Update'].get('Values')
@@ -350,16 +362,20 @@ class RestfulQuery_V2:
                     'Message': 'Updated {} record in {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError:
+        except pymssql.OperationalError as e:
+            app.logger.warning(log)
+            app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError:
+        except pymssql.ProgrammingError as e:
+            app.logger.warning(log)
+            app.log_exception(e)
             return HTTP_STATUS['488'], 488
 
-        finally:
-            app.logger.warn('{} {} Table: {} Data: {}'.format(
-                request.environ['REMOTE_ADDR'],
-                type(self).__name__, table, data))
+        except pymssql.IntegrityError as e:
+            app.logger.warning(log)
+            app.log_exception(e)
+            return HTTP_STATUS['487'], 487
 
 
 class DatabaseAPI_V2(Resource):
@@ -375,7 +391,7 @@ class DatabaseAPI_V2(Resource):
             if payload:
                 token = payload.get('Token')
 
-                if token:
+                """if token:
                     token = v1m.Token.query.filter_by(TokenHash=token).first()
                     if token:
                         if token.IssuedAt.date().isoformat() != getDate():
@@ -384,13 +400,16 @@ class DatabaseAPI_V2(Resource):
 
                 if not token:
                     return {'Status': 401,
-                            'Message': 'Unauthorized access'}, 401
+                            'Message': 'Unauthorized access'}, 401"""
 
                 params = payload.get('Parameters')
 
         if params:
             for param in params:
                 param = {'Parameters': param}
+                log = '{} {} Data: {}'.format(
+                        request.environ['REMOTE_ADDR'],
+                        type(self).__name__, param)
 
                 restfulQuery = RestfulQuery_V2(param)
 
@@ -408,18 +427,15 @@ class DatabaseAPI_V2(Resource):
 
                 try:
                     response, status_code = methods[method](table)
-                except KeyError:
+                except KeyError as e:
                     responses.append([HTTP_STATUS['405'], 405])
+                    app.logger.warning(log)
+                    app.log_exception(e)
                     continue
-                finally:
-                    app.logger.warn('{} {} Data: {}'.format(
-                        request.environ['REMOTE_ADDR'],
-                        type(self).__name__, payload))
 
                 responses.append([response, status_code])
 
             return responses, 200
-
         return HTTP_STATUS['471'], 471
 
     def get(self, table):
@@ -429,7 +445,7 @@ class DatabaseAPI_V2(Resource):
         return self.respond(table)
 
 
-class Journee(Resource):
+'''class Journee(Resource):
     queries = Queries(*CURRENT_CONFIG)
 
     def get(self, agence):
@@ -782,6 +798,6 @@ class Journee(Resource):
                 cat='JRN', commentaire=comment, poste=machine, session=session,
                 date_heure=datetime.datetime.now(), code_operateur=operator)
             db.session.add(journal)
-            db.session.commit()
+            db.session.commit()'''
 
 # TODO: Check operator
