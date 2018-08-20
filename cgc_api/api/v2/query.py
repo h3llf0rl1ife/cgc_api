@@ -125,7 +125,6 @@ class Query:
                     cols = ' {} (%s) AND '.join(o[1]) + ' {} %s'
                 else:
                     cols = ' {} %s AND '.join(o[1]) + ' {} %s'
-                    print(cols)
 
                 cols = cols.format(*operator)
                 columns.append(cols)

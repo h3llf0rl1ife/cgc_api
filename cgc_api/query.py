@@ -169,5 +169,3 @@ class Query:
         args = [tablename, u_columns, columns]
 
         return query.format(*args)
-
-    # TODO: Add support for multiple values for the same column

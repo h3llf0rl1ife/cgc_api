@@ -68,7 +68,7 @@ api_v1.add_resource(r.RestfulSchemaV1, '/schema', '/')
 api_v2.add_resource(v2r.RestfulSchemaV2, '/schema', '/')
 api_v2.add_resource(v2r.QueriesAPI_V2, '/queries')
 api_v2.add_resource(v2r.DatabaseAPI_V2, '/query/<string:table>')
-api_v2.add_resource(v2r.Journee, '/journee/<int:agence>')
+# api_v2.add_resource(v2r.Journee, '/journee/<int:agence>')
 auth_jwt.add_resource(a.Auth, '/access')
 auth_jwt.add_resource(a.Token, '/token')
 
