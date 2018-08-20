@@ -174,7 +174,7 @@ class Queries(object):
 
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'], 0)
 
-        kwargs['OPTIONAL_ARG_1'] = '''T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}' '''
+        kwargs['OPTIONAL_ARG_1'] = '''AND T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}' '''
         kwargs['OPTIONAL_ARG_2'] = 'AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}'
 
         if kwargs['Param_date_chargement'] in (None, 'NULL', ''):
@@ -1851,7 +1851,7 @@ class Queries(object):
                 (
                     T_CLIENTS.ACTIF = 1
                     AND	T_CLIENTS.CODE_CLIENT <> 0
-                    AND	T_CLIENTS.CODE_CLIENT NOT IN ({Param_code_clt}) 
+                    {OPTIONAL_ARG_1}
                     AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
                 )
                 AND T_CLIENTS.CODE_AGCE = {CODE_AGCE}
@@ -1866,9 +1866,12 @@ class Queries(object):
         except IndexError as e:
             return e
         
-        for key in kwargs:
-            if kwargs[key] in (None, 'NULL', ''):
-                return ValueError
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_CLIENTS.CODE_CLIENT NOT IN ({Param_code_clt})'
+        if kwargs['Param_code_secteur'] in (None, 'NULL', ''):
+            kwargs['OPTIONAL_ARG_1'] = ''
+
+        if kwargs['Param_code_secteur'] in (None, 'NULL', ''):
+            return ValueError
 
         return query.format(**kwargs)
 
@@ -2298,7 +2301,7 @@ class Queries(object):
         
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
-        if kwargs['Param_date_mvt'] in (None, 'NULL', ''):
+        if kwargs['Param_date_chargement'] in (None, 'NULL', ''):
             return ValueError
         
         kwargs['OPTIONAL_ARG_1'] = 'T_COND_CHARGEE.code_secteur = {Param_code_secteur} AND'
@@ -3249,7 +3252,8 @@ class Queries(object):
             kwargs = {
                 'Param_valid': args[0],
                 'Param_egal_categorie': args[1],
-                'Param_diff_categorie': args[2]
+                'Param_diff_categorie': args[2],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
@@ -3258,7 +3262,7 @@ class Queries(object):
             return ValueError
         
         kwargs['OPTIONAL_ARG_1'] = 'T_RETOURS_USINE.VALID = {Param_valid} AND'
-        kwargs['OPTIONAL_ARG_2'] = 'T_RETOURS_USINE.CATEGORIE = {Param_egal_categorie} AND'
+        kwargs['OPTIONAL_ARG_2'] = 'T_RETOURS_USINE.CATEGORIE = \'{Param_egal_categorie}\' AND'
 
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_valid'] in (None, 'NULL', '') else kwargs['OPTIONAL_ARG_1']
         kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_egal_categorie'] in (None, 'NULL', '') else kwargs['OPTIONAL_ARG_2']
@@ -4618,7 +4622,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def REQ_ls_appareil(self, args): #Done
+    def Req_ls_appareil(self, args): #Done
         query = '''
             SELECT 
                 T_APPAREIL.CODE_APPAREIL AS CODE_APPAREIL,	
@@ -4656,9 +4660,9 @@ class Queries(object):
         except IndexError as e:
             return e
         
-        kwargs['OPTIONAL_ARG_1'] = 'T_APPAREIL.CODE_APPAREIL = {pAppareil} AND'
+        kwargs['OPTIONAL_ARG_1'] = 'AND T_APPAREIL.CODE_APPAREIL = {pAppareil}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['pAppareil'] in (None, 'NULL', '') else kwargs['OPTIONAL_ARG_1']
-        kwargs['OPTIONAL_ARG_2'] = 'ISNULL(T_APPAREIL.CODE_OPERATEUR , -1)  = {pOperateur_Moins1PourNull}'
+        kwargs['OPTIONAL_ARG_2'] = 'AND ISNULL(T_APPAREIL.CODE_OPERATEUR , -1)  = {pOperateur_Moins1PourNull}'
         kwargs['OPTIONAL_ARG_2'] = '' if kwargs['pOperateur_Moins1PourNull'] in (None, 'NULL', '') else kwargs['OPTIONAL_ARG_2']
         
         return query.format(**kwargs).format(**kwargs)
@@ -5962,7 +5966,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_clients_itinéraire(self, args): #Done
+    def Req_ls_clients_itineraire(self, args): #Done
         query = '''
             SELECT 
                 T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -7679,11 +7683,8 @@ class Queries(object):
                 T_OPERATEUR
             WHERE 
                 T_FONCTION.CODE_FONCTION = T_OPERATEUR.FONCTION
-                AND
-                (
-                    T_OPERATEUR.ACTIF = {Param_actif}
-                    AND	T_OPERATEUR.CODE_OPERATEUR <> 0
-                )
+                {OPTIONAL_ARG_1}
+                AND	T_OPERATEUR.CODE_OPERATEUR <> 0
                 AND T_OPERATEUR.CODE_AGCE = {CODE_AGCE}
             ORDER BY 
                 NOM_OPERATEUR ASC
@@ -7696,9 +7697,11 @@ class Queries(object):
             }
         except IndexError as e:
             return e
+        
+        kwargs['OPTIONAL_ARG_1'] = 'AND T_OPERATEUR.ACTIF = {Param_actif}'
 
         if kwargs['Param_actif'] in (None, 'NULL', ''):
-            return ValueError
+            kwargs['OPTIONAL_ARG_1'] = ''
 
         return query.format(**kwargs)
 
@@ -7867,10 +7870,10 @@ class Queries(object):
                 (
                     T_OPERATIONS_CAISSE.DATE_OPERATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                     {OPTIONAL_ARG_1}
-                    AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ({Param_type_operation}) 
-                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION <> ({Param_diff_validation}) 
+                    AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ('{Param_type_operation}') 
+                    {OPTIONAL_ARG_2}
                 )
-                AND T_OPERATIONS_CAISSE.CODE_AGCE = {CODE_ACGE}
+                AND T_OPERATIONS_CAISSE.CODE_AGCE = {CODE_AGCE}
             ORDER BY 
                 CODE_OPERATION DESC
         '''
@@ -7880,7 +7883,7 @@ class Queries(object):
                 'Param_dt1': args[0],
                 'Param_dt2': args[1],
                 'Param_date_validation': args[2],
-                'Param_type_operation': args[3],
+                'Param_type_operation': '\',\''.join(args[3].split(',')),
                 'Param_diff_validation': args[4],
                 'CODE_AGCE': args[len(args) - 1]
             }
@@ -7890,13 +7893,17 @@ class Queries(object):
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
         kwargs['Param_date_validation'] = self.validateDate(kwargs['Param_date_validation'])
+        kwargs['Param_diff_validation'] = self.validateDate(kwargs['Param_diff_validation'])
 
-        for key in ('Param_dt1', 'Param_dt2', 'Param_type_operation', 'Param_diff_validation', 'CODE_AGCE'):
+        for key in ('Param_dt1', 'Param_dt2', 'Param_type_operation'):
             if kwargs[key] in (None, 'NULL', ''):
                 return ValueError
 
         kwargs['OPTIONAL_ARG_1'] = '''AND T_OPERATIONS_CAISSE.DATE_VALIDATION = '{Param_date_validation}' '''
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_date_validation'] in (None, 'NULL', '') else kwargs['OPTIONAL_ARG_1']
+
+        kwargs['OPTIONAL_ARG_2'] = 'AND T_OPERATIONS_CAISSE.DATE_VALIDATION <> (\'{Param_diff_validation}\')'
+        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_diff_validation'] in (None, 'NULL', '') else kwargs['OPTIONAL_ARG_2']
 
         return query.format(**kwargs).format(**kwargs)
 
@@ -7927,9 +7934,9 @@ class Queries(object):
                 AND		T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
                 AND
                 (
-                    T_OPERATIONS_CAISSE.DATE_OPERATION = '{Param_date_operation}'
-                    AND	T_OPERATIONS_CAISSE.DATE_VALIDATION = '1900-01-01 00:00:00'
-                    AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ({Param_type_operation}) 
+                    T_OPERATIONS_CAISSE.DATE_VALIDATION = '1900-01-01 00:00:00'
+                    {OPTIONAL_ARG_1}
+                    AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ('{Param_type_operation}') 
                 )
                 AND T_OPERATIONS_CAISSE.CODE_AGCE = {CODE_AGCE}
         '''
@@ -7937,7 +7944,7 @@ class Queries(object):
         try:
             kwargs = {
                 'Param_date_operation': args[0],
-                'Param_type_operation': args[1],
+                'Param_type_operation': '\',\''.join(args[1].split(',')),
                 'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
@@ -7945,11 +7952,15 @@ class Queries(object):
         
         kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
 
-        for key in kwargs:
-            if kwargs[key] in (None, 'NULL', ''):
-                return ValueError
+        kwargs['OPTIONAL_ARG_1'] = 'AND T_OPERATIONS_CAISSE.DATE_OPERATION = \'{Param_date_operation}\''
 
-        return query.format(**kwargs)
+        if kwargs['Param_date_operation'] in (None, 'NULL', ''):
+            kwargs['OPTIONAL_ARG_1'] = ''
+
+        if kwargs['Param_type_operation'] in (None, 'NULL', ''):
+            return ValueError
+
+        return query.format(**kwargs).format(**kwargs)
 
     def Req_ls_prelev_journee(self, args): #Done
         query = '''
@@ -9305,7 +9316,7 @@ class Queries(object):
                 T_VEHICULE
             WHERE 
                 T_VEHICULE.ACTIF = 1
-                AND	T_VEHICULE.Id_Type_Vehicule = {ParamId_Type_Vehicule}
+                {OPTIONAL_ARG_1}
         '''
 
         try:
@@ -9315,10 +9326,12 @@ class Queries(object):
         except IndexError as e:
             return e
 
-        if kwargs['ParamId_Type_Vehicule'] in (None, 'NULL', ''):
-            return ValueError
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_VEHICULE.Id_Type_Vehicule = {ParamId_Type_Vehicule}'
 
-        return query.format(**kwargs)
+        if kwargs['ParamId_Type_Vehicule'] in (None, 'NULL', ''):
+            kwargs['OPTIONAL_ARG_1'] = ''
+
+        return query.format(**kwargs).format(**kwargs)
 
     def Req_ls_vendeurs(self, args): #Done
         query = '''
@@ -9666,9 +9679,11 @@ class Queries(object):
             SELECT 
                 MAX(T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION) AS le_maximum_ID_JUSTIFICATION
             FROM 
-                T_AUTORISATIONS_SOLDE
+                T_AUTORISATIONS_SOLDE,
+                T_OPERATEUR
             WHERE
-                T_AUTORISATIONS_SOLDE.CODE_AGCE = {CODE_AGCE}
+                T_OPERATEUR.CODE_OPERATEUR = T_AUTORISATIONS_SOLDE.CODE_OPERATEUR
+                AND T_OPERATEUR.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
@@ -9688,9 +9703,11 @@ class Queries(object):
             SELECT 
                 MAX(T_AUTORISATION_SOLDE_CAISSERIE.ID_JUSTIFICATION) AS le_maximum_ID_JUSTIFICATION
             FROM 
-                T_AUTORISATION_SOLDE_CAISSERIE
+                T_AUTORISATION_SOLDE_CAISSERIE,
+                T_OPERATEUR
             WHERE
-                T_AUTORISATION_SOLDE_CAISSERIE.CODE_AGCE = {CODE_AGCE}
+                T_OPERATEUR.CODE_OPERATEUR = T_AUTORISATION_SOLDE_CAISSERIE.CODE_OPERATEUR
+                AND T_OPERATEUR.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
@@ -10164,7 +10181,7 @@ class Queries(object):
                 (
                     T_CHARGEMENT.VALID = 1
                     AND	T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}'
-                    AND	T_OPERATEUR.FONCTION = {Param_fonction}
+                    {OPTIONAL_ARG_1}
                 )
                 AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
@@ -13010,9 +13027,8 @@ class Queries(object):
         
         kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
 
-        for kwarg in kwargs:
-            if kwargs[kwarg] in (None, 'NULL', ''):
-                return ValueError
+        if kwargs['Param_date_journee'] in (None, 'NULL', ''):
+            return ValueError
         
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOLDE_INITIAL.CODE_OPERATEUR = {Param_code_operateur}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_operateur'] in (None, 'NULL', '') else kwargs['OPTIONAL_ARG_1']
@@ -13194,7 +13210,7 @@ class Queries(object):
             FROM 
                 T_STOCK_INIT
             WHERE 
-                T_STOCK_INIT.CATEGORIE = {Param_categorie}
+                T_STOCK_INIT.CATEGORIE = '{Param_categorie}'
                 AND	T_STOCK_INIT.DATE_PS = '{Param_date_stock}'
                 AND T_STOCK_INIT.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
@@ -13513,7 +13529,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_itinéraire(self, args): #Done
+    def Req_supp_itineraire(self, args): #Done
         query = '''
             DELETE FROM 
                 T_ITINERAIRES
@@ -15308,8 +15324,8 @@ class Queries(object):
         try:
             kwargs = {
                 'Param_date_mvt': args[0],
-                'Param2': args[1],
-                'Param3': args[2],
+                'Param_code_cp': args[1],
+                'Param_operateur': args[2],
                 'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
@@ -15760,7 +15776,8 @@ class Queries(object):
                 'Param_date_operation': args[0],
                 'Param_type_mouvement': args[1],
                 'Param_sous_type': args[2],
-                'Param_ls_motifs': args[3]
+                'Param_ls_motifs': args[3],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
@@ -15828,11 +15845,26 @@ class Queries(object):
                 T_MAGASIN_COND.CODE_CP AS CODE_CP,	
                 SUM(T_MAGASIN_COND.QTE_STOCK) AS la_somme_QTE_STOCK
             FROM 
-                T_MAGASIN_COND
+                T_MAGASIN_COND,
+                T_PARAMETRES_AGENCE a
+            WHERE
+                T_MAGASIN_COND.CODE_MAGASIN IN (a.MAG_INVENDU, a.MAG_RENDUS, a.MAG_CAISSERIE, a.MAG_STOCK)
+                AND a.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_MAGASIN_COND.CODE_CP
         '''
-        return query
+
+        try:
+            kwargs = {
+                'CODE_AGCE': args[len(args) - 1]
+            }
+        except IndexError as e:
+            return e
+
+        if kwargs['CODE_AGCE'] in (None, 'NULL', ''):
+            return ValueError
+
+        return query.format(**kwargs)
 
     def Req_total_prelev(self, args): #Done
         query = '''
@@ -19843,7 +19875,7 @@ class Queries(object):
                 T_ARTICLES_MAGASINS 
                 (CODE_ARTICLE, CATEGORIE, MAGASIN, QTE_STOCK)
             VALUES
-                ({code_article}, {categorie}, {magasin}, {qte_stock})
+                ({code_article}, '{categorie}', {magasin}, {qte_stock})
         '''
 
         try:
@@ -19965,3 +19997,79 @@ class Queries(object):
             return ValueError
 
         return query.format(**kwargs)
+
+    def Req_select_magasin_cond(self, args): #Done
+        query = '''
+            SELECT 
+                m.*
+            FROM 
+                T_MAGASIN_COND m
+                INNER JOIN T_PARAMETRES_AGENCE a
+                ON m.CODE_MAGASIN = a.MAG_STOCK OR m.CODE_MAGASIN = a.MAG_RENDUS
+                OR m.CODE_MAGASIN = a.MAG_INVENDU OR m.CODE_MAGASIN = a.MAG_CAISSERIE
+            WHERE
+                a.CODE_AGCE = {CODE_AGCE}
+        '''
+
+        try:
+            kwargs = {
+                'CODE_AGCE': args[len(args) - 1]
+            }
+        except IndexError as e:
+            return e
+
+        if kwargs['CODE_AGCE'] in (None, 'NULL', ''):
+            return ValueError
+
+        return query.format(**kwargs)
+
+    def Req_conv_affectation_imprimer(self, args): #Done
+        query = '''
+            select DATE_CHARGEMENT,NOM_SECTEUR,v.MATRICULE AS MAT_VENDEUR,V.NOM_OPERATEUR AS VENDEUR,c.MATRICULE AS MAT_CHAUFFEUR,ISNULL(C.NOM_OPERATEUR,'') AS CHAUFFEUR,A1.MATRICULE AS MAT_AIDE1,ISNULL(A1.NOM_OPERATEUR,'') AS AIDE1,A2.MATRICULE AS MAT_AIDE2,ISNULL(A2.NOM_OPERATEUR,'') AS AIDE2 
+            from t_chargement,T_SECTEUR,T_OPERATEUR V,T_OPERATEUR c,T_OPERATEUR A1,T_OPERATEUR A2
+            where T_CHARGEMENT.CODE_CHARGEMENT in (select distinct CODE_CHARGEMENT from T_PRODUITS_CHARGEE where DATE_CHARGEMENT between '{Param_dt1}' and '{Param_dt2}' and QTE_CHARGEE<>0 )
+            and T_CHARGEMENT.CODE_SECTEUR = T_SECTEUR.CODE_SECTEUR
+            AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
+            and V.CODE_OPERATEUR = T_CHARGEMENT.CODE_VENDEUR
+            and C.CODE_OPERATEUR = T_CHARGEMENT.CODE_CHAUFFEUR
+            and A1.CODE_OPERATEUR = T_CHARGEMENT.AIDE_VENDEUR1
+            and A2.CODE_OPERATEUR = T_CHARGEMENT.AIDE_VENDEUR2
+            order by DATE_CHARGEMENT,RANG
+        '''
+
+        try:
+            kwargs = {
+                'Param_dt1': args[0],
+                'Param_dt2': args[1],
+                'CODE_AGCE': args[len(args) - 1]
+            }
+        except IndexError as e:
+            return e
+
+        kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+
+        for kwarg in kwargs:
+            if kwargs[kwarg] in (None, 'NULL', ''):
+                return ValueError
+
+        return query.format(**kwargs)
+
+    """def Req_conv_pop_client_acredit(self, args): #Done
+        query = '''
+            SELECT T.CODE_CLIENT, T.NOM_CLIENT,s.CODE_SECTEUR,S.NOM_SECTEUR,ss.CODE_SOUS_SECTEUR,SS.NOM_SOUS_SECTEUR,
+            E.CODE_CAT_CLIENT,E.NOM_CATEGORIE,A.CODE_AGCE,A.NOM_AGENCE,G.ID_GROUP,G.NOM_GROUP,T.ADRESSE,T.TELEPHONE,
+            T.CLIENT_EN_COMPTE,T.SOLDE_C_STD
+            FROM dbo.TMPS_CLIENTS T ,dbo.T_AGENCE A,dbo.T_GROUP_CLIENT G,dbo.T_CAT_CLIENTS E,dbo.T_SECTEUR S,dbo.T_SOUS_SECTEUR SS
+            WHERE T.CODE_AGCE=A.CODE_AGCE AND G.ID_GROUP=T.GROUP_CLIENT AND E.CODE_CAT_CLIENT=T.CAT_CLIENT
+            AND T.SOUS_SECTEUR=SS.CODE_SOUS_SECTEUR AND S.CODE_SECTEUR=SS.CODE_SECTEUR AND   A.CODE_AGCE={CODE_AGCE}  AND T.VALIDER_SIEGE=1  AND T.VALIDER_AGENCE IS NULL
+        '''
+
+        try:
+            kwargs = {
+                'CODE_AGCE': args[len(args) - 1]
+            }
+        except IndexError as e:
+            return e
+
+        return query.format(**kwargs)"""
