@@ -4,7 +4,7 @@ requires = (
     'flask>=1.0',
     'flask-restful>=0.3.6',
     'python-dateutil>=2.7.2',
-    'cryptography',
+    'cryptography>=2.3.1',
     'flask-sqlalchemy',
     # 'pymssql==2.1.3' install from .wheel instead
 )
