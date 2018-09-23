@@ -1,7 +1,7 @@
 from cgc_api import db
 
 
-class Token(db.Model):
+"""class Token(db.Model):
     __tablename__ = 'T_CGC_API_TOKEN'
 
     TokenID = db.Column(db.Integer, primary_key=True)
@@ -49,7 +49,7 @@ class Operator(db.Model):
         'Operateur', backref='Operator_', lazy=True, uselist=False)
 
     def __repr__(self):
-        return '<Operator %r>' % self.OperatorCode
+        return '<Operator %r>' % self.OperatorCode"""
 
 
 class Operateur(db.Model):
