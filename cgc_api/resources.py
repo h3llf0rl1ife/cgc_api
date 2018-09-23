@@ -38,14 +38,14 @@ class QueriesAPI(Resource):
 
     def post(self):
         jwt = request.data.decode('utf-8')
-        params = None
+        params, agency = None, 0
 
         if jwt:
             crypto = Crypto(SECRET + getDate())
             header, payload = crypto.readJWT(jwt)
 
             if payload:
-                token = payload.get('Token')
+                # token = payload.get('Token')
 
                 """if token:
                     token = v1m.Token.query.filter_by(TokenHash=token).first()
@@ -59,6 +59,7 @@ class QueriesAPI(Resource):
                             'Message': 'Unauthorized access'}, 401"""
 
                 params = payload.get('Parameters')
+                agency = payload.get('Agency')
 
         if params:
             query = params.get('query')
@@ -79,9 +80,9 @@ class QueriesAPI(Resource):
 
                 if kwargs:
                     kwargs = [removeSQLInjection(kwarg) for kwarg in kwargs]
-                    kwargs.append(8)
+                    kwargs.append(agency)
                 else:
-                    kwargs = [8]
+                    kwargs = [agency]
 
                 try:
                     return self.queries.executeQuery(query(kwargs))
@@ -319,7 +320,7 @@ class DatabaseAPI(Resource):
                 type(self).__name__, payload)
 
             if payload:
-                token = payload.get('Token')
+                # token = payload.get('Token')
 
                 """if token:
                     token = v1m.Token.query.filter_by(TokenHash=token).first()
