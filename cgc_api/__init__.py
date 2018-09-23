@@ -28,7 +28,7 @@ dictConfig({
             'filename': 'wsgi.log'}},
     'root': {
         'level': 'INFO',
-        'handlers': ['wsgi']
+        'handlers': ['file']
     }
 })
 
