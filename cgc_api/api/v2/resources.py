@@ -106,7 +106,7 @@ class QueriesAPI_V2(Resource):
 
     def post(self):
         jwt = request.data.decode('utf-8')
-        params = None
+        params, agency = None, 0
         responses = list()
 
         if jwt:
@@ -114,7 +114,7 @@ class QueriesAPI_V2(Resource):
             header, payload = crypto.readJWT(jwt)
 
             if payload:
-                token = payload.get('Token')
+                # token = payload.get('Token')
 
                 """if token:
                     token = v1m.Token.query.filter_by(TokenHash=token).first()
@@ -128,6 +128,7 @@ class QueriesAPI_V2(Resource):
                             'Message': 'Unauthorized access'}, 401"""
 
                 params = payload.get('Parameters')
+                agency = payload.get('Agency')
 
         if params:
             for param in params:
@@ -148,9 +149,9 @@ class QueriesAPI_V2(Resource):
                     if kwargs:
                         kwargs = [removeSQLInjection(kwarg)
                                   for kwarg in kwargs]
-                        kwargs.append(8)
+                        kwargs.append(agency)
                     else:
-                        kwargs = [8]
+                        kwargs = [agency]
 
                     try:
                         responses.append(
@@ -202,7 +203,7 @@ class RestfulQuery_V2:
                     columns = list()
 
                     for cv in colvals:
-                        cv = cv.split(':')
+                        cv = cv.split('^')
                         columns.append(cv[0])
                         w_values.append(cv[1])
 
@@ -242,7 +243,7 @@ class RestfulQuery_V2:
                     columns = list()
 
                     for cv in colvals:
-                        cv = cv.split(':')
+                        cv = cv.split('^')
                         columns.append(cv[0])
                         w_values.append(cv[1])
 
@@ -284,7 +285,7 @@ class RestfulQuery_V2:
                 colvals = insert_data.split(';')
 
                 for cv in colvals:
-                    cv = cv.split(':')
+                    cv = cv.split('^')
                     i_columns.append(cv[0])
                     i_values.append(cv[1])
 
@@ -330,7 +331,7 @@ class RestfulQuery_V2:
                 colvals = update_data.split(';')
 
                 for cv in colvals:
-                    cv = cv.split(':')
+                    cv = cv.split('^')
                     u_columns.append(cv[0])
                     u_values.append(cv[1])
 
@@ -345,7 +346,7 @@ class RestfulQuery_V2:
                     columns = list()
 
                     for cv in colvals:
-                        cv = cv.split(':')
+                        cv = cv.split('^')
                         columns.append(cv[0])
                         w_values.append(cv[1])
 
@@ -389,7 +390,7 @@ class DatabaseAPI_V2(Resource):
             header, payload = crypto.readJWT(jwt)
 
             if payload:
-                token = payload.get('Token')
+                # token = payload.get('Token')
 
                 """if token:
                     token = v1m.Token.query.filter_by(TokenHash=token).first()
