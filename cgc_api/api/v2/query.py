@@ -109,9 +109,13 @@ class Query:
                             return row['name']
                 return None
 
-    def getRequest(self, tablename, s_columns=['*'], w_columns=None):
+    def getRequest(self, tablename, s_columns, w_columns=None):
         query = 'SELECT {} FROM {}'
-        s_columns = ', '.join(s_columns)
+        if s_columns:
+            s_columns = ', '.join(s_columns)
+        else:
+            s_columns = '*'
+
         args = [s_columns, tablename]
 
         if w_columns:
@@ -167,7 +171,7 @@ class Query:
         return query.format(*args)
 
     def putRequest(self, tablename, u_columns, w_columns=None):
-        query = 'UPDATE {} SET {} WHERE {}'
+        query = 'UPDATE {} SET {}'
         u_columns = ' = %s, '.join(u_columns) + ' = %s'
         args = [tablename, u_columns]
 
