@@ -11,17 +11,14 @@ from cgc_api.query import Query
 from cgc_api.config import CURRENT_CONFIG, STAT_TABLES, HTTP_STATUS, SECRET
 from cgc_api import app
 from cgc_api.crypto import Crypto
-
-
-def getDate():
-    return datetime.date.today().isoformat()
+from auth import getDate
 
 
 def removeSQLInjection(text):
     if not isinstance(text, str):
         return text
 
-    chars = {';': '', '--': '', '\'': '', '/': '', '/': '', '*': ''}
+    chars = {';': '', '--': '', '/*': '', '*/': ''}
     rx = re.compile('|'.join(map(re.escape, chars)))
 
     def one_xlat(match):
@@ -211,7 +208,8 @@ class RestfulQuery:
             w_columns = [*data['Parameters']['Update']['Where']]
 
         u_values = data['Parameters']['Update']['Values']
-        u_values = tuple([u_values[column] for column in u_columns])
+        u_values = tuple([u_values[column] if u_values[column] != 'NULL'
+                          else None for column in u_columns])
 
         w_values = data['Parameters']['Update']['Where']
 
@@ -340,9 +338,9 @@ class DatabaseAPI(Resource):
 
             restfulQuery = RestfulQuery(params)
 
-            if table in STAT_TABLES:
+            """if table in STAT_TABLES:
                 args = CURRENT_CONFIG[:3] + ('STATISTIQUES',)
-                restfulQuery._Query = Query(*args)
+                restfulQuery._Query = Query(*args)"""
 
             methods = {
                 'GET': restfulQuery.get,
