@@ -12,23 +12,8 @@ from cgc_api import app, db, models as v1m
 from cgc_api.api.v2 import models as m
 from cgc_api.crypto import Crypto
 from cgc_api.api.v2.query import Query
-
-
-def getDate():
-    return datetime.date.today().isoformat()
-
-
-def removeSQLInjection(text):
-    if not isinstance(text, str):
-        return text
-
-    chars = {';': '', '--': '', '\'': '', '/': '', '/': '', '*': ''}
-    rx = re.compile('|'.join(map(re.escape, chars)))
-
-    def one_xlat(match):
-        return chars[match.group(0)]
-
-    return rx.sub(one_xlat, text)
+from cgc_api.resources import removeSQLInjection
+from auth import getDate
 
 
 class RestfulSchemaV2(Resource):
@@ -414,9 +399,9 @@ class DatabaseAPI_V2(Resource):
 
                 restfulQuery = RestfulQuery_V2(param)
 
-                if table in STAT_TABLES:
+                """if table in STAT_TABLES:
                     args = CURRENT_CONFIG[:3] + ('STATISTIQUES',)
-                    restfulQuery._Query = Query(*args)
+                    restfulQuery._Query = Query(*args)"""
 
                 methods = {
                     'GET': restfulQuery.get,
