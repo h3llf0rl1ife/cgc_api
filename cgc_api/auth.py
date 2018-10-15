@@ -69,7 +69,7 @@ class Token(Resource):
 
                 operator = m.Operator.query.filter_by(
                     OperatorCode=payload.get('Operator')).first()"""
-                
+
                 operator = m.Operateur.query.filter_by(
                     OperatorCode=payload.get('Operator')).first()
 
