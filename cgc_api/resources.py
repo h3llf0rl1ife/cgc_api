@@ -1,14 +1,13 @@
 import re
-import datetime
 from collections import OrderedDict
 
-import pymssql
+import pyodbc
 from flask import request
 from flask_restful import Resource
 
 from cgc_api.queries import Queries
 from cgc_api.query import Query
-from cgc_api.config import CURRENT_CONFIG, STAT_TABLES, HTTP_STATUS, SECRET
+from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET  #, STAT_TABLES
 from cgc_api import app
 from cgc_api.crypto import Crypto
 from auth import getDate
@@ -89,13 +88,13 @@ class QueriesAPI(Resource):
                     app.log_exception(e)
                     return HTTP_STATUS['472'], 472
 
-                except (pymssql.ProgrammingError,
-                        pymssql.OperationalError) as e:
+                except (pyodbc.ProgrammingError,
+                        pyodbc.OperationalError) as e:
                     app.logger.warning(log)
                     app.log_exception(e)
                     return HTTP_STATUS['488'], 488
 
-                except pymssql.IntegrityError as e:
+                except pyodbc.IntegrityError as e:
                     app.logger.warning(log)
                     app.log_exception(e)
                     return HTTP_STATUS['487'], 487
@@ -134,14 +133,15 @@ class RestfulQuery:
         query = self._Query.getRequest(table, column)
 
         try:
-            return self._Query.executeQuery(query=query, param=str(value)), 200
+            param = (value, ) if value else value
+            return self._Query.executeQuery(query=query, param=param), 200
 
-        except pymssql.OperationalError as e:
+        except pyodbc.OperationalError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['473'], 473
 
-        except pymssql.ProgrammingError as e:
+        except pyodbc.ProgrammingError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488
@@ -171,17 +171,17 @@ class RestfulQuery:
                     'Message': 'Inserted {} record into {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError as e:
+        except pyodbc.OperationalError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError as e:
+        except pyodbc.ProgrammingError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488
 
-        except pymssql.IntegrityError as e:
+        except pyodbc.IntegrityError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['487'], 487
@@ -234,12 +234,12 @@ class RestfulQuery:
                     'Message': 'Updated {} record in {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError as e:
+        except pyodbc.OperationalError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError as e:
+        except pyodbc.ProgrammingError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488
@@ -294,12 +294,12 @@ class RestfulQuery:
                     'Message': 'Deleted {} records from {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError as e:
+        except pyodbc.OperationalError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError as e:
+        except pyodbc.ProgrammingError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488

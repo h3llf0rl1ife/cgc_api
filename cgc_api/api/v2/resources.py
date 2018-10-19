@@ -1,15 +1,11 @@
-import re
-import datetime
-import calendar
-
-import pymssql
+import pyodbc
 from flask import request
 from flask_restful import Resource
 
 from cgc_api.queries import Queries
-from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET, STAT_TABLES
-from cgc_api import app, db, models as v1m
-from cgc_api.api.v2 import models as m
+from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET  # , STAT_TABLES
+from cgc_api import app  # , db, models as v1m
+# from cgc_api.api.v2 import models as m
 from cgc_api.crypto import Crypto
 from cgc_api.api.v2.query import Query
 from cgc_api.resources import removeSQLInjection
@@ -147,13 +143,13 @@ class QueriesAPI_V2(Resource):
                         app.log_exception(e)
                         responses.append([HTTP_STATUS['472'], 472])
 
-                    except (pymssql.ProgrammingError,
-                            pymssql.OperationalError) as e:
+                    except (pyodbc.ProgrammingError,
+                            pyodbc.OperationalError) as e:
                         app.logger.warning(log)
                         app.log_exception(e)
                         responses.append([HTTP_STATUS['488'], 488])
 
-                    except pymssql.IntegrityError as e:
+                    except pyodbc.IntegrityError as e:
                         app.logger.warning(log)
                         app.log_exception(e)
                         responses.append([HTTP_STATUS['487'], 487])
@@ -201,12 +197,12 @@ class RestfulQuery_V2:
             return self._Query.executeQuery(
                 query=query, params=tuple(w_values)), 200
 
-        except pymssql.OperationalError as e:
+        except pyodbc.OperationalError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['473'], 473
 
-        except pymssql.ProgrammingError as e:
+        except pyodbc.ProgrammingError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488
@@ -245,12 +241,12 @@ class RestfulQuery_V2:
                     'Message': 'Deleted {} records from {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError as e:
+        except pyodbc.OperationalError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError as e:
+        except pyodbc.ProgrammingError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488
@@ -286,17 +282,17 @@ class RestfulQuery_V2:
                     'Message': 'Inserted {} records into {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError as e:
+        except pyodbc.OperationalError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError as e:
+        except pyodbc.ProgrammingError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488
 
-        except pymssql.IntegrityError as e:
+        except pyodbc.IntegrityError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['487'], 487
@@ -348,17 +344,17 @@ class RestfulQuery_V2:
                     'Message': 'Updated {} record in {}.'.format(
                         row_count, table)}, 200
 
-        except pymssql.OperationalError as e:
+        except pyodbc.OperationalError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['471'], 471
 
-        except pymssql.ProgrammingError as e:
+        except pyodbc.ProgrammingError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['488'], 488
 
-        except pymssql.IntegrityError as e:
+        except pyodbc.IntegrityError as e:
             app.logger.warning(log)
             app.log_exception(e)
             return HTTP_STATUS['487'], 487

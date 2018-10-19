@@ -1,8 +1,10 @@
-from datetime import datetime
-from decimal import Decimal
 from collections import OrderedDict
 
 import pymssql
+import pyodbc
+import pandas as pd
+
+from serializer import serialize
 
 
 class Query:
@@ -33,24 +35,24 @@ class Query:
         if type(query) != str:
             raise query
 
-        with pymssql.connect(*self.connParams) as conn:
-            with conn.cursor(as_dict=True) as cursor:
-                cursor.execute(query, params)
-                row_count = cursor.rowcount
+        with pyodbc.connect(
+                'DRIVER={ODBC Driver 13 for SQL Server};'
+                + ('SERVER={server},{port}; DATABASE={database}; \
+                    UID={username}; PWD={password}').format(
+                    server=self.server, port=1433, database=self.database,
+                    username=self.user, password=self.password)
+                ) as conn:
 
-                if with_result is not True:
-                    conn.commit()
-
-                if with_result is True:
-                    entries = cursor.fetchall()
-                    for entry in entries:
-                        for cell in entry:
-                            if isinstance(entry[cell], datetime):
-                                entry[cell] = str(entry[cell])
-                            elif isinstance(entry[cell], Decimal):
-                                entry[cell] = float(entry[cell])
-                    return entries
-        return row_count
+            if with_result:
+                entries = pd.read_sql_query(query, conn, params=params)
+                entries = entries.fillna('').to_dict('records')
+                return serialize(entries)
+            else:
+                with conn.cursor() as cursor:
+                    cursor.execute(query, params)
+                    row_count = cursor.rowcount
+                    return row_count
+        return []
 
     def validateTable(self, table):
         with pymssql.connect(*self.connParams) as conn:
@@ -126,9 +128,9 @@ class Query:
                 operator = [self.operators[o[0]] for i in range(len(o[1]))]
 
                 if o[0] in ('In', 'NotIn'):
-                    cols = ' {} (%s) AND '.join(o[1]) + ' {} %s'
+                    cols = ' {} (?) AND '.join(o[1]) + ' {} ?'
                 else:
-                    cols = ' {} %s AND '.join(o[1]) + ' {} %s'
+                    cols = ' {} ? AND '.join(o[1]) + ' {} ?'
 
                 cols = cols.format(*operator)
                 columns.append(cols)
@@ -150,9 +152,9 @@ class Query:
                 operator = [self.operators[o[0]] for i in range(len(o[1]))]
 
                 if o[0] in ('In', 'NotIn'):
-                    cols = ' {} (%s) AND '.join(o[1]) + ' {} %s'
+                    cols = ' {} (?) AND '.join(o[1]) + ' {} ?'
                 else:
-                    cols = ' {} %s AND '.join(o[1]) + ' {} %s'
+                    cols = ' {} ? AND '.join(o[1]) + ' {} ?'
 
                 cols = cols.format(*operator)
                 columns.append(cols)
@@ -164,7 +166,7 @@ class Query:
 
     def postRequest(self, tablename, columns):
         query = 'INSERT INTO {} ({}) VALUES({})'
-        values = ', '.join(['%s' for column in columns])
+        values = ', '.join(['?' for column in columns])
         columns = ', '.join(columns)
         args = [tablename, columns, values]
 
@@ -172,7 +174,7 @@ class Query:
 
     def putRequest(self, tablename, u_columns, w_columns=None):
         query = 'UPDATE {} SET {}'
-        u_columns = ' = %s, '.join(u_columns) + ' = %s'
+        u_columns = ' = ?, '.join(u_columns) + ' = ?'
         args = [tablename, u_columns]
 
         if w_columns:
@@ -183,9 +185,9 @@ class Query:
                 operator = [self.operators[o[0]] for i in range(len(o[1]))]
 
                 if o[0] in ('In', 'NotIn'):
-                    cols = ' {} (%s) AND '.join(o[1]) + ' {} %s'
+                    cols = ' {} (?) AND '.join(o[1]) + ' {} ?'
                 else:
-                    cols = ' {} %s AND '.join(o[1]) + ' {} %s'
+                    cols = ' {} ? AND '.join(o[1]) + ' {} ?'
 
                 cols = cols.format(*operator)
                 columns.append(cols)

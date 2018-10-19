@@ -1,8 +1,10 @@
-from datetime import datetime
-from decimal import Decimal
 from collections import OrderedDict
 
 import pymssql
+import pyodbc
+import pandas as pd
+
+from serializer import serialize
 
 
 class Query:
@@ -31,24 +33,24 @@ class Query:
         if type(query) != str:
             raise query
 
-        with pymssql.connect(*self.connParams) as conn:
-            with conn.cursor(as_dict=True) as cursor:
-                cursor.execute(query, param)
-                row_count = cursor.rowcount
+        with pyodbc.connect(
+                'DRIVER={ODBC Driver 13 for SQL Server};'
+                + ('SERVER={server},{port}; DATABASE={database}; \
+                    UID={username}; PWD={password}').format(
+                    server=self.server, port=1433, database=self.database,
+                    username=self.user, password=self.password)
+                ) as conn:
 
-                if with_result is not True:
-                    conn.commit()
-
-                if with_result is True:
-                    entries = cursor.fetchall()
-                    for entry in entries:
-                        for cell in entry:
-                            if isinstance(entry[cell], datetime):
-                                entry[cell] = str(entry[cell])
-                            elif isinstance(entry[cell], Decimal):
-                                entry[cell] = float(entry[cell])
-                    return entries
-        return row_count
+            if with_result:
+                entries = pd.read_sql_query(query, conn, params=param)
+                entries = entries.fillna('').to_dict('records')
+                return serialize(entries)
+            else:
+                with conn.cursor() as cursor:
+                    cursor.execute(query, param)
+                    row_count = cursor.rowcount
+                    return row_count
+        return []
 
     def validateTable(self, table):
         with pymssql.connect(*self.connParams) as conn:
@@ -112,7 +114,7 @@ class Query:
         args = [tablename]
 
         if column is not None:
-            query += ' WHERE {} = %s'
+            query += ' WHERE {} = ?'
             args.append(column)
 
         return query.format(*args)
@@ -124,7 +126,7 @@ class Query:
         if columns or kwargs:
             query += ' WHERE {}'
             if columns:
-                columns = ' = %s AND '.join(columns) + ' = %s'
+                columns = ' = ? AND '.join(columns) + ' = ?'
                 args.append(columns)
 
             elif kwargs:
@@ -132,7 +134,7 @@ class Query:
                 for kwarg in kwargs:
                     operator = self.operators[kwarg]
                     cols = [*kwargs[kwarg]]
-                    cols = ' {} %s AND '.join(cols) + ' {} %s'
+                    cols = ' {} ? AND '.join(cols) + ' {} ?'
                     columns.add(cols.format(operator))
 
                 columns = ' AND '.join(columns)
@@ -142,7 +144,7 @@ class Query:
 
     def postRequest(self, tablename, columns):
         query = 'INSERT INTO {} ({}) VALUES({})'
-        values = ', '.join(['%s' for column in columns])
+        values = ', '.join(['?' for column in columns])
         columns = ', '.join(columns)
         args = [tablename, columns, values]
 
@@ -150,10 +152,10 @@ class Query:
 
     def putRequest(self, tablename, u_columns, w_columns=None, **kwargs):
         query = 'UPDATE {} SET {} WHERE {}'
-        u_columns = ' = %s, '.join(u_columns) + ' = %s'
+        u_columns = ' = ?, '.join(u_columns) + ' = ?'
 
         if w_columns:
-            w_columns = ' = %s AND '.join(w_columns) + ' = %s'
+            w_columns = ' = ? AND '.join(w_columns) + ' = ?'
             columns = w_columns
 
         elif kwargs:
@@ -161,7 +163,7 @@ class Query:
             for kwarg in kwargs:
                 operator = self.operators[kwarg]
                 cols = [*kwargs[kwarg]]
-                cols = ' {} %s AND '.join(cols) + ' {} %s'
+                cols = ' {} ? AND '.join(cols) + ' {} ?'
                 columns.add(cols.format(operator))
 
             columns = ' AND '.join(columns)
