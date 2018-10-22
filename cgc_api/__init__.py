@@ -25,10 +25,21 @@ dictConfig({
         'file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'default',
-            'filename': 'wsgi.log'}},
+            'filename': 'wsgi.log'
+        },
+        'daily': {
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'default',
+            'filename': 'logs/daily.log',
+            'when': 'midnight',
+            'interval': 1,
+            'utc': True,
+            'delay': True
+        }
+    },
     'root': {
         'level': 'INFO',
-        'handlers': ['file']
+        'handlers': ['daily']
     }
 })
 
