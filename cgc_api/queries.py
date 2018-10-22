@@ -3,7 +3,8 @@ import datetime
 import pandas as pd
 import pyodbc
 from dateutil.parser import parse
-from serializer import serialize
+
+from cgc_api.serializer import serialize
 
 
 class Queries(object):
@@ -9575,11 +9576,11 @@ class Queries(object):
                 SUM(T_ARTICLES_MAGASINS.QTE_STOCK) AS la_somme_QTE_STOCK
             FROM 
                 T_ARTICLES_MAGASINS,
-                T_PARAMETRES_AGENCE a
+                T_MAGASINS a
             WHERE 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE = {Param_code_article}
                 {OPTIONAL_ARG_1}
-                AND T_ARTICLES_MAGASINS.MAGASIN IN (a.MAG_INVENDU, a.MAG_RENDUS, a.MAG_CAISSERIE, a.MAG_STOCK)
+                AND T_ARTICLES_MAGASINS.MAGASIN = a.CODE_MAGASIN
                 AND a.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE,	
@@ -19290,20 +19291,23 @@ class Queries(object):
                 T_PARAMETRES.VALEUR AS VALEUR
             FROM
                 T_PARAMETRES
-            {OPTIONAL_ARG_1}
+            WHERE
+                T_PARAMETRES.CODE_AGCE = {CODE_AGCE}
+                {OPTIONAL_ARG_1}
         '''
 
         try:
             kwargs = {
-                'id_ligne': args[0]
+                'id_ligne': args[0],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
         
-        kwargs['OPTIONAL_ARG_1'] = '''WHERE
-                T_PARAMETRES.ID_PARAM = {id_ligne}'''
+        kwargs['OPTIONAL_ARG_1'] = 'AND T_PARAMETRES.ID_PARAM = {id_ligne}'
         
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['id_ligne'] in self.null_values else kwargs['OPTIONAL_ARG_1']
+        if kwargs['id_ligne'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
 
         return query.format(**kwargs).format(**kwargs)
 

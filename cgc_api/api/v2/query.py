@@ -4,7 +4,7 @@ import pymssql
 import pyodbc
 import pandas as pd
 
-from serializer import serialize
+from cgc_api.serializer import serialize
 
 
 class Query:

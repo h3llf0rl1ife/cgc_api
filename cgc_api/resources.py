@@ -10,7 +10,7 @@ from cgc_api.query import Query
 from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET  #, STAT_TABLES
 from cgc_api import app
 from cgc_api.crypto import Crypto
-from auth import getDate
+from cgc_api.auth import getDate
 
 
 def removeSQLInjection(text):

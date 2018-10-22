@@ -9,7 +9,7 @@ from cgc_api import app  # , db, models as v1m
 from cgc_api.crypto import Crypto
 from cgc_api.api.v2.query import Query
 from cgc_api.resources import removeSQLInjection
-from auth import getDate
+from cgc_api.auth import getDate
 
 
 class RestfulSchemaV2(Resource):
