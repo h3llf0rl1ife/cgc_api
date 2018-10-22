@@ -7,7 +7,7 @@ from flask_restful import Resource
 
 from cgc_api.queries import Queries
 from cgc_api.query import Query
-from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET  #, STAT_TABLES
+from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET  # , STAT_TABLES
 from cgc_api import app
 from cgc_api.crypto import Crypto
 from cgc_api.auth import getDate

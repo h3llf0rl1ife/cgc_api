@@ -31,8 +31,8 @@ class Queries(object):
             if 'select' in query.lower() and (
                     'update' not in query.lower()
                     and 'delete' not in query.lower()):
-                entries = pd.read_sql_query(query, conn)
-                entries = entries.fillna('').to_dict('records')
+                entries = pd.read_sql_query(query, conn).fillna('')
+                entries = entries.to_json(orient='records', date_format='iso')
                 return serialize(entries)
 
             else:
@@ -11318,13 +11318,14 @@ class Queries(object):
             kwargs = {
                 'Param_dt': args[0],
                 'param_code_secteur': args[1],
-                'param_code_client': args[2]
+                'param_code_client': args[2],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
         
         kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
-        kwargs['CODE_0'] = 9900000 + kwargs['CODE_AGCE']
+        kwargs['CODE_0'] = str(kwargs['CODE_AGCE']) + '990000'
 
         for key in kwargs:
             if kwargs[key] in self.null_values:
@@ -19292,7 +19293,10 @@ class Queries(object):
             FROM
                 T_PARAMETRES
             WHERE
-                T_PARAMETRES.CODE_AGCE = {CODE_AGCE}
+                (
+                    T_PARAMETRES.CODE_AGCE = {CODE_AGCE}
+                    OR T_PARAMETRES.CODE_AGCE = 0
+                )
                 {OPTIONAL_ARG_1}
         '''
 
@@ -19304,7 +19308,7 @@ class Queries(object):
         except IndexError as e:
             return e
         
-        kwargs['OPTIONAL_ARG_1'] = 'AND T_PARAMETRES.ID_PARAM = {id_ligne}'
+        kwargs['OPTIONAL_ARG_1'] = 'AND T_PARAMETRES.id_ligne = {id_ligne}'
         
         if kwargs['id_ligne'] in self.null_values:
             kwargs['OPTIONAL_ARG_1'] = ''
@@ -19944,7 +19948,7 @@ class Queries(object):
         except IndexError as e:
             return e
 
-        kwargs['CODE_0'] = kwargs['CODE_AGCE'] + 9900000
+        kwargs['CODE_0'] = str(kwargs['CODE_AGCE']) + '990000'
 
         kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
         

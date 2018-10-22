@@ -44,8 +44,8 @@ class Query:
                 ) as conn:
 
             if with_result:
-                entries = pd.read_sql_query(query, conn, params=params)
-                entries = entries.fillna('').to_dict('records')
+                entries = pd.read_sql_query(query, conn, params=params).fillna('')
+                entries = entries.to_json(orient='records', date_format='iso')
                 return serialize(entries)
             else:
                 with conn.cursor() as cursor:

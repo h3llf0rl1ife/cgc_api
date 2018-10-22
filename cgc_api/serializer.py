@@ -22,4 +22,4 @@ class ComplexEncoder(json.JSONEncoder):
 
 
 def serialize(data):
-    return json.loads(json.dumps(data, cls=ComplexEncoder))
+    return json.loads(data)
