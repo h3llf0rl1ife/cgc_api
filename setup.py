@@ -5,7 +5,10 @@ requires = (
     'flask-restful>=0.3.6',
     'python-dateutil>=2.7.2',
     'cryptography>=2.3.1',
-    'flask-sqlalchemy',
+    'flask-sqlalchemy'
+    # 'gevent', wheel
+    # 'pyodbc', wheel
+    # 'pandas' wheel
     # 'pymssql==2.1.3' install from .wheel instead
 )
 
