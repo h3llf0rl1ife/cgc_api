@@ -5,6 +5,7 @@ import pyodbc
 from dateutil.parser import parse
 
 from cgc_api.serializer import serialize
+from cgc_api.config import ODBC_DRIVER
 
 
 class Queries(object):
@@ -21,18 +22,18 @@ class Queries(object):
             raise query
 
         with pyodbc.connect(
-                'DRIVER={ODBC Driver 13 for SQL Server};'
-                + ('SERVER={server},{port}; DATABASE={database}; \
-                    UID={username}; PWD={password}').format(
+                'DRIVER={driver}; SERVER={server},{port}; \
+                 DATABASE={database};UID={username}; PWD={password}'.format(
                     server=self.server, port=1433, database=self.database,
-                    username=self.user, password=self.password)
+                    username=self.user, password=self.password,
+                    driver=ODBC_DRIVER)
                 ) as conn:
 
             if 'select' in query.lower() and (
                     'update' not in query.lower()
                     and 'delete' not in query.lower()):
-                entries = pd.read_sql_query(query, conn).fillna('')
-                entries = entries.to_json(orient='records', date_format='iso')
+                entries = pd.read_sql_query(query, conn).fillna('').to_json(
+                    orient='records', date_format='iso')
                 return serialize(entries)
 
             else:
