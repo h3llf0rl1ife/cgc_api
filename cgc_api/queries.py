@@ -17273,15 +17273,98 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_upd_num_commande(self, args): #Done
+    def Req_valider_commande_usine(self, args): #Done
         query = '''
-            UPDATE 
-                T_COMMANDES
-            SET
-                NUM_COMMANDE = '{Param_NUM_COMMANDE}'
-            WHERE 
-                T_COMMANDES.ID_COMMANDE = {Param_ID_COMMANDE}
-                AND T_COMMANDES.CODE_AGENCE = {CODE_AGCE}
+            BEGIN
+                SET NOCOUNT ON;
+                BEGIN TRY
+                    BEGIN TRANSACTION
+
+                UPDATE
+                    T_COMMANDES
+                SET
+                    NUM_COMMANDE = '{Param_NUM_COMMANDE}'
+                WHERE
+                    T_COMMANDES.ID_COMMANDE = {Param_ID_COMMANDE}
+                    AND T_COMMANDES.CODE_AGENCE = {CODE_AGCE}
+
+                INSERT INTO SIEGE.dbo.T_COMMANDES (
+                    ID_COMMANDE
+                    ,TYPE_COMMANDE
+                    ,DATE_LIVRAISON
+                    ,CODE_SECTEUR
+                    ,CODE_CLIENT
+                    ,CODE_AGENCE
+                    ,CODE_OPERATEUR
+                    ,DATE_HEURE_SAISIE
+                    ,NUM_COMMANDE
+                    ,STATUT
+                    ,CLOTURE
+                    ,ID_TYPE_COMMANDE
+                    ,ID_ETAT_COMMANDE
+                    ,DATE_COMMANDE
+                    ,ID_OS
+                    ,OS
+                )
+                SELECT 
+                    ID_COMMANDE
+                    ,TYPE_COMMANDE
+                    ,DATE_LIVRAISON
+                    ,CODE_SECTEUR
+                    ,CODE_CLIENT
+                    ,CODE_AGENCE
+                    ,CODE_OPERATEUR
+                    ,DATE_HEURE_SAISIE
+                    ,NUM_COMMANDE
+                    ,STATUT
+                    ,CLOTURE
+                    ,ID_TYPE_COMMANDE
+                    ,ID_ETAT_COMMANDE
+                    ,DATE_COMMANDE
+                    ,ID_OS
+                    ,OS
+                FROM
+                    dbo.T_COMMANDES
+                WHERE
+                    T_COMMANDES.ID_COMMANDE = {Param_ID_COMMANDE}
+                    AND T_COMMANDES.CODE_AGENCE = {CODE_AGCE}
+
+                INSERT INTO SIEGE.dbo.T_PRODUITS_COMMANDES (
+                    [ID_COMMANDE]
+                    ,[CODE_ARTICLE]
+                    ,[QTE_U]
+                    ,[QTE_C]
+                    ,[QTE_P]
+                    ,[ID_DT_COMMANDE]
+                    ,[COMMENTAIRE]
+                    ,[ID_ETAT_CMD]
+                    ,[ID_PROFIL_PROG]
+                )
+                SELECT 
+                    [ID_COMMANDE]
+                    ,[CODE_ARTICLE]
+                    ,[QTE_U]
+                    ,[QTE_C]
+                    ,[QTE_P]
+                    ,[ID_DT_COMMANDE]
+                    ,[COMMENTAIRE]
+                    ,[ID_ETAT_CMD]
+                    ,[ID_PROFIL_PROG]
+                FROM 
+                    [dbo].[T_PRODUITS_COMMANDES]
+                WHERE
+                    T_PRODUITS_COMMANDES.ID_COMMANDE = {Param_ID_COMMANDE}
+
+                    COMMIT
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK
+                    DECLARE @ERR VARCHAR(MAX)
+                    SELECT @ERR=ERROR_MESSAGE()
+                    RAISERROR(@ERR,13,1) WITH SETERROR
+                    RETURN
+                END CATCH
+            END 
         '''
 
         try:
