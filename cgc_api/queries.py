@@ -20573,7 +20573,7 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def REQ_UPDATE_STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON_1(self, args):
+    def REQ_UPDATE_T_SYNTHESE_LIVRAISON_1(self, args):
         query = '''
              UPDATE STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON
              SET livre = 1
@@ -20601,7 +20601,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def REQ_UPDATE_STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON_2(self, args):
+    def REQ_UPDATE_T_SYNTHESE_LIVRAISON_2(self, args):
         query = '''
              UPDATE STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON
              SET commande = 1
