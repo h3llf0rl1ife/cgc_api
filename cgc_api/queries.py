@@ -2494,20 +2494,20 @@ class Queries(object):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
-                T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
-                SUM(( T_STATISTIQUES.VENTE + T_STATISTIQUES.VENTE_CAC ) ) AS la_somme_VENTE
+                STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
+                SUM(( STATISTIQUES.dbo.T_STATISTIQUES.VENTE + STATISTIQUES.dbo.T_STATISTIQUES.VENTE_CAC ) ) AS la_somme_VENTE
             FROM 
                 T_ARTICLES,	
-                T_STATISTIQUES
+                STATISTIQUES.dbo.T_STATISTIQUES
             WHERE 
-                T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
+                T_ARTICLES.CODE_ARTICLE = STATISTIQUES.dbo.T_STATISTIQUES.CODE_ARTICLE
                 AND
                 (
-                    T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
-                AND T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
+                AND STATISTIQUES.dbo.T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
-                T_STATISTIQUES.CATEGORIE,	
+                STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE,	
                 T_ARTICLES.CODE_PRODUIT
         '''
 
@@ -2528,12 +2528,12 @@ class Queries(object):
     def Req_date_dispo_statistiques(self, args): #Done
         query = '''
             SELECT 
-                MAX(T_STATISTIQUES.DATE_JOURNEE) AS le_maximum_DATE_JOURNEE
+                MAX(STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE) AS le_maximum_DATE_JOURNEE
             FROM 
-                T_STATISTIQUES
+                STATISTIQUES.dbo.T_STATISTIQUES
             WHERE 
-                T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
-                AND T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
+                STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                AND STATISTIQUES.dbo.T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
@@ -7922,12 +7922,17 @@ class Queries(object):
         kwargs['Param_date_operation'] = self.validateDate(kwargs['Param_date_operation'])
 
         kwargs['OPTIONAL_ARG_1'] = 'AND T_OPERATIONS.CODE_AGCE1 = {Param_code_agce}'
-        kwargs['OPTIONAL_ARG_2'] = '''AND T_OPERATIONS.TYPE_OPERATION = '{Param_type_operation}' '''
-        kwargs['OPTIONAL_ARG_3'] = '''AND T_OPERATIONS.DATE_OPERATION = '{Param_date_operation}' '''
+        kwargs['OPTIONAL_ARG_2'] = 'AND T_OPERATIONS.TYPE_OPERATION = \'{Param_type_operation}\''
+        kwargs['OPTIONAL_ARG_3'] = 'AND T_OPERATIONS.DATE_OPERATION = \'{Param_date_operation}\''
 
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_agce'] in self.null_values else kwargs['OPTIONAL_ARG_1']
-        kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_type_operation'] in self.null_values else kwargs['OPTIONAL_ARG_2']
-        kwargs['OPTIONAL_ARG_3'] = '' if kwargs['Param_date_operation'] in self.null_values else kwargs['OPTIONAL_ARG_3']
+        if kwargs['Param_code_agce'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
+
+        if kwargs['Param_type_operation'] in self.null_values:
+            kwargs['OPTIONAL_ARG_2'] = ''
+
+        if kwargs['Param_date_operation'] in self.null_values:
+            kwargs['OPTIONAL_ARG_3'] = ''
 
         return query.format(**kwargs).format(**kwargs)
 
@@ -11326,7 +11331,7 @@ class Queries(object):
             return e
         
         kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
-        kwargs['CODE_0'] = str(kwargs['CODE_AGCE']) + '990000'
+        kwargs['CODE_0'] = '990000' + str(kwargs['CODE_AGCE'])
 
         for key in kwargs:
             if kwargs[key] in self.null_values:
@@ -14271,20 +14276,20 @@ class Queries(object):
     def Req_supp_statistique(self, args): #Done
         query = '''
             DELETE FROM 
-                T_STATISTIQUES
+                STATISTIQUES.dbo.T_STATISTIQUES
             WHERE 
-                T_STATISTIQUES.DATE_JOURNEE = '{Param_date_journee}'
+                STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE = '{Param_date_journee}'
                 {OPTIONAL_ARG_1}
                 AND	
                 (
                     (
-                        T_STATISTIQUES.CODE_CLIENT = 0
-                        AND	T_STATISTIQUES.CATEGORIE = 'GMS'
+                        STATISTIQUES.dbo.T_STATISTIQUES.CODE_CLIENT = 0
+                        AND	STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE = 'GMS'
                     )
-                    OR	T_STATISTIQUES.CATEGORIE = 'SEC'
-                    OR	T_STATISTIQUES.CATEGORIE = 'DEP'
+                    OR	STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE = 'SEC'
+                    OR	STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE = 'DEP'
                 )
-                AND T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
+                AND STATISTIQUES.dbo.T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
         '''
         
         try:
@@ -14301,7 +14306,7 @@ class Queries(object):
         if kwargs['Param_date_journee'] in self.null_values:
             return ValueError
         
-        kwargs['OPTIONAL_ARG_1'] = 'AND	T_STATISTIQUES.code_secteur = {Param_code_secteur}'
+        kwargs['OPTIONAL_ARG_1'] = 'AND	STATISTIQUES.dbo.T_STATISTIQUES.code_secteur = {Param_code_secteur}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in self.null_values else kwargs['OPTIONAL_ARG_1']
 
         return query.format(**kwargs).format(**kwargs)
@@ -14309,11 +14314,11 @@ class Queries(object):
     def Req_supp_statistiques_clients(self, args): #Done
         query = '''
             DELETE FROM 
-                T_STATISTIQUES
+                STATISTIQUES.dbo.T_STATISTIQUES
             WHERE 
-                T_STATISTIQUES.DATE_JOURNEE = '{Param_date_journee}'
-                AND	T_STATISTIQUES.CODE_CLIENT <> 0
-                AND T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
+                STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE = '{Param_date_journee}'
+                AND	STATISTIQUES.dbo.T_STATISTIQUES.CODE_CLIENT <> 0
+                AND STATISTIQUES.dbo.T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
@@ -14334,10 +14339,10 @@ class Queries(object):
     def Req_supp_statistiques_stock(self, args): #Done
         query = '''
             DELETE FROM 
-                T_STATISTIQUES_STOCK
+                STATISTIQUES.dbo.T_STATISTIQUES_STOCK
             WHERE 
-                T_STATISTIQUES_STOCK.DATE_JOURNEE = '{Param_date_journee}'
-                AND T_STATISTIQUES_STOCK.CODE_AGCE = {CODE_AGCE}
+                STATISTIQUES.dbo.T_STATISTIQUES_STOCK.DATE_JOURNEE = '{Param_date_journee}'
+                AND STATISTIQUES.dbo.T_STATISTIQUES_STOCK.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
@@ -14508,24 +14513,24 @@ class Queries(object):
     def Req_synthese_livraison_date(self, args): #Done
         query = '''
             SELECT 
-                T_SYNTHESE_LIVRAISON.DATE_JOURNEE AS DATE_JOURNEE,	
-                T_SYNTHESE_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
-                T_SYNTHESE_LIVRAISON.CODE_AGCE AS CODE_AGCE,	
-                T_SYNTHESE_LIVRAISON.PROGRAMME AS PROGRAMME,	
-                T_SYNTHESE_LIVRAISON.COMMANDE AS COMMANDE,	
-                T_SYNTHESE_LIVRAISON.LIVRE AS LIVRE,	
-                T_SYNTHESE_LIVRAISON.MOTIF_NON_COMMANDE AS MOTIF_NON_COMMANDE,	
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.DATE_JOURNEE AS DATE_JOURNEE,	
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.CODE_AGCE AS CODE_AGCE,	
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.PROGRAMME AS PROGRAMME,	
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.COMMANDE AS COMMANDE,	
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.LIVRE AS LIVRE,	
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.MOTIF_NON_COMMANDE AS MOTIF_NON_COMMANDE,	
                 T_CLIENTS.NOM_CLIENT AS NOM_CLIENT
             FROM 
                 T_CLIENTS,	
-                T_SYNTHESE_LIVRAISON
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON
             WHERE 
-                T_CLIENTS.CODE_CLIENT = T_SYNTHESE_LIVRAISON.CODE_CLIENT
+                T_CLIENTS.CODE_CLIENT = STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.CODE_CLIENT
                 AND
                 (
-                    T_SYNTHESE_LIVRAISON.DATE_JOURNEE = '{Param_DATE_JOURNEE}'
+                    STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.DATE_JOURNEE = '{Param_DATE_JOURNEE}'
                 )
-                AND T_SYNTHESE_LIVRAISON.CODE_AGCE = {CODE_AGCE}
+                AND STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
@@ -16662,20 +16667,20 @@ class Queries(object):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
-                SUM(T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
-                SUM(T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
-                SUM(T_STATISTIQUES.VENTE) AS la_somme_VENTE
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE) AS la_somme_VENTE
             FROM 
                 T_ARTICLES,	
-                T_STATISTIQUES
+                STATISTIQUES.dbo.T_STATISTIQUES
             WHERE 
-                T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
+                T_ARTICLES.CODE_ARTICLE = STATISTIQUES.dbo.T_STATISTIQUES.CODE_ARTICLE
                 AND
                 (
                     {OPTIONAL_ARG_1}
-                    T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
-                AND T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
+                AND STATISTIQUES.dbo.T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_ARTICLES.CODE_PRODUIT
         '''
@@ -16697,7 +16702,7 @@ class Queries(object):
             if kwargs[key] in self.null_values:
                 return ValueError
         
-        kwargs['OPTIONAL_ARG_1'] = 'T_STATISTIQUES.code_secteur = {Param_code_secteur} AND'
+        kwargs['OPTIONAL_ARG_1'] = 'STATISTIQUES.dbo.T_STATISTIQUES.code_secteur = {Param_code_secteur} AND'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in self.null_values else kwargs['OPTIONAL_ARG_1']
 
         return query.format(**kwargs).format(**kwargs)
@@ -16705,25 +16710,25 @@ class Queries(object):
     def Req_total_statistiques_canal(self, args): #Done
         query = '''
             SELECT 
-                T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
+                STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
-                SUM(T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
-                SUM(T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
-                SUM(T_STATISTIQUES.VENTE) AS la_somme_VENTE
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE) AS la_somme_VENTE
             FROM 
                 T_ARTICLES,	
-                T_STATISTIQUES
+                STATISTIQUES.dbo.T_STATISTIQUES
             WHERE 
-                T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
+                T_ARTICLES.CODE_ARTICLE = STATISTIQUES.dbo.T_STATISTIQUES.CODE_ARTICLE
                 AND
                 (
                     {OPTIONAL_ARG_1}
-                    T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 )
-                AND T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
+                AND STATISTIQUES.dbo.T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_ARTICLES.CODE_PRODUIT,	
-                T_STATISTIQUES.CATEGORIE
+                STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE
         '''
 
         try:
@@ -16743,7 +16748,7 @@ class Queries(object):
             if kwargs[key] in self.null_values:
                 return ValueError
         
-        kwargs['OPTIONAL_ARG_1'] = 'T_STATISTIQUES.code_secteur = {Param_code_secteur} AND'
+        kwargs['OPTIONAL_ARG_1'] = 'STATISTIQUES.dbo.T_STATISTIQUES.code_secteur = {Param_code_secteur} AND'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in self.null_values else kwargs['OPTIONAL_ARG_1']
 
         return query.format(**kwargs).format(**kwargs)
@@ -16751,27 +16756,27 @@ class Queries(object):
     def Req_total_statistiques_client(self, args): #Done
         query = '''
             SELECT 
-                T_STATISTIQUES.CODE_CLIENT AS CODE_CLIENT,	
-                T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
+                STATISTIQUES.dbo.T_STATISTIQUES.CODE_CLIENT AS CODE_CLIENT,	
+                STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
-                SUM(T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
-                SUM(T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
-                SUM(T_STATISTIQUES.VENTE) AS la_somme_VENTE
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE_N1) AS la_somme_VENTE_N1,	
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE_CAC) AS la_somme_VENTE_CAC,	
+                SUM(STATISTIQUES.dbo.T_STATISTIQUES.VENTE) AS la_somme_VENTE
             FROM 
                 T_ARTICLES,	
-                T_STATISTIQUES
+                STATISTIQUES.dbo.T_STATISTIQUES
             WHERE 
-                T_ARTICLES.CODE_ARTICLE = T_STATISTIQUES.CODE_ARTICLE
+                T_ARTICLES.CODE_ARTICLE = STATISTIQUES.dbo.T_STATISTIQUES.CODE_ARTICLE
                 AND
                 (
-                    T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
-                    AND	T_STATISTIQUES.CODE_CLIENT = {Param_code_client}
+                    STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                    AND	STATISTIQUES.dbo.T_STATISTIQUES.CODE_CLIENT = {Param_code_client}
                 )
-                AND T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
+                AND STATISTIQUES.dbo.T_STATISTIQUES.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_ARTICLES.CODE_PRODUIT,	
-                T_STATISTIQUES.CATEGORIE,	
-                T_STATISTIQUES.CODE_CLIENT
+                STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE,	
+                STATISTIQUES.dbo.T_STATISTIQUES.CODE_CLIENT
         '''
 
         try:
@@ -17729,13 +17734,13 @@ class Queries(object):
     def Req_update_motif_non_commande(self, args): #Done
         query = '''
             UPDATE 
-                T_SYNTHESE_LIVRAISON
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON
             SET
                 MOTIF_NON_COMMANDE = {Param_MOTIF_NON_COMMANDE}
             WHERE 
-                T_SYNTHESE_LIVRAISON.DATE_JOURNEE = '{Param_DATE_JOURNEE}'
-                AND	T_SYNTHESE_LIVRAISON.CODE_CLIENT = {Param_CODE_CLIENT}
-                AND T_SYNTHESE_LIVRAISON.CODE_AGCE = {CODE_AGCE}
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.DATE_JOURNEE = '{Param_DATE_JOURNEE}'
+                AND	STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.CODE_CLIENT = {Param_CODE_CLIENT}
+                AND STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
@@ -19872,7 +19877,7 @@ class Queries(object):
     def Req_conv_journee_btn_cloturer_synthese_livraision(self, args): #Done2
         query = '''
             INSERT INTO 
-                T_SYNTHESE_LIVRAISON 
+                STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON 
                 (DATE_JOURNEE, CODE_AGCE, CODE_CLIENT, COMMANDE, LIVRE, PROGRAMME, MOTIF_NON_COMMANDE)
             VALUES
                 ('{date_journee}', {code_agce}, {code_client}, {commande}, {livre}, {programme}, {motif_non_commande})
@@ -20032,7 +20037,7 @@ class Queries(object):
         except IndexError as e:
             return e
 
-        kwargs['CODE_0'] = str(kwargs['CODE_AGCE']) + '990000'
+        kwargs['CODE_0'] = '990000' + str(kwargs['CODE_AGCE'])
 
         kwargs['Param_dt'] = self.validateDate(kwargs['Param_dt'])
         
@@ -20309,6 +20314,27 @@ class Queries(object):
                 T_CLIENTS
             WHERE 
                 T_CLIENTS.CODE_AGCE = {CODE_AGCE}
+                AND T_CLIENTS.CODE_CLIENT NOT LIKE '99%'
+        '''
+
+        try:
+            kwargs = {
+                'CODE_AGCE': args[len(args) - 1]
+            }
+        except IndexError as e:
+            return e
+
+        return query.format(**kwargs)
+
+    def Req_conv_codification_operateur(self, args):
+        query = '''
+            SELECT 
+                MAX(T_OPERATEUR.CODE_OPERATEUR) AS CODE_OPERATEUR
+            FROM 
+                T_OPERATEUR
+            WHERE 
+                T_OPERATEUR.CODE_AGCE = {CODE_AGCE}
+                AND T_OPERATEUR.CODE_OPERATEUR NOT LIKE '99%'
         '''
 
         try:
@@ -20547,9 +20573,9 @@ class Queries(object):
         return query.format(**kwargs)
 
 
-    def REQ_UPDATE_T_SYNTHESE_LIVRAISON_1(self, args):
+    def REQ_UPDATE_STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON_1(self, args):
         query = '''
-             UPDATE T_SYNTHESE_LIVRAISON
+             UPDATE STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON
              SET livre = 1
              WHERE 
                 date_journee='{param_dt}' 
@@ -20575,9 +20601,9 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def REQ_UPDATE_T_SYNTHESE_LIVRAISON_2(self, args):
+    def REQ_UPDATE_STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON_2(self, args):
         query = '''
-             UPDATE T_SYNTHESE_LIVRAISON
+             UPDATE STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON
              SET commande = 1
              WHERE 
                 date_journee='{param_dt}' 
@@ -20599,6 +20625,36 @@ class Queries(object):
         kwargs['param_dt'] = self.validateDate(kwargs['param_dt'])
 
         if kwargs['param_dt'] in self.null_values:
+            return ValueError
+
+        return query.format(**kwargs)
+
+    def synchro_ventes_cvs(self, args):
+        query = '''
+            DECLARE @RC int
+            DECLARE @CODE_AGENCE int
+            DECLARE @DATE_OBJECTIF nvarchar(10)
+
+            SET @CODE_AGENCE = {CODE_AGCE}
+            SET @DATE_OBJECTIF = '{DATE_OBJECTIF}'
+
+            EXECUTE @RC = [dbo].[SYNCHRO_COMMERCIAL_VERS_SIEGE] 
+            @CODE_AGENCE
+            ,@DATE_OBJECTIF
+            GO
+        '''
+
+        try:
+            kwargs = {
+                'DATE_OBJECTIF': args[0],
+                'CODE_AGCE': args[len(args) - 1]
+            }
+        except IndexError as e:
+            return e
+
+        kwargs['DATE_OBJECTIF'] = self.validateDate(kwargs['DATE_OBJECTIF'])
+
+        if kwargs['DATE_OBJECTIF'] in self.null_values:
             return ValueError
 
         return query.format(**kwargs)

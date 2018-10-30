@@ -7,7 +7,7 @@ from flask_restful import Resource
 
 from cgc_api.queries import Queries
 from cgc_api.query import Query
-from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET  # , STAT_TABLES
+from cgc_api.config import CURRENT_CONFIG, HTTP_STATUS, SECRET, STAT_TABLES
 from cgc_api import app
 from cgc_api.crypto import Crypto
 from cgc_api.auth import getDate
@@ -99,7 +99,7 @@ class QueriesAPI(Resource):
                     app.log_exception(e)
                     return HTTP_STATUS['487'], 487
 
-        return HTTP_STATUS['400'], 400
+        return HTTP_STATUS['471'], 471
 
 
 class RestfulQuery:
@@ -338,9 +338,9 @@ class DatabaseAPI(Resource):
 
             restfulQuery = RestfulQuery(params)
 
-            """if table in STAT_TABLES:
+            if table in STAT_TABLES:
                 args = CURRENT_CONFIG[:3] + ('STATISTIQUES',)
-                restfulQuery._Query = Query(*args)"""
+                restfulQuery._Query = Query(*args)
 
             methods = {
                 'GET': restfulQuery.get,
