@@ -58,7 +58,7 @@ class Queries(object):
                 return dates[default].strftime('%Y-%m-%d %H:%M:%S')
         return default
 
-    def is_op_auth_for_tache(self, args): #Done
+    def is_op_auth_for_tache(self, args):
         query = '''
             SELECT
                 T_OPERTEURS_TACHES.CODE_OPERATEUR AS CODE_OPERATEUR,
@@ -95,7 +95,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Param_ls_clients_gp(self, args): #Done
+    def Param_ls_clients_gp(self, args):
         query = '''
             SELECT
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,
@@ -133,7 +133,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Param_supp_objectif_secteurs(self, args): #Done
+    def Param_supp_objectif_secteurs(self, args):
         query = '''
             DELETE o FROM
                 T_OBJECTIF_SECTEURS o
@@ -167,7 +167,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_affectation_chargement(self, args): #Done
+    def Req_affectation_chargement(self, args):
         query = '''
             SELECT
                 T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,
@@ -209,7 +209,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_anc_solde_dep(self, args): #Done
+    def Req_anc_solde_dep(self, args):
         query = '''
             SELECT
                 SUM(T_MOUVEMENTS_CAISSE.MONTANT) AS la_somme_MONTANT,	
@@ -256,7 +256,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_annulation_facture(self, args): #Done
+    def Req_annulation_facture(self, args):
         query = '''
             UPDATE
                 T_FACTURE
@@ -280,7 +280,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_annulation_gratuit_prevente(self, args): #Done
+    def Req_annulation_gratuit_prevente(self, args):
         query = '''
             UPDATE
                 T_LIGNE_COMMANDE
@@ -312,7 +312,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_annule_synchro(self, args): #Done
+    def Req_annule_synchro(self, args):
         query = '''
             UPDATE
                 T_SYNCHRO
@@ -339,7 +339,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_article_livraison(self, args): #Done
+    def Req_article_livraison(self, args):
         query = '''
             SELECT
                 T_MOUVEMENTS.ORIGINE AS ORIGINE,
@@ -379,7 +379,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_article_livree_gms_date(self, args): #Done
+    def Req_article_livree_gms_date(self, args):
         query = '''
             SELECT
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,
@@ -430,7 +430,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_article_magasins(self, args): #Done
+    def Req_article_magasins(self, args):
         query = '''
             SELECT
                 T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,
@@ -462,7 +462,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_articles_charges(self, args): #Done
+    def Req_articles_charges(self, args):
         query = '''
             SELECT
                 T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,
@@ -520,7 +520,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_articles_cmd(self, args): #Done
+    def Req_articles_cmd(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -573,7 +573,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_articles_enseigne(self, args): #Done
+    def Req_articles_enseigne(self, args):
         query = '''
             SELECT 
                 T_ARTICLES_ENSEIGNE.ID_ENSEIGNE AS ID_ENSEIGNE,	
@@ -598,7 +598,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_articles_livraison_client(self, args): #Done
+    def Req_articles_livraison_client(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -654,7 +654,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_articles_livraison_secteur(self, args): #Done
+    def Req_articles_livraison_secteur(self, args):
         query = '''
             SELECT DISTINCT 
                 T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
@@ -693,7 +693,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_articles_livrees(self, args): #Done
+    def Req_articles_livrees(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
@@ -733,7 +733,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def req_autorisation_caisserie(self, args): #Done
+    def req_autorisation_caisserie(self, args):
         query = '''
             SELECT 
                 a.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -762,7 +762,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_bl_non_envoyer(self, args): #Done
+    def Req_bl_non_envoyer(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -807,7 +807,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_bl_non_envoyer_cond(self, args): #Done
+    def Req_bl_non_envoyer_cond(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -852,7 +852,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_bls_synch(self, args): #Done
+    def Req_bls_synch(self, args):
         query = '''
             SELECT 
                 T_SYNCHRO.ID_OPERATION AS ID_OPERATION
@@ -863,7 +863,7 @@ class Queries(object):
         '''
         return query
 
-    def Req_bordereau(self, args): #Done
+    def Req_bordereau(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
@@ -911,7 +911,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_budget_mensuel(self, args): #Done
+    def Req_budget_mensuel(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -943,7 +943,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ca_client_objectif(self, args): #Done
+    def Req_ca_client_objectif(self, args):
         query = '''
             SELECT 
                 T_OBJECTIFS.CODE_CLIENT AS CODE_CLIENT,	
@@ -989,7 +989,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ca_invendu(self, args): #Done
+    def Req_ca_invendu(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1043,7 +1043,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ca_invendu_periode(self, args): #Done
+    def Req_ca_invendu_periode(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.CODE_SECTEUR AS code_secteur,	
@@ -1093,7 +1093,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ca_lait_frais(self, args): #Done
+    def Req_ca_lait_frais(self, args):
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -1140,7 +1140,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ca_pda(self, args): #Done
+    def Req_ca_pda(self, args):
         query = '''
             SELECT 
                 SUM(T_FACTURE.MONTANT_FACTURE) AS la_somme_MONTANT_FACTURE,	
@@ -1179,7 +1179,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ca_secteur(self, args): #Done
+    def Req_ca_secteur(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.CODE_SECTEUR AS code_secteur,	
@@ -1215,7 +1215,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ca_secteur_date(self, args): #Done
+    def Req_ca_secteur_date(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1268,7 +1268,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ca_secteur_periode(self, args): #Done
+    def Req_ca_secteur_periode(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.CODE_SECTEUR AS code_secteur,	
@@ -1300,7 +1300,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_caisses_palettes(self, args): #Done
+    def Req_caisses_palettes(self, args):
         query = '''
             SELECT 
                 T_CAISSES_PALETTES.CODE_TYPE AS CODE_TYPE,	
@@ -1317,7 +1317,7 @@ class Queries(object):
         '''
         return query
 
-    def Req_chargement(self, args): #Done
+    def Req_chargement(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -1386,7 +1386,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_chargement_article(self, args): #Done
+    def Req_chargement_article(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.code_vendeur AS code_vendeur,	
@@ -1455,7 +1455,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_chargement_cond(self, args): #Done
+    def Req_chargement_cond(self, args):
         query = '''
             SELECT 
                 T_COND_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -1492,7 +1492,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_chargement_non_valide(self, args): #Done
+    def Req_chargement_non_valide(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1533,7 +1533,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_chargement_par_article(self, args): #Done
+    def Req_chargement_par_article(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -1617,7 +1617,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_chargement_par_produit(self, args): #Done
+    def Req_chargement_par_produit(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -1706,7 +1706,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_chargement_periode(self, args): #Done
+    def Req_chargement_periode(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -1751,7 +1751,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_chargement_secteur(self, args): #Done
+    def Req_chargement_secteur(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -1814,7 +1814,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs).format(**kwargs)
 
-    def Req_cheque_non_envoyer(self, args): #Done
+    def Req_cheque_non_envoyer(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -1853,7 +1853,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_client_cac_journee(self, args): #Done
+    def Req_client_cac_journee(self, args):
         query = '''
             SELECT DISTINCT 
                 T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -1897,7 +1897,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_client_not_int(self, args): #Done
+    def Req_client_not_int(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -1942,7 +1942,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_clients_n1(self, args): #Done
+    def Req_clients_n1(self, args):
         query = '''
             SELECT DISTINCT 
                 T_MOY_VENTE_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -1978,7 +1978,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_code_chargement(self, args): #Done
+    def Req_code_chargement(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -2009,7 +2009,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_codification_operation(self, args): #Done
+    def Req_codification_operation(self, args):
         query = '''
             SELECT 
                 MAX(T_OPERATIONS.CODE_OPERATION) AS le_maximum_CODE_OPERATION
@@ -2031,7 +2031,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_commande_gms_date(self, args): #Done
+    def Req_commande_gms_date(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.CODE_CLIENT AS CODE_CLIENT,	
@@ -2090,7 +2090,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_commande_secteur(self, args): #Done
+    def Req_commande_secteur(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -2135,7 +2135,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_commande_secteur_article(self, args): #Done
+    def Req_commande_secteur_article(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -2187,7 +2187,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_commande_secteur_produit(self, args): #Done
+    def Req_commande_secteur_produit(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -2240,7 +2240,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_commande_usine_date(self, args): #Done
+    def Req_commande_usine_date(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -2287,7 +2287,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_cond_charge_operateur(self, args): #Done
+    def Req_cond_charge_operateur(self, args):
         query = '''
             SELECT 
                 T_COND_CHARGEE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -2327,7 +2327,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_cond_chargee(self, args): #Done
+    def Req_cond_chargee(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -2378,7 +2378,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_cond_livraison(self, args): #Done
+    def Req_cond_livraison(self, args):
         query = '''
             UPDATE 
                 T_COND_LIVRAISON
@@ -2405,7 +2405,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_cond_livraison_client(self, args): #Done
+    def Req_cond_livraison_client(self, args):
         query = '''
             SELECT 
                 T_COND_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -2447,7 +2447,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def req_conseigne_deconseige(self, args): #Done
+    def req_conseigne_deconseige(self, args):
         query = '''
             SELECT 
                 T_REGELEMENT_COND.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -2490,7 +2490,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_contrubition_canal(self, args): #Done
+    def Req_contrubition_canal(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -2525,7 +2525,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_date_dispo_statistiques(self, args): #Done
+    def Req_date_dispo_statistiques(self, args):
         query = '''
             SELECT 
                 MAX(STATISTIQUES.dbo.T_STATISTIQUES.DATE_JOURNEE) AS le_maximum_DATE_JOURNEE
@@ -2550,7 +2550,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_date_distribution_remise(self, args): #Done
+    def Req_date_distribution_remise(self, args):
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -2615,7 +2615,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_decompte_operateur_journee(self, args): #Done
+    def Req_decompte_operateur_journee(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -2648,7 +2648,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dernier_chargement(self, args): #Done
+    def Req_dernier_chargement(self, args):
         query = '''
             SELECT TOP 5 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -2676,7 +2676,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dernier_maj_stock(self, args): #Done
+    def Req_dernier_maj_stock(self, args):
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -2699,7 +2699,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dernier_rib(self, args): #Done
+    def Req_dernier_rib(self, args):
         query = '''
             SELECT DISTINCT TOP 5 
                 T_DECOMPTE.CODE_CLIENT AS CODE_CLIENT,	
@@ -2732,7 +2732,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_det_borderau_valeurs(self, args): #Done
+    def Req_det_borderau_valeurs(self, args):
         query = '''
             SELECT 
                 T_DT_BORDEREAU.ID_BORDEREAU AS ID_BORDEREAU,	
@@ -2767,7 +2767,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_articles(self, args): #Done
+    def Req_dt_articles(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -2839,7 +2839,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_caisserie_secteur(self, args): #Done
+    def Req_dt_caisserie_secteur(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -2883,7 +2883,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_courrier(self, args): #Done
+    def Req_dt_courrier(self, args):
         query = '''
             SELECT 
                 T_DT_COURRIER_AGENCE.ID_ENVOI AS ID_ENVOI,	
@@ -2909,7 +2909,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_decompte(self, args): #Done
+    def Req_dt_decompte(self, args):
         query = '''
             UPDATE 
                 T_DT_DECOMPTE
@@ -2933,7 +2933,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_facture_client(self, args): #Done
+    def Req_dt_facture_client(self, args):
         query = '''
             SELECT 
                 T_DT_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -2972,7 +2972,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_mouvement_cond(self, args): #Done
+    def Req_dt_mouvement_cond(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS_CAISSERIE.ID_MOUVEMENT AS ID_MOUVEMENT,	
@@ -3014,7 +3014,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_dt_operation(self, args): #Done
+    def Req_dt_operation(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.ID_MOUVEMENT AS ID_MOUVEMENT,	
@@ -3072,7 +3072,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_dt_prelevement(self, args): #Done
+    def Req_dt_prelevement(self, args):
         query = '''
             SELECT 
                 T_DT_PRELEVEMENT_COND.ID_PRELEVEMENT AS ID_PRELEVEMENT,	
@@ -3129,7 +3129,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_promo_tranche_article(self, args): #Done
+    def Req_dt_promo_tranche_article(self, args):
         query = '''
             SELECT 
                 T_DT_PROMO_TRANCHE.ID_PROMO AS ID_PROMO,	
@@ -3162,7 +3162,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_reclamation(self, args): #Done
+    def Req_dt_reclamation(self, args):
         query = '''
             SELECT 
                 T_DT_RECLAMATION.ID_RECLAMATION AS ID_RECLAMATION,	
@@ -3190,7 +3190,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_rendus(self, args): #Done
+    def Req_dt_rendus(self, args):
         query = '''
             SELECT 
                 T_LIGNE_RETOUR_RENDUS.ID_RETOUR AS ID_RETOUR,	
@@ -3225,7 +3225,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_dt_retour(self, args): #Done
+    def Req_dt_retour(self, args):
         query = '''
             SELECT 
                 T_LIGNE_RETOUR_CAISSERIE.ID_RETOUR AS ID_RETOUR,	
@@ -3261,7 +3261,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ecarts(self, args): #Done
+    def Req_ecarts(self, args):
         query = '''
             SELECT 
                 T_RETOURS_USINE.ID_RETOUR AS ID_RETOUR,	
@@ -3339,7 +3339,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ecarts_caisserie(self, args): #Done
+    def Req_ecarts_caisserie(self, args):
         query = '''
             SELECT DISTINCT 
                 T_RETOURS_USINE.ID_RETOUR AS ID_RETOUR,	
@@ -3405,7 +3405,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ecarts_inventaire_par_magasin(self, args): #Done
+    def Req_ecarts_inventaire_par_magasin(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -3445,7 +3445,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_etat_borderau_valeurs(self, args): #Done
+    def Req_etat_borderau_valeurs(self, args):
         query = '''
             SELECT 
                 T_DT_BORDEREAU.ID_BORDEREAU AS ID_BORDEREAU,	
@@ -3484,7 +3484,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def req_etat_chargement(self, args): #Done
+    def req_etat_chargement(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -3521,7 +3521,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_etat_journee(self, args): #Done
+    def Req_etat_journee(self, args):
         query = '''
             SELECT 
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -3554,7 +3554,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_etat_synchro(self, args): #Done
+    def Req_etat_synchro(self, args):
         query = '''
             SELECT 
                 T_SYNCHRO.ID_JOB AS ID_JOB,	
@@ -3585,7 +3585,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_etat_validation_remise(self, args): #Done
+    def Req_etat_validation_remise(self, args):
         query = '''
             SELECT 
                 T_REMISE_CLIENT_TRAD.Date_Debut AS Date_Debut,	
@@ -3612,7 +3612,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_export_invendu_rendus(self, args): #Done
+    def Req_export_invendu_rendus(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -3660,7 +3660,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_facture_periode(self, args): #Done
+    def Req_facture_periode(self, args):
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -3726,7 +3726,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_famille_gamme(self, args): #Done
+    def Req_famille_gamme(self, args):
         query = '''
             SELECT 
                 T_FAMILLE.CODE_FAMILLE AS CODE_FAMILLE,	
@@ -3750,7 +3750,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    """def Req_get_id_det_mission(self, args): #Done
+    """def Req_get_id_det_mission(self, args):
         query = '''
             SELECT 
                 T_Det_Mission.Id_Det_Mission AS Id_Det_Mission,	
@@ -3786,7 +3786,7 @@ class Queries(object):
 
         return query.format(**kwargs)"""
 
-    """def REQ_Get_MissionBL_By_Ordre(self, args): #Done
+    """def REQ_Get_MissionBL_By_Ordre(self, args):
         query = '''
             SELECT 
                 MAX(T_Mission_BL.Id_Det) AS MAX_Id_Det
@@ -3795,7 +3795,7 @@ class Queries(object):
         '''
         return query"""
 
-    def Req_get_prevendeur_date(self, args): #Done
+    def Req_get_prevendeur_date(self, args):
         query = '''
             SELECT 
                 T_COMMANDE_CLIENT.DATE_COMMANDE AS DATE_COMMANDE,	
@@ -3820,7 +3820,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def REQ_GetEnseigne(self, args): #Done
+    def REQ_GetEnseigne(self, args):
         query = '''
             SELECT DISTINCT 
                 T_GROUP_CLIENT.ID_GROUP AS ID_GP_CLIENT,	
@@ -3845,7 +3845,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_info_bl_mission(self, args): #Done
+    def Req_info_bl_mission(self, args):
         query = '''
             SELECT 
                 T_Mission_BL.Id_Det_Mission AS Id_Det_Mission,	
@@ -3871,7 +3871,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_info_caisse(self, args): #Done
+    def Req_info_caisse(self, args):
         query = '''
             SELECT 
                 T_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
@@ -3897,7 +3897,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_info_chargement(self, args): #Done
+    def Req_info_chargement(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -3945,7 +3945,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_info_client(self, args): #Done
+    def Req_info_client(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -3983,7 +3983,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_info_journee(self, args): #Done
+    def Req_info_journee(self, args):
         query = '''
             SELECT 
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -4035,7 +4035,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    """def Req_info_mission(self, args): #Done
+    """def Req_info_mission(self, args):
         query = '''
             SELECT 
                 T_Ordre_Mission_Agence.Id_Ordre_Mission AS Id_Ordre_Mission,	
@@ -4065,7 +4065,7 @@ class Queries(object):
 
         return query.format(**kwargs)"""
 
-    def Req_info_operateur(self, args): #Done
+    def Req_info_operateur(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -4097,7 +4097,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_info_tournee_client(self, args): #Done
+    def Req_info_tournee_client(self, args):
         query = '''
             SELECT 
                 T_SOUS_SECTEUR.code_secteur AS code_secteur,	
@@ -4132,7 +4132,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    """def Req_info_trajet(self, args): #Done
+    """def Req_info_trajet(self, args):
         query = '''
             SELECT 
                 T_Hist_Trajet.Id_Ordre_Mission AS Id_Ordre_Mission,	
@@ -4173,7 +4173,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)"""
 
-    def Req_itineraire(self, args): #Done
+    def Req_itineraire(self, args):
         query = '''
             SELECT 
                 T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -4198,7 +4198,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_jours_non_clos(self, args): #Done
+    def Req_jours_non_clos(self, args):
         query = '''
             SELECT 
                 COUNT(T_JOURNEE.CLOTURE) AS Comptage_1,	
@@ -4229,7 +4229,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_lignes_commande(self, args): #Done
+    def Req_lignes_commande(self, args):
         query = '''
             SELECT 
                 T_LIGNE_COMMANDE.ID_COMMANDE AS ID_COMMANDE,	
@@ -4273,7 +4273,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_livraison_articles(self, args): #Done
+    def Req_livraison_articles(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4328,7 +4328,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_livraison_cond(self, args): #Done
+    def Req_livraison_cond(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
@@ -4359,7 +4359,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_livraison_conditionnement(self, args): #Done
+    def Req_livraison_conditionnement(self, args):
         query = '''
             SELECT 
                 T_COND_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -4407,7 +4407,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_livraison_global_client(self, args): #Done
+    def Req_livraison_global_client(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -4480,7 +4480,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_livraison_non_valider(self, args): #Done
+    def Req_livraison_non_valider(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -4526,7 +4526,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_livraisons_unique(self, args): #Done
+    def Req_livraisons_unique(self, args):
         query = '''
             SELECT DISTINCT 
                 T_LIVRAISON.code_secteur AS code_secteur,	
@@ -4578,7 +4578,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_aides_vendeur(self, args): #Done
+    def Req_ls_aides_vendeur(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -4607,7 +4607,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_alimentation_non_valide(self, args): #Done
+    def Req_ls_alimentation_non_valide(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -4636,7 +4636,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_alimentation_valide(self, args): #Done
+    def Req_ls_alimentation_valide(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -4669,7 +4669,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_alimentations(self, args): #Done
+    def Req_ls_alimentations(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
@@ -4699,7 +4699,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_appareil(self, args): #Done
+    def Req_ls_appareil(self, args):
         query = '''
             SELECT 
                 T_APPAREIL.CODE_APPAREIL AS CODE_APPAREIL,	
@@ -4744,7 +4744,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_articles(self, args): #Done
+    def Req_ls_articles(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4811,7 +4811,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def req_ls_articles_dispo(self, args): #Done
+    def req_ls_articles_dispo(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4823,7 +4823,7 @@ class Queries(object):
         '''
         return query
 
-    def Req_ls_articles_export(self, args): #Done
+    def Req_ls_articles_export(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4899,7 +4899,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def req_ls_articles_livrees_newrest(self, args): #Done
+    def req_ls_articles_livrees_newrest(self, args):
         query = '''
             SELECT DISTINCT 
                 T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -4937,7 +4937,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_articles_stat(self, args): #Done
+    def Req_ls_articles_stat(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -5002,7 +5002,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_articles_stock(self, args): #Done
+    def Req_ls_articles_stock(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -5043,7 +5043,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_articles_tout(self, args): #Done
+    def Req_ls_articles_tout(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -5124,7 +5124,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_autorisation_caisserie(self, args): #Done
+    def Req_ls_autorisation_caisserie(self, args):
         query = '''
             SELECT 
                 T_AUTORISATION_SOLDE_CAISSERIE.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -5182,7 +5182,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_autorisation_journee(self, args): #Done
+    def Req_ls_autorisation_journee(self, args):
         query = '''
             SELECT 
                 T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -5207,7 +5207,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_autorisations(self, args): #Done
+    def Req_ls_autorisations(self, args):
         query = '''
             SELECT 
                 T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION AS ID_JUSTIFICATION,	
@@ -5260,7 +5260,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_avoirs_secteurs(self, args): #Done
+    def Req_ls_avoirs_secteurs(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -5312,7 +5312,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_avoirs_secteurs_caisserie(self, args): #Done
+    def Req_ls_avoirs_secteurs_caisserie(self, args):
         query = '''
             SELECT 
                 T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -5359,7 +5359,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_bl_client(self, args): #Done
+    def Req_ls_bl_client(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -5400,7 +5400,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_borderau_valeurs(self, args): #Done
+    def Req_ls_borderau_valeurs(self, args):
         query = '''
             SELECT 
                 T_BORDEREAU_VALEURS.ID_BORDEREAU AS ID_BORDEREAU,	
@@ -5424,7 +5424,7 @@ class Queries(object):
         '''
         return query
 
-    def Req_ls_chargement_cac(self, args): #Done
+    def Req_ls_chargement_cac(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -5455,7 +5455,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_chargements_journee(self, args): #Done
+    def Req_ls_chargements_journee(self, args):
         query = '''
             SELECT DISTINCT 
                 T_CHARGEMENT.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -5508,7 +5508,7 @@ class Queries(object):
     
         return query.format(**kwargs)
 
-    def Req_ls_chauffeurs(self, args): #Done
+    def Req_ls_chauffeurs(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -5535,7 +5535,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_cheques(self, args): #Done
+    def Req_ls_cheques(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.DATE_OPERATION AS DATE_OPERATION,	
@@ -5634,7 +5634,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_cheques_non_remis(self, args): #Done
+    def Req_ls_cheques_non_remis(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -5684,7 +5684,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_client_servi_date(self, args): #Done
+    def Req_ls_client_servi_date(self, args):
         query = '''
             SELECT DISTINCT 
                 T_SOUS_SECTEUR.code_secteur AS code_secteur,	
@@ -5725,7 +5725,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_clients(self, args): #Done
+    def Req_ls_clients(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5808,7 +5808,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_clients_cac(self, args): #Done
+    def Req_ls_clients_cac(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5835,7 +5835,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_clients_cac_dep(self, args): #Done
+    def Req_ls_clients_cac_dep(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5885,7 +5885,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_clients_cac_remise(self, args): #Done
+    def Req_ls_clients_cac_remise(self, args):
         query = '''
             SELECT DISTINCT 
                 T_LIVRAISON.CODE_CLIENT AS CODE_CLIENT,	
@@ -5929,7 +5929,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_clients_classe_secteur(self, args): #Done
+    def Req_ls_clients_classe_secteur(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5965,7 +5965,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_clients_con_dec(self, args): #Done
+    def Req_ls_clients_con_dec(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -5993,7 +5993,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_clients_conseigne(self, args): #Done
+    def Req_ls_clients_conseigne(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -6077,7 +6077,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_clients_itineraire(self, args): #Done
+    def Req_ls_clients_itineraire(self, args):
         query = '''
             SELECT 
                 T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -6118,7 +6118,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_clients_remise_lait(self, args): #Done
+    def Req_ls_clients_remise_lait(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -6145,7 +6145,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_clients_sans_facture(self, args): #Done
+    def Req_ls_clients_sans_facture(self, args):
         query = '''
             SELECT 
                 T_ITINERAIRES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -6189,7 +6189,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_clients_secteur(self, args): #Done
+    def Req_ls_clients_secteur(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -6244,7 +6244,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_code_secteur_commandes(self, args): #Done
+    def Req_ls_code_secteur_commandes(self, args):
         query = '''
             SELECT DISTINCT 
                 T_COMMANDES.code_secteur AS code_secteur
@@ -6272,7 +6272,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_commande(self, args): #Done
+    def Req_ls_commande(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -6321,7 +6321,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_commande_client(self, args): #Done
+    def Req_ls_commande_client(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -6367,7 +6367,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_commande_usine(self, args): #Done
+    def Req_ls_commande_usine(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -6407,7 +6407,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def req_ls_commandes_prevente(self, args): #Done
+    def req_ls_commandes_prevente(self, args):
         query = '''
             SELECT 
                 T_COMMANDE_CLIENT.ID_COMMANDE AS ID_COMMANDE,	
@@ -6477,7 +6477,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_comptes(self, args): #Done
+    def Req_ls_comptes(self, args):
         query = ''' 
             SELECT 
                 T_COMPTES.CODE_COMPTE AS CODE_COMPTE,	
@@ -6495,7 +6495,7 @@ class Queries(object):
         '''
         return query
 
-    def Req_ls_cond(self, args): #Done
+    def Req_ls_cond(self, args):
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_CP AS CODE_CP,	
@@ -6538,7 +6538,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_cond_chargees(self, args): #Done
+    def Req_ls_cond_chargees(self, args):
         query = '''
             SELECT 
                 T_COND_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -6577,7 +6577,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_cond_livraison(self, args): #Done
+    def Req_ls_cond_livraison(self, args):
         query = '''
             SELECT 
                 T_COND_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -6611,7 +6611,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_cond_livrees(self, args): #Done
+    def Req_ls_cond_livrees(self, args):
         query = '''
             SELECT 
                 T_COND_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -6643,7 +6643,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_controlleurs(self, args): #Done
+    def Req_ls_controlleurs(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -6670,7 +6670,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_courrier(self, args): #Done
+    def Req_ls_courrier(self, args):
         query = '''
             SELECT 
                 T_COURRIER_AGENCE.ID_ENVOI AS ID_ENVOI,	
@@ -6703,7 +6703,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_decompte_cheque(self, args): #Done
+    def Req_ls_decompte_cheque(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -6753,7 +6753,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_decompte_espece(self, args): #Done
+    def Req_ls_decompte_espece(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -6791,7 +6791,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_decompte_journee(self, args): #Done
+    def Req_ls_decompte_journee(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -6819,7 +6819,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_depense_caisse(self, args): #Done
+    def Req_ls_depense_caisse(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -6869,7 +6869,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_depenses(self, args): #Done
+    def Req_ls_depenses(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.LIBELLE AS LIBELLE,	
@@ -6909,7 +6909,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_depositaires(self, args): #Done
+    def Req_ls_depositaires(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -6940,7 +6940,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def req_ls_ecarts_controleur(self, args): #Done
+    def req_ls_ecarts_controleur(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.COMPTE_ECART AS COMPTE_ECART,	
@@ -6992,7 +6992,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def req_ls_ecarts_controleur_caisserie(self, args): #Done
+    def req_ls_ecarts_controleur_caisserie(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -7043,7 +7043,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def req_ls_ecarts_journee(self, args): #Done
+    def req_ls_ecarts_journee(self, args):
         query = '''
             SELECT 
                 T_ECARTS_RENDUS.ID_ECART AS ID_ECART,	
@@ -7092,7 +7092,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_ecarts_rendus(self, args): #Done
+    def Req_ls_ecarts_rendus(self, args):
         query = '''
             SELECT 
                 T_ECARTS_RENDUS.ID_ECART AS ID_ECART,	
@@ -7138,7 +7138,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_enseigne_secteur(self, args): #Done
+    def Req_ls_enseigne_secteur(self, args):
         query = '''
             SELECT DISTINCT 
                 T_GROUP_CLIENT.ID_GROUP AS ID_GP_CLIENT,	
@@ -7172,7 +7172,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_facture_date(self, args): #Done
+    def Req_ls_facture_date(self, args):
         query = '''
             SELECT 
                 T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -7215,7 +7215,7 @@ class Queries(object):
     
         return query.format(**kwargs)
 
-    def Req_ls_factures_clients(self, args): #Done
+    def Req_ls_factures_clients(self, args):
         query = '''
             SELECT 
                 T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -7316,7 +7316,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_gms(self, args): #Done
+    def Req_ls_gms(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -7348,7 +7348,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_gms_depo(self, args): #Done
+    def Req_ls_gms_depo(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -7376,7 +7376,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_groups(self, args): #Done
+    def Req_ls_groups(self, args):
         query = '''
             SELECT 
                 T_GROUP_CLIENT.ID_GROUP AS ID_GP_CLIENT,	
@@ -7388,7 +7388,7 @@ class Queries(object):
         '''
         return query
 
-    def Req_ls_liv(self, args): #Done
+    def Req_ls_liv(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -7420,7 +7420,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_livraison(self, args): #Done
+    def Req_ls_livraison(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -7459,7 +7459,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_livraison_client(self, args): #Done
+    def Req_ls_livraison_client(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION,	
@@ -7498,7 +7498,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_livraison_tournee_journee(self, args): #Done
+    def Req_ls_livraison_tournee_journee(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -7549,7 +7549,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_livraisons(self, args): #Done
+    def Req_ls_livraisons(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -7592,7 +7592,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_livraisons_journee(self, args): #Done
+    def Req_ls_livraisons_journee(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -7649,7 +7649,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_motifs(self, args): #Done
+    def Req_ls_motifs(self, args):
         query = '''
             SELECT 
                 T_MOTIF.CODE_MOTIF AS CODE_MOTIF,	
@@ -7677,7 +7677,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def req_ls_mvt(self, args): #Done
+    def req_ls_mvt(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -7721,7 +7721,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_num_bl_client(self, args): #Done
+    def Req_ls_num_bl_client(self, args):
         query = '''
             SELECT TOP 10 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -7754,7 +7754,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_operateurs(self, args): #Done
+    def Req_ls_operateurs(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -7801,7 +7801,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_operateurs_fonction(self, args): #Done
+    def Req_ls_operateurs_fonction(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -7847,7 +7847,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_operation_caisse_valide(self, args): #Done
+    def Req_ls_operation_caisse_valide(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -7875,7 +7875,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_operations(self, args): #Done
+    def Req_ls_operations(self, args):
         query = '''
             SELECT DISTINCT 
                 T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION,	
@@ -7936,7 +7936,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_operations_caisse(self, args): #Done
+    def Req_ls_operations_caisse(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -8002,7 +8002,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_operations_non_justifies(self, args): #Done
+    def Req_ls_operations_non_justifies(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -8057,7 +8057,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_prelev_journee(self, args): #Done
+    def Req_ls_prelev_journee(self, args):
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.ID_PRELEV AS ID_PRELEV,	
@@ -8085,7 +8085,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_prelevement(self, args): #Done
+    def Req_ls_prelevement(self, args):
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.ID_PRELEV AS ID_PRELEV,	
@@ -8111,7 +8111,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_prelevements_periode(self, args): #Done
+    def Req_ls_prelevements_periode(self, args):
         query = '''
             SELECT 
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -8152,7 +8152,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_prelevements_periode_caisserie(self, args): #Done
+    def Req_ls_prelevements_periode_caisserie(self, args):
         query = '''
             SELECT 
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -8199,7 +8199,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_preparation(self, args): #Done
+    def Req_ls_preparation(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.RANG AS RANG,	
@@ -8235,7 +8235,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_prix_produit(self, args): #Done
+    def Req_ls_prix_produit(self, args):
         query = '''
             SELECT DISTINCT 
                 T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -8271,7 +8271,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_produit_commandes(self, args): #Done
+    def Req_ls_produit_commandes(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -8312,7 +8312,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_produits(self, args): #Done
+    def Req_ls_produits(self, args):
         query = '''
             SELECT DISTINCT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -8373,7 +8373,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_produits_actif(self, args): #Done
+    def Req_ls_produits_actif(self, args):
         query = '''
             SELECT DISTINCT 
                 T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -8433,7 +8433,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_ls_produits_chargees(self, args): #Done
+    def Req_ls_produits_chargees(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT AS CODE_CHARGEMENT,	
@@ -8489,7 +8489,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_produits_livraison(self, args): #Done
+    def Req_ls_produits_livraison(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -8548,7 +8548,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_reclamations(self, args): #Done
+    def Req_ls_reclamations(self, args):
         query = '''
             SELECT 
                 T_RECLAMATIONS_QUALITE.ID_RECLAMATION AS ID_RECLAMATION,	
@@ -8606,7 +8606,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_reconaissances(self, args): #Done
+    def Req_ls_reconaissances(self, args):
         query = '''
             SELECT 
                 T_RECONAISSANCES.CODE_CLIENT AS CODE_CLIENT,	
@@ -8644,7 +8644,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_reglement(self, args): #Done
+    def Req_ls_reglement(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.NUM_DECOMPTE AS NUM_DECOMPTE,	
@@ -8697,7 +8697,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_reglements(self, args): #Done
+    def Req_ls_reglements(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.DATE_DECOMPTE AS DATE_DECOMPTE,	
@@ -8734,7 +8734,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_reglements_cond(self, args): #Done
+    def Req_ls_reglements_cond(self, args):
         query = '''
             SELECT 
                 T_REGELEMENT_COND.ID_REGLEMENT AS ID_REGLEMENT,	
@@ -8787,7 +8787,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_remise_clients(self, args): #Done
+    def Req_ls_remise_clients(self, args):
         query = '''
             SELECT 
                 T_REMISE_CLIENT_TRAD.Date_Debut AS Date_Debut,	
@@ -8874,7 +8874,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_remises_clients(self, args): #Done
+    def Req_ls_remises_clients(self, args):
         query = '''
             SELECT 
                 T_REMISE_CLIENT_TRAD.Date_Debut AS Date_Debut,	
@@ -8938,7 +8938,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_remises_par_secteur(self, args): #Done
+    def Req_ls_remises_par_secteur(self, args):
         query = '''
             SELECT 
                 T_REMISE_CLIENT_TRAD.Date_Debut AS Date_Debut,	
@@ -8992,7 +8992,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_resp_vente(self, args): #Done
+    def Req_ls_resp_vente(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -9022,7 +9022,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_secteur(self, args): #Done
+    def Req_ls_secteur(self, args):
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -9068,7 +9068,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_secteur2(self, args): #Done
+    def Req_ls_secteur2(self, args):
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -9108,7 +9108,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_secteur_prevente(self, args): #Done
+    def Req_ls_secteur_prevente(self, args):
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -9155,7 +9155,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_secteur_sans_commande(self, args): #Done
+    def Req_ls_secteur_sans_commande(self, args):
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -9191,7 +9191,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_ss_secteur(self, args): #Done
+    def Req_ls_ss_secteur(self, args):
         query = '''
             SELECT 
                 T_SOUS_SECTEUR.CODE_SOUS_SECTEUR AS CODE_SOUS_SECTEUR,	
@@ -9226,7 +9226,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_ss_tournee(self, args): #Done
+    def Req_ls_ss_tournee(self, args):
         query = '''
             SELECT 
                 T_SOUS_SECTEUR.CODE_SOUS_SECTEUR AS CODE_SOUS_SECTEUR,	
@@ -9260,7 +9260,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_superviseurs(self, args): #Done
+    def Req_ls_superviseurs(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -9286,7 +9286,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_superviseurs_resp_vente(self, args): #Done
+    def Req_ls_superviseurs_resp_vente(self, args):
         query = '''
             SELECT DISTINCT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -9324,7 +9324,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_tache_operateur(self, args): #Done
+    def Req_ls_tache_operateur(self, args):
         query = '''
             SELECT 
                 T_OPERTEURS_TACHES.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -9353,7 +9353,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_tournees(self, args): #Done
+    def Req_ls_tournees(self, args):
         query = '''
             SELECT 
                 T_TOURNEES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -9390,7 +9390,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_tous_secteur(self, args): #Done
+    def Req_ls_tous_secteur(self, args):
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -9431,7 +9431,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_vehicule(self, args): #Done
+    def Req_ls_vehicule(self, args):
         query = '''
             SELECT 
                 T_VEHICULE.Matricule AS Matricule,	
@@ -9459,7 +9459,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ls_vendeurs(self, args): #Done
+    def Req_ls_vendeurs(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -9523,7 +9523,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ls_versement_caisse(self, args): #Done
+    def Req_ls_versement_caisse(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -9574,7 +9574,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_magasin_article(self, args): #Done
+    def Req_magasin_article(self, args):
         query = '''
             SELECT 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -9610,7 +9610,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_magasin_categorie(self, args): #Done
+    def Req_magasin_categorie(self, args):
         query = '''
             SELECT 
                 T_TYPE_PRODUIT_MAG.CODE_MAGASIN AS CODE_MAGASIN,	
@@ -9640,7 +9640,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_magasin_cond(self, args): #Done
+    def Req_magasin_cond(self, args):
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_MAGASIN AS CODE_MAGASIN,	
@@ -9672,7 +9672,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_magasins_agence(self, args): #Done
+    def Req_magasins_agence(self, args):
         query = '''
             SELECT 
                 T_MAGASINS.CODE_MAGASIN AS CODE_MAGASIN,	
@@ -9696,7 +9696,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_maj_pass(self, args): #Done
+    def Req_maj_pass(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.FONCTION AS FONCTION,	
@@ -9722,36 +9722,43 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_maj_position_cond(self, args): #Done
+    def Req_maj_position_cond(self, args):
         query = '''
             UPDATE 
-                T_MAGASIN_COND
+                mc
+            FROM
+                T_MAGASIN_COND mc
+                INNER JOIN T_MAGASINS m ON m.CODE_MAGASIN = mc.CODE_MAGASIN
             SET
-                QTE_STOCK = {Param_qte_stock}
-            WHERE 
+                mc.QTE_STOCK = {Param_qte_stock}
+            WHERE
+                mc.CODE_CP = {Param_code_cp}
+                AND m.CODE_AGCE = {CODE_AGCE}
                 {OPTIONAL_ARG_1}
-                T_MAGASIN_COND.CODE_CP = {Param_code_cp}
         '''
 
         try:
             kwargs = {
                 'Param_qte_stock': args[0],
                 'Param_code_magasin': args[1],
-                'Param_code_cp': args[2]
+                'Param_code_cp': args[2],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
-        
+
         for key in ('Param_qte_stock', 'Param_code_cp'):
             if kwargs[key] in self.null_values:
                 return ValueError
-        
-        kwargs['OPTIONAL_ARG_1'] = 'T_MAGASIN_COND.CODE_MAGASIN = {Param_code_magasin} AND'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_magasin'] in self.null_values else kwargs['OPTIONAL_ARG_1']
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND mc.CODE_MAGASIN = {Param_code_magasin}'
+
+        if kwargs['Param_code_magasin'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
 
         return query.format(**kwargs).format(**kwargs)
 
-    """def Req_mappage_article(self, args): #Done
+    """def Req_mappage_article(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -9773,7 +9780,7 @@ class Queries(object):
         '''
         return query"""
 
-    """def Req_mappage_produit(self, args): #Done
+    """def Req_mappage_produit(self, args):
         query = '''
             SELECT 
                 T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -9787,7 +9794,7 @@ class Queries(object):
         '''
         return query"""
 
-    """def Req_mappage_secteur(self, args): #Done
+    """def Req_mappage_secteur(self, args):
         query = '''
             SELECT 
                 T_SECTEUR.code_secteur AS code_secteur,	
@@ -9804,7 +9811,7 @@ class Queries(object):
         '''
         return query"""
 
-    def Req_max_autorisation(self, args): #Done
+    def Req_max_autorisation(self, args):
         query = '''
             SELECT 
                 MAX(T_AUTORISATIONS_SOLDE.ID_JUSTIFICATION) AS le_maximum_ID_JUSTIFICATION
@@ -9828,7 +9835,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_autorisation_caisserie(self, args): #Done
+    def Req_max_autorisation_caisserie(self, args):
         query = '''
             SELECT 
                 MAX(T_AUTORISATION_SOLDE_CAISSERIE.ID_JUSTIFICATION) AS le_maximum_ID_JUSTIFICATION
@@ -9852,7 +9859,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_borderau_valeurs(self, args): #Done
+    def Req_max_borderau_valeurs(self, args):
         query = '''
             SELECT 
                 MAX(T_BORDEREAU_VALEURS.ID_BORDEREAU) AS le_maximum_CODE_OPERATION
@@ -9861,7 +9868,7 @@ class Queries(object):
         '''
         return query
 
-    def Req_max_chargement(self, args): #Done
+    def Req_max_chargement(self, args):
         query = '''
             SELECT 
                 MAX(T_CHARGEMENT.CODE_CHARGEMENT) AS le_maximum_CODE_CHARGEMENT
@@ -9883,7 +9890,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_commandes_usine(self, args): #Done
+    def Req_max_commandes_usine(self, args):
         query = '''
             SELECT 
                 MAX(T_COMMANDES.ID_COMMANDE) AS le_maximum_ID_COMMANDE
@@ -9905,7 +9912,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_cond_livrees(self, args): #Done
+    def Req_max_cond_livrees(self, args):
         query = '''
             SELECT 
                 MAX(T_COND_LIVRAISON.NUM_LIVRAISON) AS le_maximum_NUM_LIVRAISON
@@ -9927,7 +9934,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_convoyage(self, args): #Done
+    def Req_max_convoyage(self, args):
         query = '''
             SELECT 
                 MAX(T_CONVOYAGE.NUM_CONVOYAGE) AS max_convoyage
@@ -9949,7 +9956,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_decompte(self, args): #Done
+    def Req_max_decompte(self, args):
         query = '''
             SELECT 
                 MAX(T_DECOMPTE.NUM_DECOMPTE) AS le_maximum_NUM_DECOMPTE
@@ -9971,7 +9978,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_envoi(self, args): #Done
+    def Req_max_envoi(self, args):
         query = '''
             SELECT 
                 MAX(T_COURRIER_AGENCE.ID_ENVOI) AS le_maximum_ID
@@ -9993,7 +10000,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_journee(self, args): #Done
+    def Req_max_journee(self, args):
         query = '''
             SELECT 
                 MAX(T_JOURNEE.DATE_JOURNEE) AS le_maximum_DATE_JOURNEE,	
@@ -10020,7 +10027,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_livraison(self, args): #Done
+    def Req_max_livraison(self, args):
         query = '''
             SELECT 
                 MAX(T_LIVRAISON.NUM_LIVRAISON) AS le_maximum_NUM_LIVRAISON
@@ -10042,7 +10049,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_mouv_cond(self, args): #Done
+    def Req_max_mouv_cond(self, args):
         query = '''
             SELECT 
                 MAX(T_MOUVEMENTS_CAISSERIE.ID_MOUVEMENT) AS le_maximum_ID_MOUVEMENT
@@ -10066,7 +10073,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_mouvement(self, args): #Done
+    def Req_max_mouvement(self, args):
         query = '''
             SELECT 
                 MAX(T_MOUVEMENTS.ID_MOUVEMENT) AS le_maximum_ID_MOUVEMENT
@@ -10090,7 +10097,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_mvt_caisse(self, args): #Done
+    def Req_max_mvt_caisse(self, args):
         query = '''
             SELECT 
                 MAX(T_MOUVEMENTS_CAISSE.ID_MOUVEMENT) AS le_maximum_ID_MOUVEMENT
@@ -10111,7 +10118,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_operations_caisse(self, args): #Done
+    def Req_max_operations_caisse(self, args):
         query = '''
             SELECT 
                 MAX(T_OPERATIONS_CAISSE.CODE_OPERATION) AS le_maximum_CODE_OPERATION
@@ -10133,7 +10140,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_prelevement(self, args): #Done
+    def Req_max_prelevement(self, args):
         query = '''
             SELECT 
                 MAX(T_PRELEVEMENT_SUSP_COND.ID_PRELEV) AS le_maximum_ID_PRELEV
@@ -10155,7 +10162,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_reclamation(self, args): #Done
+    def Req_max_reclamation(self, args):
         query = '''
             SELECT 
                 MAX(T_RECLAMATIONS_QUALITE.ID_RECLAMATION) AS le_maximum_ID_RECLAMATION
@@ -10165,7 +10172,7 @@ class Queries(object):
 
         return query
 
-    def Req_max_reconaissance(self, args): #Done
+    def Req_max_reconaissance(self, args):
         query = '''
             SELECT 
                 MAX(T_RECONAISSANCES.ID_RECONAISSANCE) AS le_maximum_ID_RECONAISSANCE
@@ -10187,7 +10194,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_reglement(self, args): #Done
+    def Req_max_reglement(self, args):
         query = '''
             SELECT 
                 MAX(T_REGELEMENT_COND.ID_REGLEMENT) AS le_maximum_ID_REGLEMENT
@@ -10209,7 +10216,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_max_tournee(self, args): #Done
+    def Req_max_tournee(self, args):
         query = '''
             SELECT 
                 MAX(T_TOURNEES.CODE_TOURNEE) AS le_maximum_CODE_TOURNEE
@@ -10237,7 +10244,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_min_rang_produit(self, args): #Done
+    def Req_min_rang_produit(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -10262,7 +10269,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_modele_taches(self, args): #Done
+    def Req_modele_taches(self, args):
         query = '''
             SELECT 
                 T_MODELE_TACHES.ID_MODELE AS ID_MODELE,	
@@ -10286,7 +10293,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_montant_a_verser(self, args): #Done
+    def Req_montant_a_verser(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -10333,7 +10340,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_montant_livraison_client(self, args): #Done
+    def Req_montant_livraison_client(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_CLIENT AS CODE_CLIENT,	
@@ -10374,7 +10381,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_mouvements_caisserie(self, args): #Done
+    def Req_mouvements_caisserie(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -10416,7 +10423,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_moy_vente_gms(self, args): #Done
+    def Req_moy_vente_gms(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_CLIENT AS CODE_CLIENT,	
@@ -10466,7 +10473,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_moyenne_vente(self, args): #Done
+    def Req_moyenne_vente(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -10501,7 +10508,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_moyenne_vente_produit_secteur(self, args): #Done
+    def Req_moyenne_vente_produit_secteur(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.code_secteur AS code_secteur,	
@@ -10563,7 +10570,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_mt_a_verser_secteur(self, args): #Done
+    def Req_mt_a_verser_secteur(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -10594,7 +10601,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_mt_remise_secteur(self, args): #Done
+    def Req_mt_remise_secteur(self, args):
         query = '''
             SELECT 
                 T_DT_FACTURE.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -10641,7 +10648,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_mt_verse_operateur(self, args): #Done
+    def Req_mt_verse_operateur(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -10683,7 +10690,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    """def Req_mvente(self, args): #Done
+    """def Req_mvente(self, args):
         query = '''
             SELECT 
                 T_MOYENNE_VENTE.DATE_VENTE AS DATE_VENTE,	
@@ -10714,7 +10721,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)"""
 
-    def Req_nbl_client(self, args): #Done
+    def Req_nbl_client(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -10745,7 +10752,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_nbre_facture_client(self, args): #Done
+    def Req_nbre_facture_client(self, args):
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -10779,7 +10786,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_nouv_solde_dep(self, args): #Done
+    def Req_nouv_solde_dep(self, args):
         query = '''
             SELECT 
                 SUM(T_MOUVEMENTS_CAISSE.MONTANT) AS la_somme_MONTANT,	
@@ -10820,7 +10827,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_objectif_agence(self, args): #Done
+    def Req_objectif_agence(self, args):
         query = '''
             SELECT 
                 T_OBJECTIF_AGENCE.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -10850,7 +10857,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_objectif_clients(self, args): #Done
+    def Req_objectif_clients(self, args):
         query = '''
             SELECT 
                 T_OBJECTIF_CLIENTS.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -10888,7 +10895,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_objectif_mois(self, args): #Done
+    def Req_objectif_mois(self, args):
         query = '''
             SELECT 
                 T_OBJECTIF_VENTE.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -10919,7 +10926,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_objectif_perte(self, args): #Done
+    def Req_objectif_perte(self, args):
         query = '''
             SELECT 
                 T_OBJECTIF_RENDUS.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -10949,7 +10956,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_objectif_secteurs(self, args): #Done
+    def Req_objectif_secteurs(self, args):
         query = '''
             SELECT 
                 T_OBJECTIF_SECTEURS.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -10989,7 +10996,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_objectifs_clients(self, args): #Done
+    def Req_objectifs_clients(self, args):
         query = '''
             SELECT 
                 T_BLOC.CODE_ZONE AS CODE_ZONE,	
@@ -11039,7 +11046,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_position_cond(self, args): #Done
+    def Req_position_cond(self, args):
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_MAGASIN AS CODE_MAGASIN,	
@@ -11066,7 +11073,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_position_stock(self, args): #Done
+    def Req_position_stock(self, args):
         query = '''
             SELECT
                 T_ARTICLES_MAGASINS.MAGASIN AS MAGASIN,	
@@ -11108,7 +11115,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_previsions(self, args): #Done
+    def Req_previsions(self, args):
         query = '''
             SELECT 
                 T_PREVISION.Date_Debut AS Date_Debut,	
@@ -11137,7 +11144,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_prix_article_periode(self, args): #Done
+    def Req_prix_article_periode(self, args):
         query = '''
             SELECT 
                 T_PRIX.Date_Debut AS Date_Debut,	
@@ -11170,7 +11177,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_prix_debut_jour(self, args): #Done
+    def Req_prix_debut_jour(self, args):
         query = '''
             SELECT 
                 T_PRIX.Date_Debut AS Date_Debut,	
@@ -11199,7 +11206,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_produit_en_stock(self, args): #Done
+    def Req_produit_en_stock(self, args):
         query = '''
             SELECT 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -11231,7 +11238,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_produits_famille(self, args): #Done
+    def Req_produits_famille(self, args):
         query = '''
             SELECT 
                 T_PRODUITS.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -11256,7 +11263,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_produits_mappage(self, args): #Done
+    def Req_produits_mappage(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -11283,7 +11290,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_promotions_dt(self, args): #Done
+    def Req_promotions_dt(self, args):
         query = '''
             SELECT DISTINCT 
                 T_PROMOTIONS.ID_PROMO AS ID_PROMO,	
@@ -11339,7 +11346,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_qte_commande(self, args): #Done
+    def Req_qte_commande(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.code_secteur AS code_secteur,	
@@ -11387,7 +11394,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_rapp_ca_pda(self, args): #Done
+    def Req_rapp_ca_pda(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -11439,7 +11446,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_realisation_globale(self, args): #Done
+    def Req_realisation_globale(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -11529,7 +11536,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_recap_factures_produits(self, args): #Done
+    def Req_recap_factures_produits(self, args):
         query = '''
             SELECT 
                 CAST( T_FACTURE.DATE_HEURE  AS DATE )  AS DATE_FACTURE,	
@@ -11644,7 +11651,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_recap_factures_produits_cumul(self, args): #Done
+    def Req_recap_factures_produits_cumul(self, args):
         query = '''
             SELECT 
                 T_RESP.NOM_OPERATEUR AS NOM_RESP_VENTE,	
@@ -11747,7 +11754,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_recap_factures_valeur(self, args): #Done
+    def Req_recap_factures_valeur(self, args):
         query = '''
             SELECT 
                 T_RESP.NOM_OPERATEUR AS NOM_RESP_VENTE,	
@@ -11849,7 +11856,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_recap_factures_valeur_date(self, args): #Done
+    def Req_recap_factures_valeur_date(self, args):
         query = '''
             SELECT 
                 CAST( T_FACTURE.DATE_HEURE  AS DATE )  AS DATE_FACTURE,	
@@ -11954,7 +11961,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    """def Req_recensement_clts_nt(self, args): #Done
+    """def Req_recensement_clts_nt(self, args):
         query = '''
             SELECT 
                 T_RECENSEMENT.ID_RECENSEMENT AS ID_RECENSEMENT,	
@@ -12025,7 +12032,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)"""
 
-    def Req_recherche_client_code_interne(self, args): #Done
+    def Req_recherche_client_code_interne(self, args):
         query = '''
             SELECT 
                 T_CLIENTS.CODE_CLIENT AS CODE_CLIENT,	
@@ -12054,7 +12061,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_recherche_operateur(self, args): #Done
+    def Req_recherche_operateur(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -12097,7 +12104,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_recherche_operateur_affectation(self, args): #Done
+    def Req_recherche_operateur_affectation(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -12136,7 +12143,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_recherche_par_matricule(self, args): #Done
+    def Req_recherche_par_matricule(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -12168,7 +12175,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_recherche_prevision(self, args): #Done
+    def Req_recherche_prevision(self, args):
         query = '''
             SELECT 
                 T_PREVISION.Date_Debut AS Date_Debut,	
@@ -12198,7 +12205,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_recherche_secteur(self, args): #Done
+    def Req_recherche_secteur(self, args):
         query = '''
             SELECT 
                 T_SECTEUR.NOM_SECTEUR AS NOM_SECTEUR,	
@@ -12221,7 +12228,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_reconaissances_operateur(self, args): #Done
+    def Req_reconaissances_operateur(self, args):
         query = '''
             SELECT 
                 T_RECONAISSANCES.DATE_RECONAISS AS DATE_RECONAISS,	
@@ -12256,7 +12263,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_regularisation_sans_MS_magasin(self, args): #Done
+    def Req_regularisation_sans_MS_magasin(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -12299,7 +12306,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_releve_client_cac(self, args): #Done
+    def Req_releve_client_cac(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -12378,7 +12385,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_releve_client_details(self, args): #Done
+    def Req_releve_client_details(self, args):
         query = '''
             SELECT 
                 T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -12441,7 +12448,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_releve_client_details_produits(self, args): #Done
+    def Req_releve_client_details_produits(self, args):
         query = '''
             SELECT 
                 T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -12515,7 +12522,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_releve_client_global_produit(self, args): #Done
+    def Req_releve_client_global_produit(self, args):
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -12575,7 +12582,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_releve_client_globale(self, args): #Done
+    def Req_releve_client_globale(self, args):
         query = '''
             SELECT 
                 T_FACTURE.NUM_FACTURE AS NUM_FACTURE,	
@@ -12636,7 +12643,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_releve_client_tva(self, args): #Done
+    def Req_releve_client_tva(self, args):
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -12692,7 +12699,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_releve_dons(self, args): #Done
+    def Req_releve_dons(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -12744,7 +12751,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_relve_cac(self, args): #Done
+    def Req_relve_cac(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON_T_,	
@@ -12811,7 +12818,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_remarque_journee(self, args): #Done
+    def Req_remarque_journee(self, args):
         query = '''
             SELECT 
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -12842,7 +12849,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_remise_client(self, args): #Done
+    def Req_remise_client(self, args):
         query = '''
             SELECT 
                 T_REMISE_CLIENT_TRAD.Date_Debut AS Date_Debut,	
@@ -12874,7 +12881,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_remise_clt(self, args): #Done
+    def Req_remise_clt(self, args):
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -12925,7 +12932,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_remise_clt_produit(self, args): #Done
+    def Req_remise_clt_produit(self, args):
         query = '''
             SELECT 
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
@@ -12978,7 +12985,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_repartition(self, args): #Done
+    def Req_repartition(self, args):
         query = '''
             SELECT 
                 T_REPARTITION.DATE_REPARTITION AS DATE_REPARTITION,	
@@ -13011,7 +13018,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_sit_caisserie(self, args): #Done
+    def Req_sit_caisserie(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -13053,7 +13060,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_solde_initial_caisse(self, args): #Done
+    def Req_solde_initial_caisse(self, args):
         query = '''
             SELECT 
                 T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -13088,7 +13095,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_solde_initial_client(self, args): #Done
+    def Req_solde_initial_client(self, args):
         query = '''
             SELECT 
                 T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -13139,7 +13146,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_solde_operateur(self, args): #Done
+    def Req_solde_operateur(self, args):
         query = '''
             SELECT 
                 T_SOLDE_INITIAL.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -13193,7 +13200,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_ss_tournee(self, args): #Done
+    def Req_ss_tournee(self, args):
         query = '''
             SELECT 
                 T_TOURNEES_SS.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -13229,7 +13236,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_stock_article_magasin(self, args): #Done
+    def Req_stock_article_magasin(self, args):
         query = '''
             SELECT 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -13259,7 +13266,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_stock_cond(self, args): #Done
+    def Req_stock_cond(self, args):
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_CP AS CODE_CP,	
@@ -13292,7 +13299,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_stock_inital_cond(self, args): #Done
+    def Req_stock_inital_cond(self, args):
         query = '''
             SELECT 
                 T_STOCK_INITI_COND.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -13324,7 +13331,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_stock_inital_cond_magasin(self, args): #Done
+    def Req_stock_inital_cond_magasin(self, args):
         query = '''
             SELECT 
                 T_STOCK_INITI_COND.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -13358,7 +13365,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_stock_initial(self, args): #Done
+    def Req_stock_initial(self, args):
         query = '''
             SELECT 
                 T_STOCK_INIT.DATE_PS AS DATE_PS,	
@@ -13394,7 +13401,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_stock_initial_magasins(self, args): #Done
+    def Req_stock_initial_magasins(self, args):
         query = '''
             SELECT 
                 T_STOCK_INIT.DATE_PS AS DATE_PS,	
@@ -13425,7 +13432,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_stock_produit_magasin(self, args): #Done
+    def Req_stock_produit_magasin(self, args):
         query = '''
             SELECT 
                 T_ARTICLES_MAGASINS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -13457,7 +13464,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_stock_recep_temp(self, args): #Done
+    def Req_stock_recep_temp(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -13489,7 +13496,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_sup_chargement_secteur(self, args): #Done
+    def Req_sup_chargement_secteur(self, args):
         query = '''
             DELETE pc FROM 
                 T_CHARGEMENT c
@@ -13532,7 +13539,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    """def Req_supp_bl_mission(self, args): #Done
+    """def Req_supp_bl_mission(self, args):
         query = '''
             DELETE FROM 
                 T_Mission_BL
@@ -13552,7 +13559,7 @@ class Queries(object):
 
         return query.format(**kwargs)"""
 
-    def Req_supp_budget(self, args): #Done
+    def Req_supp_budget(self, args):
         query = '''
             DELETE FROM 
                 T_BUDGET_MENSUEL
@@ -13576,7 +13583,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_chargement_cac(self, args): #Done
+    def Req_supp_chargement_cac(self, args):
         query = '''
             DELETE FROM 
                 T_CHARGEMENT
@@ -13607,7 +13614,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_supp_cond_livree(self, args): #Done
+    def Req_supp_cond_livree(self, args):
         query = '''
             DELETE FROM 
                 T_COND_LIVRAISON
@@ -13627,7 +13634,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_dt_reclamation(self, args): #Done
+    def Req_supp_dt_reclamation(self, args):
         query = '''
             DELETE FROM 
                 T_DT_RECLAMATION
@@ -13647,7 +13654,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_hist_clients(self, args): #Done
+    def Req_supp_hist_clients(self, args):
         query = '''
             DELETE FROM 
                 T_MOY_VENTE_CLIENTS
@@ -13671,17 +13678,19 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_hist_secteur(self, args): #Done
+    def Req_supp_hist_secteur(self, args):
         query = '''
             DELETE FROM 
                 T_MOY_VENTE_ARTICLE
             WHERE 
                 T_MOY_VENTE_ARTICLE.DATE_VENTE = '{Param_date_journee}'
+                AND T_MOY_VENTE_ARTICLE.CODE_AGCE = {CODE_AGCE}
         '''
         
         try:
             kwargs = {
-                'Param_date_journee': args[0]
+                'Param_date_journee': args[0],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
@@ -13693,7 +13702,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_initial_client(self, args): #Done
+    def Req_supp_initial_client(self, args):
         query = '''
             DELETE FROM 
                 T_SOLDE_INITIAL_CLIENT
@@ -13718,7 +13727,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_itineraire(self, args): #Done
+    def Req_supp_itineraire(self, args):
         query = '''
             DELETE FROM 
                 T_ITINERAIRES
@@ -13738,7 +13747,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_justification_caisserie(self, args): #Done
+    def Req_supp_justification_caisserie(self, args):
         query = '''
             DELETE FROM 
                 T_AUTORISATION_SOLDE_CAISSERIE
@@ -13758,7 +13767,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_justification_solde(self, args): #Done
+    def Req_supp_justification_solde(self, args):
         query = '''
             DELETE FROM 
                 T_AUTORISATIONS_SOLDE
@@ -13778,7 +13787,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_mouvement_operation(self, args): #Done
+    def Req_supp_mouvement_operation(self, args):
         query = '''
             DELETE FROM 
                 T_MOUVEMENTS
@@ -13798,17 +13807,19 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_moy_vente(self, args): #Done
+    def Req_supp_moy_vente(self, args):
         query = '''
             DELETE FROM 
                 T_MOY_VENTE_ARTICLE
             WHERE 
                 T_MOY_VENTE_ARTICLE.DATE_VENTE = '{Param_date}'
+                AND T_MOY_VENTE_ARTICLE.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
             kwargs = {
-                'Param_date': args[0]
+                'Param_date': args[0],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
@@ -13820,7 +13831,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_moy_vente_clients(self, args): #Done
+    def Req_supp_moy_vente_clients(self, args):
         query = '''
             DELETE FROM 
                 T_MOY_VENTE_CLIENTS
@@ -13844,7 +13855,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    """def Req_supp_mvente(self, args): #Done
+    """def Req_supp_mvente(self, args):
         query = '''
             DELETE FROM 
                 T_MOYENNE_VENTE
@@ -13866,7 +13877,7 @@ class Queries(object):
 
         return query.format(**kwargs)"""
 
-    def Req_supp_mvt_caisse(self, args): #Done
+    def Req_supp_mvt_caisse(self, args):
         query = '''
             DELETE FROM 
                 T_MOUVEMENTS_CAISSE
@@ -13886,7 +13897,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_mvt_caisserie(self, args): #Done
+    def Req_supp_mvt_caisserie(self, args):
         query = '''
             DELETE FROM 
                 T_MOUVEMENTS_CAISSERIE
@@ -13906,7 +13917,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_obj_clients(self, args): #Done
+    def Req_supp_obj_clients(self, args):
         query = '''
             DELETE FROM 
                 T_OBJECTIF_CLIENTS
@@ -13930,17 +13941,22 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_obj_secteurs(self, args): #Done
+    def Req_supp_obj_secteurs(self, args):
         query = '''
             DELETE FROM 
-                T_OBJECTIF_SECTEURS
+                T_OBJECTIF_SECTEURS o
+                INNER JOIN T_SECTEUR s ON s.CODE_SECTEUR = o.CODE_SECTEUR
+                INNER JOIN T_BLOC b ON b.code_bloc = s.code_bloc
+                INNER JOIN T_ZONE z ON z.CODE_ZONE = b.CODE_ZONE
             WHERE 
                 T_OBJECTIF_SECTEURS.DATE_OBJECTIF = '{Param_date}'
+                AND z.CODE_AGCE = {CODE_AGCE}
         '''
-        
+
         try:
             kwargs = {
-                'Param_date': args[0]
+                'Param_date': args[0],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
@@ -13952,17 +13968,22 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_objectif(self, args): #Done
+    def Req_supp_objectif(self, args):
         query = '''
             DELETE FROM 
-                T_OBJECTIF_VENTE
+                T_OBJECTIF_VENTE o
+                INNER JOIN T_SECTEUR s ON s.CODE_SECTEUR = o.CODE_SECTEUR
+                INNER JOIN T_BLOC b ON b.code_bloc = s.code_bloc
+                INNER JOIN T_ZONE z ON z.CODE_ZONE = b.CODE_ZONE
             WHERE 
                 T_OBJECTIF_VENTE.DATE_OBJECTIF = '{Param_date_objectif}'
+                AND z.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
             kwargs = {
-                'Param_date_objectif': args[0]
+                'Param_date_objectif': args[0],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
@@ -13974,7 +13995,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_objectif_agence(self, args): #Done
+    def Req_supp_objectif_agence(self, args):
         query = '''
             DELETE FROM 
                 T_OBJECTIF_AGENCE
@@ -13998,7 +14019,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_objectif_clients(self, args): #Done
+    def Req_supp_objectif_clients(self, args):
         query = '''
             DELETE FROM 
                 T_OBJECTIF_CLIENTS
@@ -14027,7 +14048,7 @@ class Queries(object):
         
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_supp_objectif_rendus(self, args): #Done
+    def Req_supp_objectif_rendus(self, args):
         query = '''
             DELETE FROM 
                 T_OBJECTIF_RENDUS
@@ -14051,7 +14072,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_prevision(self, args): #Done
+    def Req_supp_prevision(self, args):
         query = '''
             DELETE FROM 
                 T_PREVISION
@@ -14075,7 +14096,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_produit_comm(self, args): #Done
+    def Req_supp_produit_comm(self, args):
         query = '''
             DELETE FROM 
                 T_PRODUITS_COMMANDES
@@ -14095,15 +14116,15 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_produits_chargees(self, args): #Done
+    def Req_supp_produits_chargees(self, args):
         query = '''
             DELETE FROM 
-                T_PRODUITS_CHARGEE
+                T_PRODUITS_CHARGEE pc
+                INNER JOIN T_CHARGEMENT c ON pc.CODE_CHARGEMENT = c.CODE_CHARGEMENT
             WHERE 
-                T_CHARGEMENT.CODE_SECTEUR = {Param_code_secteur}
-                AND	T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}'
-                AND T_PRODUITS_CHARGEE.CODE_CHARGEMENT = T_CHARGEMENT.CODE_CHARGEMENT
-                AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
+                c.CODE_SECTEUR = {Param_code_secteur}
+                AND	c.DATE_CHARGEMENT = '{Param_date_chargement}'
+                AND c.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
@@ -14123,7 +14144,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_produits_livree(self, args): #Done
+    def Req_supp_produits_livree(self, args):
         query = '''
             DELETE FROM 
                 T_PRODUITS_LIVREES
@@ -14143,7 +14164,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_remise(self, args): #Done
+    def Req_supp_remise(self, args):
         query = '''
             DELETE FROM 
                 T_REMISE_CLIENT_TRAD
@@ -14168,21 +14189,26 @@ class Queries(object):
             return ValueError
 
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_REMISE_CLIENT_TRAD.CODE_CLIENT = {Param_code_client}'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_client'] in self.null_values else kwargs['OPTIONAL_ARG_1']
+
+        if kwargs['Param_code_client'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_supp_solde_caisse(self, args): #Done
+    def Req_supp_solde_caisse(self, args):
         query = '''
             DELETE FROM 
-                T_SOLDE_INITIAL_CAISSE
+                T_SOLDE_INITIAL_CAISSE s
+                INNER JOIN T_CAISSE c ON c.CODE_CAISSE = s.CODE_CAISSE
             WHERE 
-                T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = '{Param_date_journee}'
+                s.DATE_JOURNEE = '{Param_date_journee}'
+                AND c.CODE_AGCE = {CODE_AGCE}
         '''
 
         try:
             kwargs = {
-                'Param_date_journee': args[0]
+                'Param_date_journee': args[0],
+                'CODE_AGCE': args[len(args) - 1]
             }
         except IndexError as e:
             return e
@@ -14194,29 +14220,10 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_solde_init_caisse(self, args): #Done
-        query = '''
-            DELETE FROM 
-                T_SOLDE_INITIAL_CAISSE
-            WHERE 
-                T_SOLDE_INITIAL_CAISSE.DATE_JOURNEE = '{Param_date_journee}'
-        '''
+    def Req_supp_solde_init_caisse(self, args):
+        return self.Req_supp_solde_caisse(args)
 
-        try:
-            kwargs = {
-                'Param_date_journee': args[0]
-            }
-        except IndexError as e:
-            return e
-        
-        kwargs['Param_date_journee'] = self.validateDate(kwargs['Param_date_journee'])
-        
-        if kwargs['Param_date_journee'] in self.null_values:
-            return ValueError
-
-        return query.format(**kwargs)
-
-    def Req_supp_solde_init_client(self, args): #Done
+    def Req_supp_solde_init_client(self, args):
         query = '''
             DELETE FROM 
                 T_SOLDE_INITIAL_CLIENT
@@ -14248,7 +14255,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_supp_solde_initial_operateur(self, args): #Done
+    def Req_supp_solde_initial_operateur(self, args):
         query = '''
             DELETE FROM 
                 T_SOLDE_INITIAL
@@ -14273,7 +14280,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_statistique(self, args): #Done
+    def Req_supp_statistique(self, args):
         query = '''
             DELETE FROM 
                 STATISTIQUES.dbo.T_STATISTIQUES
@@ -14311,7 +14318,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_supp_statistiques_clients(self, args): #Done
+    def Req_supp_statistiques_clients(self, args):
         query = '''
             DELETE FROM 
                 STATISTIQUES.dbo.T_STATISTIQUES
@@ -14336,7 +14343,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_statistiques_stock(self, args): #Done
+    def Req_supp_statistiques_stock(self, args):
         query = '''
             DELETE FROM 
                 STATISTIQUES.dbo.T_STATISTIQUES_STOCK
@@ -14360,7 +14367,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_supp_stock_init_cond(self, args): #Done
+    def Req_supp_stock_init_cond(self, args):
         query = '''
             DELETE FROM 
                 T_STOCK_INITI_COND
@@ -14385,7 +14392,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_supp_stock_initial(self, args): #Done
+    def Req_supp_stock_initial(self, args):
         query = '''
             DELETE FROM 
                 T_STOCK_INIT
@@ -14410,7 +14417,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def req_susp_cond_chargement_journee(self, args): #Done
+    def req_susp_cond_chargement_journee(self, args):
         query = '''
             SELECT 
                 T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -14465,7 +14472,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_susp_emballage(self, args): #Done
+    def Req_susp_emballage(self, args):
         query = '''
             SELECT 
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -14510,7 +14517,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_synthese_livraison_date(self, args): #Done
+    def Req_synthese_livraison_date(self, args):
         query = '''
             SELECT 
                 STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -14548,7 +14555,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_tache_operateur(self, args): #Done
+    def Req_tache_operateur(self, args):
         query = '''
             SELECT 
                 T_OPERTEURS_TACHES.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -14571,7 +14578,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_almientation_caisse2(self, args): #Done
+    def Req_total_almientation_caisse2(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
@@ -14604,7 +14611,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_autorisation_caisserie(self, args): #Done
+    def Req_total_autorisation_caisserie(self, args):
         query = '''
             SELECT 
                 T_AUTORISATION_SOLDE_CAISSERIE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -14636,7 +14643,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_avoir(self, args): #Done
+    def Req_total_avoir(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -14677,7 +14684,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_avoir_mvt(self, args): #Done
+    def Req_total_avoir_mvt(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -14715,7 +14722,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_chargement(self, args): #Done
+    def Req_total_chargement(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_CHARGEE.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -14754,7 +14761,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_chargement_supp_secteur(self, args): #Done
+    def Req_total_chargement_supp_secteur(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
@@ -14791,7 +14798,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_cmd_secteur(self, args): #Done
+    def Req_total_cmd_secteur(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -14855,7 +14862,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_commande_usine(self, args): #Done
+    def Req_total_commande_usine(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.TYPE_COMMANDE AS TYPE_COMMANDE,	
@@ -14902,7 +14909,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_commandes(self, args): #Done
+    def Req_total_commandes(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -14941,7 +14948,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_commandes_periode(self, args): #Done
+    def Req_total_commandes_periode(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_COMMANDES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -14979,7 +14986,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_cond_charg_supp_secteur(self, args): #Done
+    def Req_total_cond_charg_supp_secteur(self, args):
         query = '''
             SELECT 
                 T_COND_LIVRAISON.code_secteur AS code_secteur,	
@@ -15016,7 +15023,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_cond_retour_secteur(self, args): #Done
+    def Req_total_cond_retour_secteur(self, args):
         query = '''
             SELECT 
                 T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
@@ -15062,7 +15069,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_conseig_decons(self, args): #Done
+    def Req_total_conseig_decons(self, args):
         query = '''
             SELECT 
                 T_REGELEMENT_COND.CODE_OPERTAEUR AS CODE_OPERTAEUR,	
@@ -15105,7 +15112,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_conseigne_mag_operateur(self, args): #Done
+    def Req_total_conseigne_mag_operateur(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -15163,7 +15170,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_credit_secteur(self, args): #Done
+    def Req_total_credit_secteur(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -15209,7 +15216,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_credit_secteur_cond(self, args): #Done
+    def Req_total_credit_secteur_cond(self, args):
         query = '''
             SELECT 
                 T_COND_LIVRAISON.code_secteur AS code_secteur,	
@@ -15255,7 +15262,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_decompte(self, args): #Done
+    def Req_total_decompte(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -15296,7 +15303,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_decompte_espece(self, args): #Done
+    def Req_total_decompte_espece(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -15340,7 +15347,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_depense_categorie(self, args): #Done
+    def Req_total_depense_categorie(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.TYPE_OPERATION AS TYPE_OPERATION,	
@@ -15385,7 +15392,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_don(self, args): #Done
+    def Req_total_don(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -15430,7 +15437,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_dons_secteur(self, args): #Done
+    def Req_total_dons_secteur(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
@@ -15475,7 +15482,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_ecart_chargement(self, args): #Done
+    def Req_total_ecart_chargement(self, args):
         query = '''
             SELECT 
                 T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -15508,7 +15515,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_ecart_cond(self, args): #Done
+    def Req_total_ecart_cond(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS_CAISSERIE.CODE_CP AS CODE_CP,	
@@ -15558,7 +15565,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_ecart_inventaires(self, args): #Done
+    def Req_total_ecart_inventaires(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -15597,7 +15604,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_livraison(self, args): #Done
+    def Req_total_livraison(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -15636,7 +15643,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_livraison_client(self, args): #Done
+    def Req_total_livraison_client(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.Type_Livraison AS Type_Livraison,	
@@ -15683,7 +15690,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_livraison_sec_gms(self, args): #Done
+    def Req_total_livraison_sec_gms(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -15727,7 +15734,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_montant_cheques(self, args): #Done
+    def Req_total_montant_cheques(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -15759,7 +15766,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_mvt_caisse(self, args): #Done
+    def Req_total_mvt_caisse(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS_CAISSE.CODE_CAISSE AS CODE_CAISSE,	
@@ -15808,7 +15815,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_mvt_chargement(self, args): #Done
+    def Req_total_mvt_chargement(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -15864,7 +15871,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_mvt_cond(self, args): #Done
+    def Req_total_mvt_cond(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -15916,7 +15923,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_mvt_cond_cac(self, args): #Done
+    def Req_total_mvt_cond_cac(self, args):
         query = '''
             SELECT 
                 T_COND_LIVRAISON.CODE_CP AS CODE_CP,	
@@ -15957,7 +15964,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_mvt_operation(self, args): #Done
+    def Req_total_mvt_operation(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -16013,7 +16020,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_mvt_vente(self, args): #Done
+    def Req_total_mvt_vente(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.CODE_SECTEUR AS code_secteur,	
@@ -16057,7 +16064,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_position_cond(self, args): #Done
+    def Req_total_position_cond(self, args):
         query = '''
             SELECT 
                 T_MAGASIN_COND.CODE_CP AS CODE_CP,	
@@ -16081,7 +16088,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_prelev(self, args): #Done
+    def Req_total_prelev(self, args):
         query = '''
             SELECT 
                 T_DT_PRELEVEMENT_COND.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -16112,7 +16119,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_prelev_journalier(self, args): #Done
+    def Req_total_prelev_journalier(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.FONCTION AS FONCTION,	
@@ -16172,7 +16179,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_prelevement(self, args): #Done
+    def Req_total_prelevement(self, args):
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -16229,7 +16236,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_qte_chargement_cond(self, args): #Done
+    def Req_total_qte_chargement_cond(self, args):
         query = '''
             SELECT 
                 T_COND_CHARGEE.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -16271,7 +16278,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_reception(self, args): #Done
+    def Req_total_reception(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.TYPE_MOUVEMENT AS TYPE_MOUVEMENT,	
@@ -16311,7 +16318,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_reconaissances(self, args): #Done
+    def Req_total_reconaissances(self, args):
         query = '''
             SELECT 
                 T_RECONAISSANCES.DATE_RECONAISS AS DATE_RECONAISS,	
@@ -16353,7 +16360,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_reglement(self, args): #Done
+    def Req_total_reglement(self, args):
         query = '''
             SELECT 
                 T_DECOMPTE.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -16387,7 +16394,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_regularisation_MS(self, args): #Done
+    def Req_total_regularisation_MS(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -16432,7 +16439,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_remise_ca(self, args): #Done
+    def Req_total_remise_ca(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -16463,7 +16470,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_retour_secteur(self, args): #Done
+    def Req_total_retour_secteur(self, args):
         query = '''
             SELECT 
                 T_PRODUITS_LIVREES.code_secteur AS code_secteur,	
@@ -16508,7 +16515,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_solde_autorise(self, args): #Done
+    def Req_total_solde_autorise(self, args):
         query = '''
             SELECT 
                 T_AUTORISATIONS_SOLDE.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -16537,7 +16544,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_solde_init_clients(self, args): #Done
+    def Req_total_solde_init_clients(self, args):
         query = '''
             SELECT 
                 T_SOLDE_INITIAL_CLIENT.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -16575,7 +16582,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_solde_initial(self, args): #Done
+    def Req_total_solde_initial(self, args):
         query = '''
             SELECT 
                 T_SOLDE_INITIAL.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -16616,7 +16623,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_sortie_rendus(self, args): #Done
+    def Req_total_sortie_rendus(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -16663,7 +16670,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_statistiques(self, args): #Done
+    def Req_total_statistiques(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_PRODUIT AS CODE_PRODUIT,	
@@ -16707,7 +16714,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_statistiques_canal(self, args): #Done
+    def Req_total_statistiques_canal(self, args):
         query = '''
             SELECT 
                 STATISTIQUES.dbo.T_STATISTIQUES.CATEGORIE AS CATEGORIE,	
@@ -16753,7 +16760,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_total_statistiques_client(self, args): #Done
+    def Req_total_statistiques_client(self, args):
         query = '''
             SELECT 
                 STATISTIQUES.dbo.T_STATISTIQUES.CODE_CLIENT AS CODE_CLIENT,	
@@ -16798,7 +16805,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_susp_operateur(self, args): #Done
+    def Req_total_susp_operateur(self, args):
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.DATE_VALIDATION AS DATE_VALIDATION,	
@@ -16832,7 +16839,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_transfert_entree(self, args): #Done
+    def Req_total_transfert_entree(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -16882,7 +16889,7 @@ class Queries(object):
             
         return query.format(**kwargs)
 
-    def Req_total_transfert_produit_entre_mags(self, args): #Done
+    def Req_total_transfert_produit_entre_mags(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -16925,7 +16932,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_transfert_rendus(self, args): #Done
+    def Req_total_transfert_rendus(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -16967,7 +16974,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_transfert_sortie(self, args): #Done
+    def Req_total_transfert_sortie(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -17016,7 +17023,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_total_transferts_produit(self, args): #Done
+    def Req_total_transferts_produit(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -17063,7 +17070,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_tournee_chargement(self, args): #Done
+    def Req_tournee_chargement(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -17100,7 +17107,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_tournee_secteur(self, args): #Done
+    def Req_tournee_secteur(self, args):
         query = '''
             SELECT 
                 T_TOURNEES.CODE_TOURNEE AS CODE_TOURNEE,	
@@ -17130,7 +17137,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_transfert_rendus_par_categorie(self, args): #Done
+    def Req_transfert_rendus_par_categorie(self, args):
         query = '''
             SELECT 
                 T_MOUVEMENTS.DATE_MVT AS DATE_MVT,	
@@ -17172,7 +17179,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_type_produit_mag(self, args): #Done
+    def Req_type_produit_mag(self, args):
         query = '''
             SELECT 
                 T_TYPE_PRODUIT_MAG.CODE_MAGASIN AS CODE_MAGASIN,	
@@ -17195,7 +17202,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_upd_chargement_1(self, args): #Done
+    def Req_upd_chargement_1(self, args):
         query = '''
             UPDATE 
                 T_CHARGEMENT
@@ -17218,17 +17225,19 @@ class Queries(object):
             }
         except IndexError as e:
             return e
-        
+
         for key in ('Param_VALID', 'Param_MONTANT_A_VERSER', 'Param_CODE_CHARGEMENT'):
             if kwargs[key] in self.null_values:
                 return ValueError
-        
+
         kwargs['OPTIONAL_ARG_1'] = ', CODE_PREVENDEUR = {Param_CODE_PREVENDEUR}'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_CODE_PREVENDEUR'] in self.null_values else kwargs['OPTIONAL_ARG_1']
-        
+
+        if kwargs['Param_CODE_PREVENDEUR'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
+
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_upd_etat_liv(self, args): #Done
+    def Req_upd_etat_liv(self, args):
         query = '''
             UPDATE 
                 T_LIVRAISON
@@ -17254,7 +17263,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_upd_maj_secteur(self, args): #Done
+    def Req_upd_maj_secteur(self, args):
         query = '''
             UPDATE 
                 T_SECTEUR
@@ -17278,7 +17287,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_valider_commande_usine(self, args): #Done
+    def Req_valider_commande_usine(self, args):
         query = '''
             BEGIN
                 SET NOCOUNT ON;
@@ -17387,7 +17396,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_upd_remise_lait(self, args): #Done
+    def Req_upd_remise_lait(self, args):
         query = '''
             UPDATE 
                 T_REMISE_CLIENT_TRAD
@@ -17419,7 +17428,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_upd_statut_remise(self, args): #Done
+    def Req_upd_statut_remise(self, args):
         query = '''
             UPDATE 
                 T_REMISE_CLIENT_TRAD
@@ -17449,7 +17458,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_upd_statut_remise_client(self, args): #Done
+    def Req_upd_statut_remise_client(self, args):
         query = '''
             UPDATE 
                 T_REMISE_CLIENT_TRAD
@@ -17479,7 +17488,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_affectation_bl(self, args): #Done
+    def Req_update_affectation_bl(self, args):
         query = '''
             UPDATE 
                 T_LIVRAISON
@@ -17509,7 +17518,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_affectation_logistique(self, args): #Done
+    def Req_update_affectation_logistique(self, args):
         query = '''
             UPDATE 
                 T_CHARGEMENT
@@ -17543,7 +17552,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_cloture2(self, args): #Done
+    def Req_update_cloture2(self, args):
         query = '''
             UPDATE 
                 T_JOURNEE
@@ -17571,7 +17580,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_commande(self, args): #Done
+    def Req_update_commande(self, args):
         query = '''
             UPDATE 
                 T_COMMANDES
@@ -17609,36 +17618,10 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_cond(self, args): #Done
-        query = '''
-            UPDATE 
-                T_MAGASIN_COND
-            SET
-                QTE_STOCK = {Param_qte}
-            WHERE 
-                {OPTIONAL_ARG_1}
-                T_MAGASIN_COND.CODE_CP = {Param_code_cp}
-        '''
+    def Req_update_cond(self, args):
+        return self.Req_maj_position_cond(args)
 
-        try:
-            kwargs = {
-                'Param_qte': args[0],
-                'Param_magasin': args[1],
-                'Param_code_cp': args[2]
-            }
-        except IndexError as e:
-            return e
-        
-        for key in ('Param_qte', 'Param_code_cp'):
-            if kwargs[key] in self.null_values:
-                return ValueError
-        
-        kwargs['OPTIONAL_ARG_1'] = 'T_MAGASIN_COND.CODE_MAGASIN = {Param_magasin} AND'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_magasin'] in self.null_values else kwargs['OPTIONAL_ARG_1']
-
-        return query.format(**kwargs).format(**kwargs)
-
-    def Req_update_dispo(self, args): #Done
+    def Req_update_dispo(self, args):
         query = '''
             UPDATE 
                 T_ARTICLES
@@ -17663,7 +17646,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_update_info_trajet(self, args): #Done
+    def Req_update_info_trajet(self, args):
         query = '''
             UPDATE 
                 T_CHARGEMENT
@@ -17699,7 +17682,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_ligne_commande(self, args): #Done
+    def Req_update_ligne_commande(self, args):
         query = '''
             UPDATE 
                 T_LIGNE_COMMANDE
@@ -17724,14 +17707,14 @@ class Queries(object):
             }
         except IndexError as e:
             return e
-        
+
         for key in kwargs:
             if kwargs[key] in self.null_values:
                 return ValueError
 
         return query.format(**kwargs)
 
-    def Req_update_motif_non_commande(self, args): #Done
+    def Req_update_motif_non_commande(self, args):
         query = '''
             UPDATE 
                 STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON
@@ -17761,7 +17744,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_motif_non_livraison(self, args): #Done
+    def Req_update_motif_non_livraison(self, args):
         query = '''
             UPDATE 
                 T_LIVRAISON
@@ -17787,7 +17770,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_NS_CAISSERIE(self, args): #Done
+    def Req_update_NS_CAISSERIE(self, args):
         query = '''
             UPDATE 
                 T_JOURNEE
@@ -17835,7 +17818,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_update_operateur_versement(self, args): #Done
+    def Req_update_operateur_versement(self, args):
         query = '''
             UPDATE 
                 T_DECOMPTE
@@ -17867,7 +17850,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_prix(self, args): #Done
+    def Req_update_prix(self, args):
         query = '''
             UPDATE 
                 T_PRIX_AGENCE
@@ -17893,13 +17876,13 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_tx_couverture_article(self, args): #Done
+    def Req_update_tx_couverture_article(self, args):
         query = '''
-            UPDATE 
+            UPDATE
                 T_ARTICLES
             SET
                 TX_COUVERTURE = {Param_tx_couverture}
-            WHERE 
+            WHERE
                 T_ARTICLES.CODE_ARTICLE = {Param_code_article}
         '''
 
@@ -17910,14 +17893,14 @@ class Queries(object):
             }
         except IndexError as e:
             return e
-        
+
         for key in kwargs:
             if kwargs[key] in self.null_values:
                 return ValueError
-    
+
         return query.format(**kwargs)
 
-    def Req_update_vendeur_chargement(self, args): #Done
+    def Req_update_vendeur_chargement(self, args):
         query = '''
             UPDATE 
                 T_CHARGEMENT
@@ -17943,7 +17926,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_update_vendeur_cond(self, args): #Done
+    def Req_update_vendeur_cond(self, args):
         query = '''
             UPDATE 
                 T_COND_CHARGEE
@@ -17967,7 +17950,7 @@ class Queries(object):
     
         return query.format(**kwargs)
 
-    def Req_val_livraison(self, args): #Done
+    def Req_val_livraison(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.NUM_LIVRAISON AS NUM_LIVRAISON,	
@@ -17994,7 +17977,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_val_objectif_secteur(self, args): #Done
+    def Req_val_objectif_secteur(self, args):
         query = '''
             SELECT 
                 T_OBJECTIF_SECTEURS.DATE_OBJECTIF AS DATE_OBJECTIF,	
@@ -18052,7 +18035,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def req_valeur_chargement_secteur(self, args): #Done
+    def req_valeur_chargement_secteur(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.CODE_SECTEUR AS code_secteur,	
@@ -18125,7 +18108,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_valeur_chargements(self, args): #Done
+    def Req_valeur_chargements(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -18176,7 +18159,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_valeur_commande(self, args): #Done
+    def Req_valeur_commande(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.DATE_LIVRAISON AS DATE_LIVRAISON,	
@@ -18248,7 +18231,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_validation_cond_livraison(self, args): #Done
+    def Req_validation_cond_livraison(self, args):
         query = '''
             UPDATE 
                 T_COND_LIVRAISON
@@ -18276,17 +18259,20 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_validation_livraison_prevente(self, args): #Done
+    def Req_validation_livraison_prevente(self, args):
         query = '''
             UPDATE 
                 T_LIGNE_COMMANDE
             SET 
                 QTE_LIVREE = QTE_COMMANDE
             WHERE 
-                ID_COMMANDE IN (SELECT ID_COMMANDE FROM T_COMMANDE_CLIENT WHERE DATE_COMMANDE='{param_date}'
-                AND code_secteur={param_code_secteur})
-            AND 
-                CODE_ARTICLE={param_code_article}
+                ID_COMMANDE IN (
+                    SELECT ID_COMMANDE
+                    FROM T_COMMANDE_CLIENT
+                    WHERE DATE_COMMANDE='{param_date}'
+                    AND code_secteur={param_code_secteur}
+                )
+                AND CODE_ARTICLE = {param_code_article}
         '''
 
         try:
@@ -18297,16 +18283,16 @@ class Queries(object):
             }
         except IndexError as e:
             return e
-        
+
         kwargs['param_date'] = self.validateDate(kwargs['param_date'])
 
         for key in kwargs:
             if kwargs[key] in self.null_values:
                 return ValueError
-    
+
         return query.format(**kwargs)
 
-    def Req_validation_produits_livraison(self, args): #Done
+    def Req_validation_produits_livraison(self, args):
         query = '''
             UPDATE 
                 T_PRODUITS_LIVREES
@@ -18332,7 +18318,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_validation_repartition(self, args): #Done
+    def Req_validation_repartition(self, args):
         query = '''
             UPDATE 
                 T_REPARTITION
@@ -18363,7 +18349,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_vent_n1_produit(self, args): #Done
+    def Req_vent_n1_produit(self, args):
         query = '''
             SELECT 
                 T_MOY_VENTE_ARTICLE.DATE_VENTE AS DATE_VENTE,	
@@ -18412,7 +18398,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_vente_n1_client(self, args): #Done
+    def Req_vente_n1_client(self, args):
         query = '''
             SELECT 
                 T_MOY_VENTE_CLIENTS.DATE_VENTE AS DATE_VENTE,	
@@ -18445,7 +18431,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_vente_nette(self, args): #Done
+    def Req_vente_nette(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -18476,7 +18462,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ventes_secteur(self, args): #Done
+    def Req_ventes_secteur(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -18540,7 +18526,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_ventes_secteur_produit(self, args): #Done
+    def Req_ventes_secteur_produit(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -18612,7 +18598,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_chargement(self, args): #Done
+    def Req_verif_chargement(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.code_secteur AS code_secteur,	
@@ -18660,7 +18646,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs).format(**kwargs)
 
-    def Req_verif_envoi_perte(self, args): #Done
+    def Req_verif_envoi_perte(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS.DATE_OPERATION AS DATE_OPERATION,	
@@ -18692,7 +18678,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_verif_n1_clients(self, args): #Done
+    def Req_verif_n1_clients(self, args):
         query = '''
             SELECT 
                 T_MOY_VENTE_CLIENTS.DATE_VENTE AS DATE_VENTE,	
@@ -18736,7 +18722,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_n1_secteurs(self, args): #Done
+    def Req_verif_n1_secteurs(self, args):
         query = '''
             SELECT 
                 T_MOY_VENTE_ARTICLE.DATE_VENTE AS DATE_VENTE,	
@@ -18779,7 +18765,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_verif_nbl(self, args): #Done
+    def Req_verif_nbl(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS.TYPE_OPERATION AS TYPE_OPERATION,	
@@ -18806,7 +18792,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_num_commande(self, args): #Done
+    def Req_verif_num_commande(self, args):
         query = '''
             SELECT 
                 T_COMMANDES.ID_COMMANDE AS ID_COMMANDE,	
@@ -18832,7 +18818,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_prelev_caisserie(self, args): #Done
+    def Req_verif_prelev_caisserie(self, args):
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.DATE_PRELEV AS DATE_PRELEV,	
@@ -18867,7 +18853,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_prelevement(self, args): #Done
+    def Req_verif_prelevement(self, args):
         query = '''
             SELECT 
                 T_PRELEVEMENT_SUSP_COND.DATE_PRELEV AS DATE_PRELEV,	
@@ -18902,7 +18888,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_synchro(self, args): #Done
+    def Req_verif_synchro(self, args):
         query = '''
             SELECT 
                 T_SYNCHRO.OPERATION AS OPERATION,	
@@ -18931,7 +18917,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_trait_pda(self, args): #Done
+    def Req_verif_trait_pda(self, args):
         query = '''
             SELECT 
                 T_HIST_TRAITEMENT_PDA.code_secteur AS code_secteur,	
@@ -18962,7 +18948,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_traitement(self, args): #Done
+    def Req_verif_traitement(self, args):
         query = '''
             SELECT 
                 T_HISTORIQUE_OPERATIONS.COMMENTAIRE
@@ -18984,7 +18970,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_verif_tx_remise(self, args): #Done
+    def Req_verif_tx_remise(self, args):
         query = '''
             SELECT DISTINCT 
                 T_REMISE_CLIENT_TRAD.Date_Debut AS Date_Debut,	
@@ -19011,7 +18997,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_versement_non_envoyer(self, args): #Done
+    def Req_versement_non_envoyer(self, args):
         query = '''
             SELECT 
                 T_OPERATIONS_CAISSE.CODE_OPERATION AS CODE_OPERATION,	
@@ -19053,7 +19039,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_zero_stock(self, args): #Done
+    def Req_zero_stock(self, args):
         query = '''
             UPDATE 
                 m
@@ -19073,12 +19059,9 @@ class Queries(object):
         except IndexError as e:
             return e
 
-        if kwargs['CODE_AGCE'] in self.null_values:
-            return ValueError
-        
         return query.format(**kwargs)
 
-    def Requ_mvt_cond_gms(self, args): #Done
+    def Requ_mvt_cond_gms(self, args):
         query = '''
             SELECT 
                 T_LIVRAISON.TYPE_MVT AS TYPE_MVT,	
@@ -19128,7 +19111,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Requête1(self, args): #Done
+    def Requête1(self, args):
         query = '''
             SELECT 
                 T_CHARGEMENT.DATE_CHARGEMENT AS DATE_CHARGEMENT,	
@@ -19200,7 +19183,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    """def Requête12(self, args): #Done
+    """def Requête12(self, args):
         query = '''
             SELECT 
                 art.CODE_ARTICLE, art.LIBELLE AS nom_article,
@@ -19217,7 +19200,7 @@ class Queries(object):
         '''
         return query"""
 
-    def journee_1_Requete(self, args): #Done
+    def journee_1_Requete(self, args):
         query = '''
             SELECT TOP 10 
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE,	
@@ -19270,7 +19253,7 @@ class Queries(object):
 
         return query.format(**kwargs)
     
-    def Req_fen_transfert(self, args): #Done
+    def Req_fen_transfert(self, args):
         query = '''
             SELECT 
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,	
@@ -19298,7 +19281,7 @@ class Queries(object):
 
         return query.format(**kwargs)
     
-    def Req_ls_articles_prix(self, args): #Done
+    def Req_ls_articles_prix(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE AS CODE_ARTICLE,	
@@ -19347,7 +19330,7 @@ class Queries(object):
         return query.format(**kwargs).format(**kwargs)
 
 # --------------- Conversions ----------------------
-    def Req_conv_login(self, args): #Done2
+    def Req_conv_login(self, args):
         query = '''
             SELECT
                 T_OPERATEUR.CODE_OPERATEUR AS CODE_OPERATEUR,
@@ -19374,7 +19357,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
     
-    def Req_conv_parametres(self, args): #Done2
+    def Req_conv_parametres(self, args):
         query = '''
             SELECT
                 T_PARAMETRES.ID_PARAM AS ID_PARAM,
@@ -19404,7 +19387,7 @@ class Queries(object):
 
         return query.format(**kwargs).format(**kwargs)
 
-    def Req_conv_generation_in_1(self, args): #Done2
+    def Req_conv_generation_in_1(self, args):
         query = '''
             SELECT 
                 T_ARTICLES.CODE_ARTICLE,
@@ -19443,7 +19426,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_generation_in_2(self, args): #Done2
+    def Req_conv_generation_in_2(self, args):
         query = '''
             select T_PRODUITS.CODE_PRODUIT,NOM_PRODUIT,NOM_FAMILLE,NOM_GAMME,CYCLE from T_PRODUITS,T_FAMILLE,T_GAMME
             where T_PRODUITS.CODE_FAMILLE = T_FAMILLE.CODE_FAMILLE and T_GAMME.CODE_GAMME = T_FAMILLE.CODE_GAMME
@@ -19451,7 +19434,7 @@ class Queries(object):
 
         return query
 
-    def Req_conv_generation_in_3(self, args): #Done2
+    def Req_conv_generation_in_3(self, args):
         query = '''
             select CODE_SECTEUR,NOM_SECTEUR,CODE_ZONE,(select COUNT(*) from T_TOURNEES where T_TOURNEES.CODE_SECTEUR = T_SECTEUR.CODE_SECTEUR and T_TOURNEES.ACTIF=1)AS NB_TRN from T_SECTEUR,T_BLOC
             where T_SECTEUR.CODE_BLOC = T_BLOC.CODE_BLOC
@@ -19459,14 +19442,14 @@ class Queries(object):
 
         return query
 
-    def Req_conv_generation_in_4(self, args): #Done2
+    def Req_conv_generation_in_4(self, args):
         query = '''
             SELECT CODE_SOUS_SECTEUR,NOM_SOUS_SECTEUR FROM T_SOUS_SECTEUR
         '''
 
         return query
 
-    def Req_conv_generation_in_5(self, args): #Done2
+    def Req_conv_generation_in_5(self, args):
         query = '''
             select CODE_ZONE,NOM_ZONE,SP.NOM_OPERATEUR AS SUP,RV.NOM_OPERATEUR AS RVENTE from T_ZONE,T_OPERATEUR SP,T_OPERATEUR RV
             where SP.CODE_OPERATEUR = T_ZONE.CODE_SUPERVISEUR
@@ -19486,14 +19469,14 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_generation_in_6(self, args): #Done2
+    def Req_conv_generation_in_6(self, args):
         query = '''
             select CODE_CAT_CLIENT,NOM_CATEGORIE from T_CAT_CLIENTS
         '''
 
         return query
 
-    def Req_conv_generation_in_7(self, args): #Done2
+    def Req_conv_generation_in_7(self, args):
         query = '''
             select T_CLIENTS.CODE_CLIENT,NOM_CLIENT,CAT_CLIENT,CLASSE,TELEPHONE,CODE_SECTEUR,TYPE_PRESENTOIRE,(select COUNT(*) from T_ITINERAIRES,T_TOURNEES where CODE_CLIENT = T_CLIENTS.CODE_CLIENT and T_ITINERAIRES.CODE_TOURNEE=T_TOURNEES.CODE_TOURNEE and T_TOURNEES.ACTIF=1) AS FRQ,ADRESSE,SOUS_SECTEUR
             from T_CLIENTS,T_SOUS_SECTEUR
@@ -19514,7 +19497,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_generation_in_8(self, args): #Done2
+    def Req_conv_generation_in_8(self, args):
         query = '''
             select T_SOUS_SECTEUR.CODE_SECTEUR,T_FACTURE.CODE_OPERATEUR,NOM_OPERATEUR,COUNT(NUM_FACTURE) as NB_FACTURE from T_FACTURE,T_CLIENTS,T_SOUS_SECTEUR,T_OPERATEUR where DATE_HEURE>='20150401' and VALID=1 and T_CLIENTS.CODE_CLIENT=T_FACTURE.CODE_CLIENT and T_CLIENTS.SOUS_SECTEUR=T_SOUS_SECTEUR.CODE_SOUS_SECTEUR
             and T_FACTURE.CODE_OPERATEUR = T_OPERATEUR.CODE_OPERATEUR
@@ -19534,7 +19517,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_generation_in_9(self, args): #Done2
+    def Req_conv_generation_in_9(self, args):
         query = '''
             select CODE_CLIENT,SUM(QTE_VENTE*PRIX)/('{param_nbj}') AS CA_MOY,COUNT( distinct T_FACTURE.NUM_FACTURE) as NB_FACTS,COUNT( distinct T_ARTICLES.CODE_PRODUIT) as NB_PRODUITS
             from T_FACTURE,T_DT_FACTURE,T_ARTICLES
@@ -19563,7 +19546,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_affiche_ls_inventaire_nom_magasin(self, args): #Done2
+    def Req_conv_affiche_ls_inventaire_nom_magasin(self, args):
         query = '''
             SELECT
                 T_MAGASINS.NOM_MAGASIN AS NOM_MAGASIN
@@ -19587,7 +19570,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_affiche_ls_inventaire_nom_operateur(self, args): #Done2
+    def Req_conv_affiche_ls_inventaire_nom_operateur(self, args):
         query = '''
             SELECT
                 T_OPERATEUR.NOM_OPERATEUR AS NOM_OPERATEUR
@@ -19611,7 +19594,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart(self, args): #Done2
+    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart(self, args):
         query = '''
             SELECT
                 T_MOUVEMENTS_CAISSERIE.COMPTE_ECART AS COMPTE_ECART
@@ -19633,7 +19616,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart2(self, args): #Done2
+    def Req_conv_fen_inventaire_btn_supprimer_compte_ecart2(self, args):
         query = '''
             SELECT
                 T_MOUVEMENTS.COMPTE_ECART AS COMPTE_ECART
@@ -19655,7 +19638,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_fen_inventaire_btn_supprimer_code_operation(self, args): #Done2
+    def Req_conv_fen_inventaire_btn_supprimer_code_operation(self, args):
         query = '''
             SELECT
                 T_OPERATIONS.CODE_OPERATION AS CODE_OPERATION
@@ -19680,7 +19663,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_nouv_journee_date_journee(self, args): #Done2
+    def Req_conv_journee_btn_nouv_journee_date_journee(self, args):
         query = '''
             SELECT DISTINCT
                 T_JOURNEE.DATE_JOURNEE AS DATE_JOURNEE
@@ -19702,7 +19685,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_nouv_journee_articles_magasins(self, args): #Done2
+    def Req_conv_journee_btn_nouv_journee_articles_magasins(self, args):
         query = '''
             SELECT
                 *
@@ -19727,7 +19710,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_nouv_journee_stock_init(self, args): #Done2
+    def Req_conv_journee_btn_nouv_journee_stock_init(self, args):
         query = '''
             INSERT INTO 
                 T_STOCK_INIT (DATE_PS, CATEGORIE, CODE_ARTICLE, CODE_MAGASIN, QTE_INIT)
@@ -19753,10 +19736,10 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_nouv_journee_magasin_cond(self, args): #Done2
+    def Req_conv_journee_btn_nouv_journee_magasin_cond(self, args):
         return self.Req_select_magasin_cond(args)
 
-    def Req_conv_journee_btn_nouv_journee_stock_initi_cond(self, args): #Done2
+    def Req_conv_journee_btn_nouv_journee_stock_initi_cond(self, args):
         query = '''
             INSERT INTO 
                 T_STOCK_INITI_COND (DATE_JOURNEE, CODE_MAGASIN, CODE_CP, STOCK_INIT)
@@ -19781,7 +19764,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_nouv_journee_preparation_chargements(self, args): #Done2
+    def Req_conv_journee_btn_nouv_journee_preparation_chargements(self, args):
         query = '''
             DELETE FROM
                 T_PREPARATION_CHARGEMENTS
@@ -19801,7 +19784,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_nouv_journee_journee(self, args): #Done2
+    def Req_conv_journee_btn_nouv_journee_journee(self, args):
         query = '''
             INSERT INTO 
                 T_JOURNEE
@@ -19845,7 +19828,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_cloturer_livraision_planning(self, args): #Done2
+    def Req_conv_journee_btn_cloturer_livraision_planning(self, args):
         query = '''
             SELECT
                 T_LIVRAISON_PLANNING.CODE_CLIENT AS CODE_CLIENT,
@@ -19874,7 +19857,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_cloturer_synthese_livraision(self, args): #Done2
+    def Req_conv_journee_btn_cloturer_synthese_livraision(self, args):
         query = '''
             INSERT INTO 
                 STATISTIQUES.dbo.T_SYNTHESE_LIVRAISON 
@@ -19903,7 +19886,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_cloturer_creer_journal(self, args): #Done2
+    def Req_conv_journee_btn_cloturer_creer_journal(self, args):
         query = '''
             INSERT INTO 
                 T_HISTORIQUE_OPERATIONS 
@@ -19930,7 +19913,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_cloturer_creer_synchro(self, args): #Done2
+    def Req_conv_journee_btn_cloturer_creer_synchro(self, args):
         query = '''
             INSERT INTO 
                 T_SYNCHRO 
@@ -19958,7 +19941,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_cloturer_journee_temp(self, args): #Done2
+    def Req_conv_journee_btn_cloturer_journee_temp(self, args):
         query = '''
             UPDATE 
                 T_JOURNEE
@@ -19986,7 +19969,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_cloturer_solde_initial_caisse(self, args): #Done2
+    def Req_conv_journee_btn_cloturer_solde_initial_caisse(self, args):
         query = '''
             INSERT INTO 
                 T_SOLDE_INITIAL_CAISSE 
@@ -20012,7 +19995,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_cloturer_controle_cloture(self, args): #Done2
+    def Req_conv_journee_btn_cloturer_controle_cloture(self, args):
         query = '''
             select A.code_op,COUNT(A.code_op) as nb from (
             select DATE_CHARGEMENT,CODE_VENDEUR as CODE_OP from T_CHARGEMENT where CODE_VENDEUR<>{CODE_0}
@@ -20046,7 +20029,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_import_moy_vente_article(self, args): #Done2
+    def Req_conv_journee_btn_import_moy_vente_article(self, args):
         query = '''
             INSERT INTO 
                 T_MOY_VENTE_ARTICLE 
@@ -20075,7 +20058,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_journee_btn_import_moy_vente_clients(self, args): #Done2
+    def Req_conv_journee_btn_import_moy_vente_clients(self, args):
         query = '''
             INSERT INTO 
                 T_MOY_VENTE_ARTICLE 
@@ -20103,7 +20086,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_codification_operation_cod_std(self, args): #Done2
+    def Req_conv_codification_operation_cod_std(self, args):
         #HLitRecherche(T_AGENCE,CODE_AGCE,var_code_agce)
         query = '''
             SELECT
@@ -20126,7 +20109,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_fen_inventaire_btn_appliquer_operations(self, args): #Done2
+    def Req_conv_fen_inventaire_btn_appliquer_operations(self, args):
         query = '''
             INSERT INTO 
                 T_OPERATIONS
@@ -20164,7 +20147,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    def Req_conv_fen_inventaire_btn_appliquer_mouvements_caisserie(self, args): #Done2
+    def Req_conv_fen_inventaire_btn_appliquer_mouvements_caisserie(self, args):
         query = '''
             INSERT INTO 
                 T_MOUVEMENTS_CAISSERIE
@@ -20200,7 +20183,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_fen_inventaire_btn_appliquer_mouvements(self, args): #Done2
+    def Req_conv_fen_inventaire_btn_appliquer_mouvements(self, args):
         query = '''
             INSERT INTO 
                 T_MOUVEMENTS
@@ -20239,7 +20222,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_maj_position_articles_magasins(self, args): #Done2
+    def Req_conv_maj_position_articles_magasins(self, args):
         query = '''
             INSERT INTO 
                 T_ARTICLES_MAGASINS 
@@ -20260,7 +20243,7 @@ class Queries(object):
         
         return query.format(**kwargs)
 
-    """def Req_conv_maj_position_articles_magasins_qte_stock(self, args): #Done2
+    """def Req_conv_maj_position_articles_magasins_qte_stock(self, args):
         query = '''
             UPDATE 
                 T_ARTICLES_MAGASINS
@@ -20284,7 +20267,7 @@ class Queries(object):
         
         return query.format(**kwargs)"""
 
-    def Req_conv_codification_mvt_cond_cod_long(self, args): #Done2
+    def Req_conv_codification_mvt_cond_cod_long(self, args):
         query = '''
             SELECT
                 T_AGENCE.COD_LONG AS COD_LONG
@@ -20348,9 +20331,11 @@ class Queries(object):
     
     def Req_conv_operateurs_btn_appliquer(self, args):
         query = '''
-            delete from T_OPERTEURS_TACHES
-            where ID_TACHE in (select ID_TACHE from T_TACHES where APP='4')
-            and CODE_OPERATEUR= {CODE_OPERATEUR}
+            DELETE FROM
+                T_OPERTEURS_TACHES
+            WHERE
+                ID_TACHE in (select ID_TACHE from T_TACHES where APP='4')
+                AND CODE_OPERATEUR = {CODE_OPERATEUR}
         '''
 
         try:
@@ -20384,7 +20369,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_select_magasin_cond(self, args): #Done
+    def Req_select_magasin_cond(self, args):
         query = '''
             SELECT 
                 mc.*
@@ -20405,7 +20390,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    def Req_conv_affectation_imprimer(self, args): #Done
+    def Req_conv_affectation_imprimer(self, args):
         query = '''
             select DATE_CHARGEMENT,NOM_SECTEUR,v.MATRICULE AS MAT_VENDEUR,V.NOM_OPERATEUR AS VENDEUR,c.MATRICULE AS MAT_CHAUFFEUR,ISNULL(C.NOM_OPERATEUR,'') AS CHAUFFEUR,A1.MATRICULE AS MAT_AIDE1,ISNULL(A1.NOM_OPERATEUR,'') AS AIDE1,A2.MATRICULE AS MAT_AIDE2,ISNULL(A2.NOM_OPERATEUR,'') AS AIDE2 
             from t_chargement,T_SECTEUR,T_OPERATEUR V,T_OPERATEUR c,T_OPERATEUR A1,T_OPERATEUR A2
@@ -20437,7 +20422,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    """def Req_conv_pop_client_acredit(self, args): #Done
+    """def Req_conv_pop_client_acredit(self, args):
         query = '''
             SELECT T.CODE_CLIENT, T.NOM_CLIENT,s.CODE_SECTEUR,S.NOM_SECTEUR,ss.CODE_SOUS_SECTEUR,SS.NOM_SOUS_SECTEUR,
             E.CODE_CAT_CLIENT,E.NOM_CATEGORIE,A.CODE_AGCE,A.NOM_AGENCE,G.ID_GROUP,G.NOM_GROUP,T.ADRESSE,T.TELEPHONE,
