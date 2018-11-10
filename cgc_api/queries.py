@@ -263,7 +263,7 @@ class Queries(object):
             SET
                 VALID = 0
             WHERE
-                T_FACTURE.NUM_FACTURE = {Param_num_facture}
+                T_FACTURE.NUM_FACTURE = '{Param_num_facture}'
                 AND T_FACTURE.CODE_AGCE = {CODE_AGCE}
         '''
 
@@ -1095,7 +1095,7 @@ class Queries(object):
 
     def Req_ca_lait_frais(self, args):
         query = '''
-            SELECT 
+            SELECT
                 T_FACTURE.CODE_CLIENT AS CODE_CLIENT,	
                 SUM(( ( ( T_DT_FACTURE.QTE_VENTE - T_DT_FACTURE.QTE_PERTE ) - T_DT_FACTURE.QTE_PROMO ) * T_DT_FACTURE.PRIX ) ) AS CA,	
                 T_ARTICLES.TVA AS TVA
@@ -1151,13 +1151,10 @@ class Queries(object):
                 T_SOUS_SECTEUR
             WHERE 
                 T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
-                AND		T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
-                AND
-                (
-                    T_FACTURE.VALID = 1
-                    {OPTIONAL_ARG_1}
-                    AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
-                )
+                AND T_CLIENTS.CODE_CLIENT = T_FACTURE.CODE_CLIENT
+                AND T_FACTURE.VALID = 1
+                {OPTIONAL_ARG_1}
+                AND	T_FACTURE.DATE_HEURE BETWEEN '{Param_dt1}' AND '{Param_dt2}'
                 AND T_FACTURE.CODE_AGCE = {CODE_AGCE}
         '''
 
@@ -1175,7 +1172,8 @@ class Queries(object):
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
 
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in self.null_values else kwargs['OPTIONAL_ARG_1']
+        if kwargs['Param_code_secteur'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
 
         return query.format(**kwargs).format(**kwargs)
 
@@ -1211,7 +1209,8 @@ class Queries(object):
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
 
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_CHARGEMENT.CODE_SECTEUR = {Param_code_secteur}'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in self.null_values else kwargs['OPTIONAL_ARG_1']
+        if kwargs['Param_code_secteur'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
 
         return query.format(**kwargs).format(**kwargs)
 
@@ -1234,12 +1233,9 @@ class Queries(object):
                 T_PRODUITS_CHARGEE
             WHERE 
                 T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
-                AND		T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
-                AND
-                (
-                    T_CHARGEMENT.DATE_CHARGEMENT BETWEEN '{Param_dt1}' AND '{Param_dt2}'
-                    {OPTIONAL_ARG_1}
-                )
+                AND T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
+                AND T_CHARGEMENT.DATE_CHARGEMENT BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                {OPTIONAL_ARG_1}
                 AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_CHARGEMENT.CODE_SECTEUR,	
@@ -1264,7 +1260,8 @@ class Queries(object):
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'], 1)
 
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_CHARGEMENT.CODE_SECTEUR = {Param_code_secteur}'
-        kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in self.null_values else kwargs['OPTIONAL_ARG_1']
+        if kwargs['Param_code_secteur'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
 
         return query.format(**kwargs).format(**kwargs)
 
@@ -1362,11 +1359,8 @@ class Queries(object):
                 T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
                 AND	T_ARTICLES.CODE_ARTICLE = T_PRODUITS_CHARGEE.CODE_ARTICLE
                 AND	T_ARTICLES.CODE_ARTICLE = T_ARTICLES_AGENCE.CODE_ARTICLE
-                AND
-                (
-                    T_ARTICLES_AGENCE.ACTIF = 1
-                    AND	T_PRODUITS_CHARGEE.CODE_CHARGEMENT = {Param_code_chargement}
-                )
+                AND T_ARTICLES_AGENCE.ACTIF = 1
+                AND	T_PRODUITS_CHARGEE.CODE_CHARGEMENT = {Param_code_chargement}
                 AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
                 AND T_ARTICLES_AGENCE.CODE_AGCE = {CODE_AGCE}
             ORDER BY 
@@ -1417,12 +1411,9 @@ class Queries(object):
                 T_OPERATEUR
             WHERE 
                 T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
-                AND		T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
-                AND
-                (
-                    T_CHARGEMENT.code_secteur = {Param_code_secteur}
-                    AND	T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}'
-                )
+                AND T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
+                AND T_CHARGEMENT.code_secteur = {Param_code_secteur}
+                AND	T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chargement}'
                 AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_CHARGEMENT.code_vendeur,	
@@ -1501,11 +1492,8 @@ class Queries(object):
                 T_CHARGEMENT
             WHERE 
                 T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
-                AND
-                (
-                    T_CHARGEMENT.VALID = 0
-                    {OPTIONAL_ARG_1}
-                )
+                AND T_CHARGEMENT.VALID = 0
+                {OPTIONAL_ARG_1}
                 AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_CHARGEMENT.DATE_CHARGEMENT,	
@@ -1576,13 +1564,10 @@ class Queries(object):
                 AND	T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
                 AND	T_ARTICLES.CODE_ARTICLE = T_PRODUITS_CHARGEE.CODE_ARTICLE
                 AND	T_ARTICLES.CODE_ARTICLE = T_ARTICLES_AGENCE.CODE_ARTICLE
-                AND
-                (
-                    T_ARTICLES_AGENCE.ACTIF = 1
-                    AND	T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chragement}'
-                    {OPTIONAL_ARG_1}
-                    {OPTIONAL_ARG_2}
-                )
+                AND T_ARTICLES_AGENCE.ACTIF = 1
+                AND	T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chragement}'
+                {OPTIONAL_ARG_1}
+                {OPTIONAL_ARG_2}
                 AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
                 AND T_ARTICLES_AGENCE.CODE_AGCE = {CODE_AGCE}
             ORDER BY 
@@ -1600,10 +1585,8 @@ class Queries(object):
             return e
 
         kwargs['Param_date_chragement'] = self.validateDate(kwargs['Param_date_chragement'])
-
-        for kwarg in ('Param_date_chragement', 'CODE_AGCE'):
-            if kwargs[kwarg] in self.null_values:
-                return ValueError
+        if kwargs['Param_date_chragement'] in self.null_values:
+            return ValueError
 
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_CHARGEMENT.code_secteur = {Param_code_secteur}'
         kwargs['OPTIONAL_ARG_2'] = 'AND	T_ARTICLES.CODE_ARTICLE = {Param_code_article}'
@@ -1659,12 +1642,9 @@ class Queries(object):
                 AND	T_ARTICLES.CODE_ARTICLE = T_PRODUITS_CHARGEE.CODE_ARTICLE
                 AND	T_SECTEUR.code_secteur = T_CHARGEMENT.CODE_SECTEUR
                 AND	T_CHARGEMENT.CODE_CHARGEMENT = T_PRODUITS_CHARGEE.CODE_CHARGEMENT
-                AND
-                (
-                    T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chragement}'
-                    {OPTIONAL_ARG_1}
-                    {OPTIONAL_ARG_2}
-                )
+                AND T_CHARGEMENT.DATE_CHARGEMENT = '{Param_date_chragement}'
+                {OPTIONAL_ARG_1}
+                {OPTIONAL_ARG_2}
                 AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_PRODUITS_CHARGEE.CODE_CHARGEMENT,	
@@ -1692,7 +1672,6 @@ class Queries(object):
             return e
         
         kwargs['Param_date_chragement'] = self.validateDate(kwargs['Param_date_chragement'])
-
         if kwargs['Param_date_chragement'] in self.null_values:
             return ValueError
 
@@ -1723,11 +1702,8 @@ class Queries(object):
             WHERE 
                 T_SECTEUR.code_secteur = T_CHARGEMENT.code_secteur
                 AND	T_OPERATEUR.CODE_OPERATEUR = T_CHARGEMENT.code_vendeur
-                AND
-                (
-                    T_CHARGEMENT.DATE_CHARGEMENT BETWEEN '{Param_date1}' AND '{Param_date2}'
-                    AND	T_CHARGEMENT.code_vendeur = {Param_code_vendeur}
-                )
+                AND T_CHARGEMENT.DATE_CHARGEMENT BETWEEN '{Param_date1}' AND '{Param_date2}'
+                AND	T_CHARGEMENT.code_vendeur = {Param_code_vendeur}
                 AND T_CHARGEMENT.CODE_AGCE = {CODE_AGCE}
             ORDER BY 
                 DATE_CHARGEMENT ASC
@@ -1853,13 +1829,10 @@ class Queries(object):
                 T_CLIENTS
             WHERE 
                 T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
-                AND		T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
-                AND
-                (
-                    T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
-                    AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
-                    {OPTIONAL_ARG_1}
-                )
+                AND T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
+                AND T_LIVRAISON.TYPE_MVT IN ('L', 'R') 
+                AND	T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
+                {OPTIONAL_ARG_1}
                 AND T_LIVRAISON.CODE_AGCE = {CODE_AGCE}
         '''
 
@@ -1879,7 +1852,6 @@ class Queries(object):
             return ValueError
 
         kwargs['OPTIONAL_ARG_1'] = 'AND T_LIVRAISON.DATE_VALIDATION = \'{Param_dt}\''
-
         if kwargs['Param_dt'] in self.null_values:
             kwargs['OPTIONAL_ARG_1'] = '' 
 
@@ -1899,13 +1871,10 @@ class Queries(object):
                 T_CLIENTS
             WHERE 
                 T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
-                AND
-                (
-                    T_CLIENTS.ACTIF = 1
-                    AND	T_CLIENTS.CODE_CLIENT <> 0
-                    {OPTIONAL_ARG_1}
-                    AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
-                )
+                AND T_CLIENTS.ACTIF = 1
+                AND	T_CLIENTS.CODE_CLIENT <> 0
+                {OPTIONAL_ARG_1}
+                AND	T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}
                 AND T_CLIENTS.CODE_AGCE = {CODE_AGCE}
         '''
 
@@ -2916,7 +2885,7 @@ class Queries(object):
                 T_DT_FACTURE
             WHERE 
                 T_ARTICLES.CODE_ARTICLE = T_DT_FACTURE.CODE_ARTICLE
-                AND T_DT_FACTURE.NUM_FACTURE = {Param_num_facture}
+                AND T_DT_FACTURE.NUM_FACTURE = '{Param_num_facture}'
             ORDER BY 
                 RANG ASC
         '''
@@ -15000,8 +14969,8 @@ class Queries(object):
         kwargs['Param_date_chargement'] = self.validateDate(kwargs['Param_date_chargement'])
 
         kwargs['OPTIONAL_ARG_1'] = 'AND	T_COND_CHARGEE.CODE_COND = {Param_code_cp}'
-         if kwargs['Param_code_cp'] in self.null_values:
-             kwargs['OPTIONAL_ARG_1'] = ''
+        if kwargs['Param_code_cp'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
 
         return query.format(**kwargs).format(**kwargs)
 
