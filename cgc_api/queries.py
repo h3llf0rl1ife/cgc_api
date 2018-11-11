@@ -19960,3 +19960,30 @@ class Queries(object):
             return ValueError
 
         return query.format(**kwargs)
+
+    def req_select_p_ville(self, args):
+        query = '''
+            SELECT
+	            *
+            FROM
+	            [10.7.0.20].GCOPAG.dbo.P_VILLE
+        '''
+        return query
+
+    def req_select_p_type_client(self, args):
+        query = '''
+            SELECT
+	            *
+            FROM
+	            [10.7.0.20].GCOPAG.dbo.P_TYPE_CLIENT
+        '''
+        return query
+
+    def req_max_p_tiers(self, args):
+        query = '''
+           SELECT
+	            MAX(id_Tiers) as id_Tiers
+            FROM
+	            [10.7.0.20].GCOPAG.dbo.P_TIERS
+        '''
+        return query
