@@ -7043,6 +7043,7 @@ class Queries(object):
                 {OPTIONAL_ARG_5}
                 {OPTIONAL_ARG_6}
                 AND T_ZONE.CODE_AGCE = {CODE_AGCE}
+                AND	T_FACTURE.CODE_AGCE = {CODE_AGCE}
             GROUP BY 
                 T_FACTURE.NUM_FACTURE,	
                 T_FACTURE.CODE_CLIENT,	
@@ -7209,11 +7210,8 @@ class Queries(object):
                 T_LIVRAISON
             WHERE 
                 T_CLIENTS.CODE_CLIENT = T_LIVRAISON.CODE_CLIENT
-                AND
-                (
-                    T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
-                    AND	T_LIVRAISON.code_secteur = {Param_code_secteur}
-                )
+                AND T_LIVRAISON.DATE_LIVRAISON = '{Param_date_livraison}'
+                AND T_LIVRAISON.code_secteur = {Param_code_secteur}
                 AND T_LIVRAISON.CODE_AGCE = {CODE_AGCE}
         '''
 
@@ -7719,14 +7717,11 @@ class Queries(object):
                 T_CAISSE
             WHERE 
                 T_CAISSE.CODE_CAISSE = T_MOUVEMENTS_CAISSE.CODE_CAISSE
-                AND		T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
-                AND
-                (
-                    T_OPERATIONS_CAISSE.DATE_OPERATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
-                    {OPTIONAL_ARG_1}
-                    AND	T_OPERATIONS_CAISSE.TYPE_OPERATION IN ('{Param_type_operation}') 
-                    {OPTIONAL_ARG_2}
-                )
+                AND	T_OPERATIONS_CAISSE.CODE_OPERATION = T_MOUVEMENTS_CAISSE.ORIGINE
+                AND T_OPERATIONS_CAISSE.DATE_OPERATION BETWEEN '{Param_dt1}' AND '{Param_dt2}'
+                {OPTIONAL_ARG_1}
+                AND T_OPERATIONS_CAISSE.TYPE_OPERATION IN ('{Param_type_operation}') 
+                {OPTIONAL_ARG_2}
                 AND T_OPERATIONS_CAISSE.CODE_AGCE = {CODE_AGCE}
             ORDER BY 
                 CODE_OPERATION DESC
