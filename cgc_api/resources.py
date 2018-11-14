@@ -344,6 +344,9 @@ class DatabaseAPI(Resource):
             elif table == 'P_TIERS':
                 args = ('10.7.0.20',) + CURRENT_CONFIG[1:3] + ('GCOPAG',)
                 restfulQuery._Query = Query(*args)
+            elif table == 'TMPS_CLIENTS':
+                args = CURRENT_CONFIG[:3] + ('SIEGE',)
+                restfulQuery._Query = Query(*args)
             else:
                 restfulQuery._Query = Query(*CURRENT_CONFIG)
 
