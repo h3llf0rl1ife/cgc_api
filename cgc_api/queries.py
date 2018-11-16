@@ -8676,7 +8676,7 @@ class Queries(object):
                 AND T_SECTEUR.code_secteur = T_SOUS_SECTEUR.code_secteur
                 AND T_SOUS_SECTEUR.CODE_SOUS_SECTEUR = T_CLIENTS.SOUS_SECTEUR
                 AND T_REMISE_CLIENT_TRAD.Date_Debut = '{Param_dt1}'
-                AND	T_REMISE_CLIENT_TRAD.Date_Fin = '{Param_dt2}'
+                {OPTIONAL_ARG_1}
                 AND T_ZONE.CODE_AGCE = {CODE_AGCE}
                 AND T_CLIENTS.CODE_AGCE = {CODE_AGCE}
         '''
@@ -8689,15 +8689,17 @@ class Queries(object):
             }
         except IndexError as e:
             return e
-        
+
         kwargs['Param_dt1'] = self.validateDate(kwargs['Param_dt1'])
+        if kwargs['Param_dt1'] in self.null_values:
+            return ValueError
+
+        kwargs['OPTIONAL_ARG_1'] = 'AND	T_REMISE_CLIENT_TRAD.Date_Fin = \'{Param_dt2}\''
         kwargs['Param_dt2'] = self.validateDate(kwargs['Param_dt2'])
+        if kwargs['Param_dt2'] in self.null_values:
+            kwargs['OPTIONAL_ARG_1'] = ''
 
-        for key in kwargs:
-            if kwargs[key] in self.null_values:
-                return ValueError
-
-        return query.format(**kwargs)
+        return query.format(**kwargs).format(**kwargs)
 
     def Req_ls_resp_vente(self, args):
         query = '''
@@ -19977,7 +19979,7 @@ class Queries(object):
     def req_max_p_tiers(self, args):
         query = '''
            SELECT
-	            MAX(id_Tiers) as id_Tiers
+	            MAX(id_Tiers) as Expr1
             FROM
 	            [10.7.0.20].GCOPAG.dbo.P_TIERS
         '''
