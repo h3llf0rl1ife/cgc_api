@@ -7083,7 +7083,7 @@ class Queries(object):
             if kwargs[key] in self.null_values:
                 return ValueError
 
-        kwargs['OPTIONAL_ARG_1'] = 'AND T_SOUS_SECTEUR.code_secteur = {Param_code_secteur} AND'
+        kwargs['OPTIONAL_ARG_1'] = 'AND T_SOUS_SECTEUR.code_secteur = {Param_code_secteur}'
         kwargs['OPTIONAL_ARG_1'] = '' if kwargs['Param_code_secteur'] in self.null_values else kwargs['OPTIONAL_ARG_1']
         kwargs['OPTIONAL_ARG_2'] = 'AND	T_FACTURE.CODE_CLIENT = {Param_code_client}'
         kwargs['OPTIONAL_ARG_2'] = '' if kwargs['Param_code_client'] in self.null_values else kwargs['OPTIONAL_ARG_2']
