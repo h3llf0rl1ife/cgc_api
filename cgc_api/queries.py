@@ -15758,7 +15758,7 @@ class Queries(object):
 
         try:
             kwargs = {
-                'Param_date_reconaissance': args[0],
+                'Param_date_recon': args[0],
                 'Param_date_max': args[1],
                 'CODE_AGCE': args[len(args) - 1]
             }
@@ -18612,7 +18612,6 @@ class Queries(object):
                 {OPTIONAL_ARG_1}
                 AND T_PRIX.CODE_AGCE = {CODE_AGCE}
                 AND T_ARTICLES_AGENCE.CODE_AGCE = {CODE_AGCE}
-                )
             ORDER BY 
                 T_ARTICLES.RANG ASC
         '''
