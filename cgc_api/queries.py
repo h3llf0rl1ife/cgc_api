@@ -16115,7 +16115,7 @@ class Queries(object):
             if kwargs[key] in self.null_values:
                 return ValueError
         
-        kwargs['OPTIONAL_ARG_1'] = 'STATISTIQUES.dbo.T_STATISTIQUES.code_secteur = {Param_code_secteur} AND'
+        kwargs['OPTIONAL_ARG_1'] = 'AND STATISTIQUES.dbo.T_STATISTIQUES.code_secteur = {Param_code_secteur}'
         if kwargs['Param_code_secteur'] in self.null_values:
             kwargs['OPTIONAL_ARG_1'] = ''
 
@@ -16159,7 +16159,7 @@ class Queries(object):
             if kwargs[key] in self.null_values:
                 return ValueError
         
-        kwargs['OPTIONAL_ARG_1'] = 'STATISTIQUES.dbo.T_STATISTIQUES.code_secteur = {Param_code_secteur} AND'
+        kwargs['OPTIONAL_ARG_1'] = 'AND STATISTIQUES.dbo.T_STATISTIQUES.code_secteur = {Param_code_secteur}'
         if kwargs['Param_code_secteur'] in self.null_values:
             kwargs['OPTIONAL_ARG_1'] = ''
 
