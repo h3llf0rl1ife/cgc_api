@@ -273,6 +273,9 @@ class RestfulQuery_V2:
             args.append(i_columns)
 
         query = self._Query.postRequest(table, *args)
+        if table == 'P_TIERS':
+            query = 'SET IDENTITY_INSERT P_TIERS ON\n \
+                     {}\nSET IDENTITY_INSERT P_TIERS OFF'.format(query)
 
         try:
             row_count = self._Query.executeQuery(
