@@ -10917,7 +10917,6 @@ class Queries(object):
                         T_CIBLE_PROMOTION.CODE_CLIENT = {CODE_0}
                         OR	T_CIBLE_PROMOTION.CODE_CLIENT = {param_code_client}
                     )
-                )
         '''
 
         try:
