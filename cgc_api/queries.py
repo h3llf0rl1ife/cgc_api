@@ -19735,7 +19735,7 @@ class Queries(object):
 
         return query.format(**kwargs)
 
-    """def Req_conv_pop_client_acredit(self, args):
+    def Req_conv_pop_client_acredit(self, args):
         query = '''
             SELECT T.CODE_CLIENT, T.NOM_CLIENT,s.CODE_SECTEUR,S.NOM_SECTEUR,ss.CODE_SOUS_SECTEUR,SS.NOM_SOUS_SECTEUR,
             E.CODE_CAT_CLIENT,E.NOM_CATEGORIE,A.CODE_AGCE,A.NOM_AGENCE,G.ID_GROUP,G.NOM_GROUP,T.ADRESSE,T.TELEPHONE,
@@ -19752,7 +19752,7 @@ class Queries(object):
         except IndexError as e:
             return e
 
-        return query.format(**kwargs)"""
+        return query.format(**kwargs)
 
     def Req_conv_nb_commandes(self, args):
         query = '''
