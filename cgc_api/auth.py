@@ -57,34 +57,33 @@ class Token(Resource):
             header, payload = crypto.readJWT(jwt)
 
             if payload:
-                """machine_name = payload.get('Machine')
+                no_login = payload.get('NoLogin')
+                if no_login:
+                    params = m.Parameters.query.get(payload.get('Agency'))
 
-                machine = m.Machine.query.filter_by(
-                    MachineName=machine_name).first()
+                    if not params:
+                        return HTTP_STATUS['505'], 505
 
-                if not machine:
-                    machine = m.Machine(MachineName=machine_name, Active=True)
-                    db.session.add(machine)
-                    db.session.commit()
+                    payload = {
+                        'MAG_STOCK': params.MagStock,
+                        'MAG_RENDUS': params.MagRendus,
+                        'MAG_CAISSERIE': params.MagCaisserie,
+                        'MAG_INVENDU': params.MagInvendu,
+                        'CAISSE_P': params.CaissePrincipale,
+                        'CAISSE_D': params.CaisseDepenses}
+                    header = JWT_HEADER
+                    jwt = crypto.writeJWT(header, payload)
 
-                operator = m.Operator.query.filter_by(
-                    OperatorCode=payload.get('Operator')).first()"""
+                    app.logger.info('{} - {} - {} Logged in'.format(
+                        request.environ['REMOTE_ADDR'],
+                        type(self).__name__, 'AUDIT'))
+
+                    return {'Token': jwt}, 200
 
                 operator = m.Operateur.query.filter_by(
                     OperatorCode=payload.get('Operator')).first()
 
                 if operator:
-                    """if operator.Operateur_.Task_:
-                        salt = crypto.unhexlify(
-                            bytearray(operator.Salt, 'utf-8'))
-                        password = crypto.unhexlify(
-                            bytearray(operator.Password, 'utf-8'))
-                        p_password = crypto.hashString(
-                            'sha256', bytearray(
-                                payload.get('Password'), 'utf-8'), salt=salt)
-                        password_check = crypto.checkHashString(
-                            password, p_password)"""
-
                     if operator.Task_:
                         password_check = payload.get('Password') \
                             == operator.Password
@@ -94,24 +93,6 @@ class Token(Resource):
                             password_check = True
 
                 if password_check:
-                    """token = m.Token.query.filter_by(
-                        Machine=machine, Operator=operator,
-                        IssuedAt=getDate(), ExpiresAt=getDate()).first()
-
-                    if token:
-                        token_hash = token.TokenHash
-                    else:
-                        token_hash = crypto.generateToken(128)
-                        token = m.Token(
-                            TokenHash=token_hash, Active=True,
-                            Machine=machine, Operator=operator,
-                            IssuedAt=getDate(), ExpiresAt=getDate())
-                        db.session.add(token)
-                        db.session.commit()
-
-                    params = m.Parameters.query.get(
-                        operator.Operateur_.AgencyCode)"""
-
                     params = m.Parameters.query.get(
                         operator.AgencyCode)
 
@@ -119,9 +100,6 @@ class Token(Resource):
                         return HTTP_STATUS['505'], 505
 
                     payload = {
-                        # 'Token': token_hash,
-                        # 'Function': operator.Operateur_.Function,
-                        # 'SerialNumber': operator.Operateur_.SerialNumber,
                         'Function': operator.Function,
                         'SerialNumber': operator.SerialNumber,
                         'MAG_STOCK': params.MagStock,
@@ -132,10 +110,6 @@ class Token(Resource):
                         'CAISSE_D': params.CaisseDepenses}
                     header = JWT_HEADER
                     jwt = crypto.writeJWT(header, payload)
-
-                    """app.logger.info('{} - {} - {} Logged in'.format(
-                        request.environ['REMOTE_ADDR'],
-                        type(self).__name__, operator.Operateur_.OperatorName))"""
 
                     app.logger.info('{} - {} - {} Logged in'.format(
                         request.environ['REMOTE_ADDR'],
