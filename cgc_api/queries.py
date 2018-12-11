@@ -19610,7 +19610,7 @@ class Queries(object):
                 T_CLIENTS
             WHERE 
                 T_CLIENTS.CODE_AGCE = {CODE_AGCE}
-                AND T_CLIENTS.CODE_CLIENT NOT LIKE '99%'
+                AND T_CLIENTS.CODE_CLIENT < 3000000
         '''
 
         try:
